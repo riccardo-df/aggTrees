@@ -70,7 +70,7 @@ ggplot(data.frame(x = cates), aes(x = x)) +
 
 From the plot above, we notice substantial heterogeneity in the treatment effects. Effects range from -382.681 grams to -57.087 grams (you can double-check using `range(cates)`). The mean of the distribution is an estimate of the ATE and corresponds to -257.681 grams. The standard deviation of the distribution is 63.317. 
 
-### Tree-pruning step
+### Tree-growing step
 Further insights into treatment effect heterogeneity can be learned from analyzing intermediate aggregation levels. The idea is to discover the subpopulations most and least impacted by the treatment. This is the goal of aggregation trees.  
 
 To build the tree, we use the `aggregation_tree` function, which allows the user to set two stopping criteria:
