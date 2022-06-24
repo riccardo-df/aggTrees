@@ -95,7 +95,7 @@ log_ratio_sd <- function(X, D) {
 #' Object of class \code{phased}.
 #'
 #' @details
-#' For each covariate in \code{X}, \code{balance_measures} computes sample averges and standard deviations
+#' For each covariate in \code{X}, \code{balance_measures} computes sample averages and standard deviations
 #' for both treatment arms. Additionally, two balance measures are computed:
 #' \describe{
 #'   \item{\code{Norm. Diff.}}{Normalized differences, computed as the differences in the means of each covariate
