@@ -68,7 +68,18 @@ ggplot(data.frame(x = cates), aes(x = x)) +
 
 ![density](/images/cates_density_github.png)
 
-From the plot above, we notice substantial heterogeneity in the treatment effects. Effects range from -382.681 grams to -57.087 grams (you can double-check using `range(cates)`). The mean of the distribution is an estimate of the ATE and corresponds to -257.681 grams. The standard deviation of the distribution is 63.317. 
+From the plot above, we notice substantial heterogeneity in the treatment effects. Effects range from -382.681 grams to -57.087 grams (you can double-check using `range(cates)`). The mean of the distribution is an estimate of the ATE and corresponds to -257.681 grams. The standard deviation of the distribution is 63.317.  
+
+Fitting a regression forest using the estimated CATEs and computing the importance of each variable allows us to gain some knowledge on which covariates are more related to treatment effect heterogeneity. This is the role of the `var_importance` function. Notice that the forest is grown in the aggregation sample. Results can be displayed by using the `plot_importance` function. To avoid overplotting, it is possible to show only the `k` most important covariates.
+
+```
+var_imp <- var_importance(cates, X_agg)
+plot_importance(var_imp, k = 10)
+```
+
+![importance](/images/importance_github.png)
+
+Results show that the mother's age and the number of prenatal care visits are the main drivers of treatment effect heterogeneity. However, nothing can be inferred on the direction of the effect of these two covariates.
 
 ### Tree-growing step
 Further insights into treatment effect heterogeneity can be learned from analyzing intermediate aggregation levels. The idea is to discover the subpopulations most and least impacted by the treatment. This is the goal of aggregation trees.  
