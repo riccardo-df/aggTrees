@@ -1,7 +1,6 @@
 #' Variable Importance for Estimated CATEs
 #'
-#' Grows a random forest using the estimated CATEs as dependent variable, and provides the covariates' relative 
-#' variable importance.
+#' Grows a random forest using the estimated CATEs as dependent variable, and provides the covariates' relative importance.
 #'
 #' @param cates CATEs vector.
 #' @param X Covariate matrix (no intercept).
