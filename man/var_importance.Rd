@@ -15,8 +15,7 @@ var_importance(cates, X)
 A data frame storing the relative importance of each covariate.
 }
 \description{
-Grows a random forest using the estimated CATEs as dependent variable, and provides the covariates' relative 
-variable importance.
+Grows a random forest using the estimated CATEs as dependent variable, and provides the covariates' relative importance.
 }
 \details{
 \code{cates} are used to grow a random forest using the the covariates in \code{X}. This allows to gain some knowledge
