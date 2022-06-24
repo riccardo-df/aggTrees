@@ -1,7 +1,7 @@
 #' Variable Importance for Estimated CATEs
 #'
 #' Grows a random forest using the estimated CATEs as dependent variable, and provides the covariates' relative 
-#' variable importance 
+#' variable importance.
 #'
 #' @param cates CATEs vector.
 #' @param X Covariate matrix (no intercept).
@@ -40,10 +40,9 @@
 #' ## Estimating CATEs using only estimation sample.
 #' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
 #'
-#' ## Growing forest using only aggregation sample.
+#' ## Computing importance using only aggregation sample.
 #' cates <- predict(cates_forest, newdata = X_agg)$predictions
-#' 
-#' ## Extracting variable importance.
+#'
 #' var_imp <- var_importance(cates, X_agg)
 #' plot_importance(var_imp)
 #' 
@@ -63,7 +62,7 @@ var_importance <- function(cates, X) {
   
   `%>%` <- magrittr::`%>%`
   
-  var_df <- dplyr::data_frame(Variable = var_df$name, Importance = as.numeric(var_df$varImp)) %>%
+  var_df <- dplyr::tibble(Variable = var_df$name, Importance = as.numeric(var_df$varImp)) %>%
     dplyr::arrange(Importance) %>%
     dplyr::mutate(Variable = factor(Variable, levels = unique(Variable)))
   
@@ -74,7 +73,7 @@ var_importance <- function(cates, X) {
 
 #' Variable Importance Plot
 #'
-#' Plots the relative variable importance
+#' Plots the relative variable importance.
 #'
 #' @param importance The output of \code{\link{var_importance}}.
 #' @param k Display only the k most important covariates. All covariates are displayed by default.
@@ -107,10 +106,9 @@ var_importance <- function(cates, X) {
 #' ## Estimating CATEs using only estimation sample.
 #' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
 #'
-#' ## Growing forest using only aggregation sample.
+#' ## Computing importance using only aggregation sample.
 #' cates <- predict(cates_forest, newdata = X_agg)$predictions
-#' 
-#' ## Extracting variable importance.
+#'
 #' var_imp <- var_importance(cates, X_agg)
 #' plot_importance(var_imp)
 #' 
@@ -126,7 +124,6 @@ plot_importance <- function(importance, k = 0) {
   plot <- ggplot2::ggplot(importance[idx, ], ggplot2::aes(x = Variable, y = Importance)) +
     ggplot2::geom_bar(stat = "identity", fill = "steelblue", alpha = .6, width = 0.9) +
     ggplot2::coord_flip() +
-    ggplot2::scale_y_continuous(limits = c(0, 0.55)) +
     ggplot2::xlab("Labels") + ggplot2::ylab("Variable importance") +
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
