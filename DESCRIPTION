@@ -1,0 +1,26 @@
+Package: aggTrees
+Type: Package
+Title: Aggregation Trees
+Version: 0.1.0
+Authors@R: 
+    person("Riccardo", "Di Francesco", , "difrancesco.riccardo96@gmail.com", role = c("aut", "cre"))
+Description: Implementing aggregation trees to discover heterogeneous subpopulation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 2.10)
+RoxygenNote: 7.2.0
+Imports: 
+    colorspace,
+    ggplot2,
+    grDevices,
+    grf,
+    haven,
+    parttree (>= 0.0.1.9000),
+    rpart,
+    rpart.plot,
+    stringr
+Remotes: 
+    grantmcdermott/parttree
+
