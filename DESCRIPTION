@@ -13,14 +13,15 @@ Depends:
 RoxygenNote: 7.2.0
 Imports: 
     colorspace,
+    dplyr,
     ggplot2,
     grDevices,
     grf,
     haven,
+    magrittr,
     parttree (>= 0.0.1.9000),
     rpart,
     rpart.plot,
     stringr
 Remotes: 
     grantmcdermott/parttree
-
