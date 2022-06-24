@@ -15,7 +15,7 @@ plot_importance(importance, k = 0)
 None. It plots the relative importance of the covariates.
 }
 \description{
-Plots the relative variable importance
+Plots the relative variable importance.
 }
 \examples{
 ## Loading data (using random subsample provided by Matias Cattaneo).
@@ -42,10 +42,9 @@ D_agg <- D[-est_idx]
 ## Estimating CATEs using only estimation sample.
 cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
 
-## Growing forest using only aggregation sample.
+## Computing importance using only aggregation sample.
 cates <- predict(cates_forest, newdata = X_agg)$predictions
 
-## Extracting variable importance.
 var_imp <- var_importance(cates, X_agg)
 plot_importance(var_imp)
 

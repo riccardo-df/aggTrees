@@ -16,7 +16,7 @@ A data frame storing the relative importance of each covariate.
 }
 \description{
 Grows a random forest using the estimated CATEs as dependent variable, and provides the covariates' relative 
-variable importance
+variable importance.
 }
 \details{
 \code{cates} are used to grow a random forest using the the covariates in \code{X}. This allows to gain some knowledge
@@ -49,10 +49,9 @@ D_agg <- D[-est_idx]
 ## Estimating CATEs using only estimation sample.
 cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
 
-## Growing forest using only aggregation sample.
+## Computing importance using only aggregation sample.
 cates <- predict(cates_forest, newdata = X_agg)$predictions
 
-## Extracting variable importance.
 var_imp <- var_importance(cates, X_agg)
 plot_importance(var_imp)
 
