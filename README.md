@@ -79,7 +79,7 @@ plot_importance(var_imp, k = 10)
 
 ![importance](/images/importance_github.png)
 
-Results show that the mother's age and the number of prenatal care visits are the main drivers of treatment effect heterogeneity. However, nothing can be inferred on the direction of the effect of these two covariates.
+Results show that the mother's age and the number of prenatal care visits are the main drivers of treatment effect heterogeneity. However, nothing can be inferred about the direction of the effect of these two covariates.
 
 ### Tree-growing step
 Further insights into treatment effect heterogeneity can be learned from analyzing intermediate aggregation levels. The idea is to discover the subpopulations most and least impacted by the treatment. This is the goal of aggregation trees.  
