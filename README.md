@@ -123,7 +123,7 @@ X_subsample <- as.data.frame(X_agg[, c("mage", "nprenatal")])
 tree <- aggregation_tree(cates, X_subsample, maxdepth = 2, cp = 0.01)
 ```
 
-Because the tree is constructed using only two covariates, we can represent it by plotting the axis-aligned splits it performed. This is achieved by the `recursive_partitioning_plot` function, which overlays the splits on a scatter plot of the covariates used in the tree construction. To aid readability, I suggest coloring the points according to the magnitude of the CATEs. By default, `recursive_partitioning_plot` uses yellow for more negative effects and red for more positive effects. Users can override this choice by setting the parameters `low` and `red`. Because in the present exercise effects are always negative, I decide to set `low = "red"` and `high = "yellow"`. 
+Because the tree is constructed using only two covariates, we can represent it by plotting the axis-aligned splits it performed. This is achieved by the `recursive_partitioning_plot` function, which overlays the splits on a scatter plot of the covariates used in the tree construction. To aid readability, I suggest coloring the points according to the magnitude of the CATEs. By default, `recursive_partitioning_plot` uses yellow for more negative effects and red for more positive effects. Users can override this choice by setting the parameters `low` and `high`. Because in the present exercise effects are always negative, I decide to set `low = "red"` and `high = "yellow"`. 
 
 ```
 plot <- recursive_partitioning_plot(tree, cates, X_subsample, low = "red", high = "yellow")
