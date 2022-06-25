@@ -14,7 +14,7 @@ library(aggTrees)
 ```
 
 ## Example
-This section shows how to use aggregation trees to discover heterogeneous subpopulations. This exercise uses a random subsample of the data on maternal smoking and infants' weight at birth (available as a built-in data set in Stata and in the [GitHub repository](https://github.com/mdcattaneo/replication-C_2010_JOE) of Matias Cattaneo).  
+This section shows how to use aggregation trees to discover heterogeneous subpopulations using a random subsample of the data on maternal smoking and infants' weight at birth (available as a built-in data set in Stata and in the [GitHub repository](https://github.com/mdcattaneo/replication-C_2010_JOE) of Matias Cattaneo).  
 
 Let's load the data and define the relevant variables.
 
