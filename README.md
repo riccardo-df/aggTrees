@@ -126,7 +126,7 @@ tree <- aggregation_tree(cates, X_subsample, maxdepth = 2, cp = 0.01)
 Because the tree is constructed using only two covariates, we can represent it by plotting the axis-aligned splits it performed. This is achieved by the `recursive_partitioning_plot` function, which overlays the splits on a scatter plot of the covariates used in the tree construction. To aid readability, I suggest coloring the points according to the magnitude of the CATEs. By default, `recursive_partitioning_plot` uses yellow for more negative effects and red for more positive effects. Users can override this choice by setting the parameters `low` and `high`. Because in the present exercise effects are always negative, I decide to set `low = "red"` and `high = "yellow"`. 
 
 ```
-plot <- recursive_partitioning_plot(tree, cates, X_subsample, low = "red", high = "yellow")
+plot <- recursive_partitioning_plot(tree, cates, X_subsample, low = "red", high = "yellow", size = 3.5)
 plot
 ```
 
@@ -140,7 +140,7 @@ Finally, we can compare the results from the aggregation tree to those obtained 
 ```
 clusters <- kmeans(cates, 3)
 
-plot <- cluster_plot(clusters, cates, X_subsample, low = "red", high = "yellow")
+plot <- cluster_plot(clusters, cates, X_subsample, low = "red", high = "yellow", size = 3.5)
 plot
 ```
 
@@ -151,8 +151,8 @@ The cluster analysis results align with the tree's findings: mothers of the most
 As a last remark, the package allows the user to overlay the recursive partitioning of the aggregation tree and the results from cluster analysis. This is achieved by first generating the tree plot and then passing it as an argument in the `cluster_plot` function. 
 
 ```
-tree_plot <- recursive_partitioning_plot(tree, cates, X_subsample, low = "red", high = "yellow")
-cluster_plot <- cluster_plot(clusters, cates, X_subsample, plot = tree_plot, low = "red", high = "yellow")
+tree_plot <- recursive_partitioning_plot(tree, cates, X_subsample, low = "red", high = "yellow", size = 3.5)
+cluster_plot <- cluster_plot(clusters, cates, X_subsample, plot = tree_plot, low = "red", high = "yellow", size = 3.5)
 cluster_plot
 ```
 
