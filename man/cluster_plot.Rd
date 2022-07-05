@@ -4,7 +4,15 @@
 \alias{cluster_plot}
 \title{Cluster Plot}
 \usage{
-cluster_plot(clusters, cates, X, plot = NULL, low = "yellow", high = "red")
+cluster_plot(
+  clusters,
+  cates,
+  X,
+  plot = NULL,
+  low = "yellow",
+  high = "red",
+  size = 1
+)
 }
 \arguments{
 \item{clusters}{The output of \code{\link{kmeans}} or \code{\link[T4cluster]{kmeanspp}}.}
@@ -18,6 +26,8 @@ cluster_plot(clusters, cates, X, plot = NULL, low = "yellow", high = "red")
 \item{low}{String. Color to represent more negative \code{cates}. Ignored if \code{plot} is provided.}
 
 \item{high}{String. Color to represent more positive \code{cates}. Ignored if \code{plot} is provided.}
+
+\item{size}{Size of points.}
 }
 \value{
 The desired plot.
@@ -65,13 +75,13 @@ clusters <- kmeans(cates, 3)
 
 ## Plotting.
 X_subsample <- as.data.frame(X_agg[, c("mage", "nprenatal")])
-plot <- cluster_plot(clusters, cates, X_subsample)
+plot <- cluster_plot(clusters, cates, X_subsample, size = 3.5)
 plot
 
 ## Overlaying aggregation tree.
 tree <- aggregation_tree(cates, X_subsample, maxdepth = 3, cp = 0.01)
-tree_plot <- recursive_partitioning_plot(tree, cates, X_subsample)
-cluster_plot <- cluster_plot(clusters, cates, X_subsample, plot = tree_plot)
+tree_plot <- recursive_partitioning_plot(tree, cates, X_subsample, size = 3.5)
+cluster_plot <- cluster_plot(clusters, cates, X_subsample, plot = tree_plot, size = 3.5)
 cluster_plot
 
 }

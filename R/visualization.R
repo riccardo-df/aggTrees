@@ -127,6 +127,7 @@ plot_aggregation_tree <- function(aggregation_tree,
 #' @param X Covariate matrix (no intercept). The same used in \code{aggregation_tree}.
 #' @param low String. Color to represent more negative \code{cates}.
 #' @param high String. Color to represent more positive \code{cates}.
+#' @param size Size of points.
 #'
 #' @return
 #' The desired plot.
@@ -171,19 +172,19 @@ plot_aggregation_tree <- function(aggregation_tree,
 #' tree <- aggregation_tree(cates, X_subsample, maxdepth = 3, cp = 0.01)
 #'
 #' ## Plotting.
-#' plot <- recursive_partitioning_plot(tree, cates, X_subsample)
+#' plot <- recursive_partitioning_plot(tree, cates, X_subsample, size = 3.5)
 #' plot
 #'
 #' @export
 recursive_partitioning_plot <- function(aggregation_tree, cates, X,
-                                        low = "yellow", high = "red") {
+                                        low = "yellow", high = "red", size = 1) {
   ## Handling inputs and checks.
   if (dim(X)[2] > 2) stop("You are using more than two covariates. \n When more than two covariates are available, the recursive partitioning plot is not avaialable. \n You may consider a tree-plot (see ??plot_aggregation_tree).")
   if (length((aggregation_tree$ordered)) > 2) stop("The tree has been grown with more than two covariates.")
 
   ## Plotting.
   plot <- ggplot2::ggplot(data.frame("x1" = X[, 1], "x2" = X[, 2], "cates" = cates), ggplot2::aes(x = x1, y = x2)) +
-    ggplot2::geom_point(ggplot2::aes(color = cates)) +
+    ggplot2::geom_point(ggplot2::aes(color = cates), size = size) +
     ggplot2::scale_color_gradient(low = low, high = high) +
     ggplot2::xlab(colnames(X)[1]) +
     ggplot2::ylab(colnames(X)[2]) +
@@ -212,6 +213,7 @@ recursive_partitioning_plot <- function(aggregation_tree, cates, X,
 #' @param plot Optional, the output of \code{\link{recursive_partitioning_plot}}. If provided, the cluster plot is overimposed to \code{plot}.
 #' @param low String. Color to represent more negative \code{cates}. Ignored if \code{plot} is provided.
 #' @param high String. Color to represent more positive \code{cates}. Ignored if \code{plot} is provided.
+#' @param size Size of points.
 #'
 #' @return
 #' The desired plot.
@@ -255,18 +257,18 @@ recursive_partitioning_plot <- function(aggregation_tree, cates, X,
 #'
 #' ## Plotting.
 #' X_subsample <- as.data.frame(X_agg[, c("mage", "nprenatal")])
-#' plot <- cluster_plot(clusters, cates, X_subsample)
+#' plot <- cluster_plot(clusters, cates, X_subsample, size = 3.5)
 #' plot
 #'
 #' ## Overlaying aggregation tree.
 #' tree <- aggregation_tree(cates, X_subsample, maxdepth = 3, cp = 0.01)
-#' tree_plot <- recursive_partitioning_plot(tree, cates, X_subsample)
-#' cluster_plot <- cluster_plot(clusters, cates, X_subsample, plot = tree_plot)
+#' tree_plot <- recursive_partitioning_plot(tree, cates, X_subsample, size = 3.5)
+#' cluster_plot <- cluster_plot(clusters, cates, X_subsample, plot = tree_plot, size = 3.5)
 #' cluster_plot
 #'
 #' @export
 cluster_plot <- function(clusters, cates, X,
-                         plot = NULL, low = "yellow", high = "red") {
+                         plot = NULL, low = "yellow", high = "red", size = 1) {
   ## Handling inputs and checks.
   if (dim(X)[2] > 2) stop("You are using more than two covariates. \n When more than two covariates are available, the recursive partitioning plot is not avaialable. \n You may consider a tree-plot (see ??plot_aggregation_tree).")
 
@@ -282,7 +284,7 @@ cluster_plot <- function(clusters, cates, X,
   ## Plotting.
   if (is.null(plot)) {
     plot <- ggplot2::ggplot(data.frame("x1" = X[, 1], "x2" = X[, 2], "cates" = cates), ggplot2::aes(x = x1, y = x2)) +
-      ggplot2::geom_point(ggplot2::aes(color = cates)) +
+      ggplot2::geom_point(ggplot2::aes(color = cates), size = size) +
       ggplot2::scale_color_gradient(low = low, high = high) +
       ggplot2::xlab(colnames(X)[1]) +
       ggplot2::ylab(colnames(X)[2]) +

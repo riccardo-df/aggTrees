@@ -9,7 +9,8 @@ recursive_partitioning_plot(
   cates,
   X,
   low = "yellow",
-  high = "red"
+  high = "red",
+  size = 1
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ recursive_partitioning_plot(
 \item{low}{String. Color to represent more negative \code{cates}.}
 
 \item{high}{String. Color to represent more positive \code{cates}.}
+
+\item{size}{Size of points.}
 }
 \value{
 The desired plot.
@@ -69,7 +72,7 @@ cates <- predict(cates_forest, newdata = X_agg)$predictions
 tree <- aggregation_tree(cates, X_subsample, maxdepth = 3, cp = 0.01)
 
 ## Plotting.
-plot <- recursive_partitioning_plot(tree, cates, X_subsample)
+plot <- recursive_partitioning_plot(tree, cates, X_subsample, size = 3.5)
 plot
 
 }
