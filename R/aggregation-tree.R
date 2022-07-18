@@ -64,3 +64,59 @@ aggregation_tree <- function(cates, X, maxdepth, cp) {
   ## Output.
   return(tree)
 }
+
+
+#' Cross-Validated Aggregation Tree
+#'
+#' Uses the cross-validation criterion to select the "best" tree from the sequence.
+#'
+#' @param aggregation_tree The output of \code{\link{aggregation_tree}}.
+#'
+#' @return
+#' The cross-validated tree, as a \code{\link[rpart]{rpart}} object.
+#'
+#' @details
+#' \code{aggregation_tree} should be deep enough to allow the criterion to explore more trees \cr
+#'
+#' @examples
+#' ## Loading data (using random subsample provided by Matias Cattaneo).
+#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
+#'
+#' Y <- as.matrix(dta[, "bweight"])
+#' D <- as.matrix(dta[, "mbsmoke"])
+#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
+#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
+#'
+#' ## Splitting sample.
+#' set.seed(1986)
+#' n <- dim(dta)[1]
+#' est_idx <- sample(1:n, n / 2, replace = FALSE)
+#'
+#' X_est <- X[est_idx, ]
+#' Y_est <- Y[est_idx]
+#' D_est <- D[est_idx]
+#'
+#' X_agg <- X[-est_idx, ]
+#' Y_agg <- Y[-est_idx]
+#' D_agg <- D[-est_idx]
+#'
+#' ## Estimating CATEs using only estimation sample.
+#' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
+#'
+#' ## Growing tree using only aggregation sample.
+#' cates <- predict(cates_forest, newdata = X_agg)$predictions
+#' tree <- aggregation_tree(cates, X_agg, maxdepth = 3, cp = 0.01)
+#'
+#' ## Plotting.
+#' plot_aggregation_tree(tree)
+#'
+#' ## Cross-validation.
+#' cv_tree <- cross_validated_tree(tree)
+#' plot_aggregation_tree(cv_tree)
+#'
+#' @export
+cross_validated_tree <- function(aggregation_tree) {
+  if (!inherits(aggregation_tree, "rpart")) stop("The input must be a rpart object.")
+
+  return(rpart::prune(aggregation_tree, aggregation_tree$cptable[, 1][which.min(aggregation_tree$cptable[, 4])]))
+}

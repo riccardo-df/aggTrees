@@ -68,6 +68,8 @@
 plot_aggregation_tree <- function(aggregation_tree,
                                   palette = NULL, sequence = FALSE, ...) {
   ## Handling inputs and checks.
+  if (!inherits(aggregation_tree, "rpart")) stop("The input must be a rpart object.")
+
   if (is.null(palette)) palette <- colorspace::choose_palette()
   labels <- c("ATE \n", rep("GATE \n", times = (length(aggregation_tree$frame$n) - 1)))
 
@@ -179,6 +181,7 @@ plot_aggregation_tree <- function(aggregation_tree,
 recursive_partitioning_plot <- function(aggregation_tree, cates, X,
                                         low = "yellow", high = "red", size = 1) {
   ## Handling inputs and checks.
+  if (!inherits(aggregation_tree, "rpart")) stop("The input must be a rpart object.")
   if (dim(X)[2] > 2) stop("You are using more than two covariates. \n When more than two covariates are available, the recursive partitioning plot is not avaialable. \n You may consider a tree-plot (see ??plot_aggregation_tree).")
   if (length((aggregation_tree$ordered)) > 2) stop("The tree has been grown with more than two covariates.")
 
