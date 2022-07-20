@@ -56,10 +56,9 @@
 #' @export
 aggregation_tree <- function(cates, X, maxdepth, cp) {
   ## Growing tree.
-  tree <- rpart::rpart(cates ~ .,
-    data = data.frame("cates" = cates, X), method = "anova",
-    control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE
-  )
+    tree <- rpart::rpart(cates ~ .,
+                         data = data.frame("cates" = cates, X), method = "anova",
+                         control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE)
 
   ## Output.
   return(tree)
