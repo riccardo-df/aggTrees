@@ -4,7 +4,7 @@
 \alias{aggregation_tree}
 \title{Aggregation Trees}
 \usage{
-aggregation_tree(cates, X, maxdepth, cp)
+aggregation_tree(cates, X, maxdepth, cp, honesty = FALSE, honest_frac = 0.5)
 }
 \arguments{
 \item{cates}{CATEs vector.}
@@ -14,6 +14,10 @@ aggregation_tree(cates, X, maxdepth, cp)
 \item{maxdepth}{The maximum depth (i.e, the maximum number of nodes connecting the root to the leaves) of the tree.}
 
 \item{cp}{Minimum MSE increase to accept splits.}
+
+\item{honest_frac}{Number in the (0, 1] interval. The fraction of observations to be used in estimating the tree structure. Ignored if \code{honesty} is \code{FALSE}.}
+
+\item{honest}{Logical. Whether honest estimation should be implemented.}
 }
 \value{
 A \code{\link[rpart]{rpart}} object.

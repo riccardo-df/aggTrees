@@ -4,16 +4,16 @@
 \alias{cross_validated_tree}
 \title{Cross-Validated Aggregation Tree}
 \usage{
-cross_validated_tree(aggregation_tree)
+cross_validated_tree(tree)
 }
 \arguments{
-\item{aggregation_tree}{The output of \code{\link{aggregation_tree}}.}
+\item{tree}{A \code{\link[rpart]{rpart}} object.}
 }
 \value{
 The cross-validated tree, as a \code{\link[rpart]{rpart}} object.
 }
 \description{
-Uses the cross-validation criterion to select the "best" tree from the sequence.
+Uses the cross-validation criterion to select the "best" subtree.
 }
 \details{
 \code{aggregation_tree} should be deep enough to allow the criterion to explore more trees \cr

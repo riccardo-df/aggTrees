@@ -6,6 +6,8 @@
 #' @param X Covariate matrix (no intercept).
 #' @param maxdepth The maximum depth (i.e, the maximum number of nodes connecting the root to the leaves) of the tree.
 #' @param cp Minimum MSE increase to accept splits.
+#' @param honest Logical. Whether honest estimation should be implemented.
+#' @param honest_frac Number in the (0, 1] interval. The fraction of observations to be used in estimating the tree structure. Ignored if \code{honesty} is \code{FALSE}.
 #'
 #' @return
 #' A \code{\link[rpart]{rpart}} object.
@@ -54,11 +56,19 @@
 #' plot_aggregation_tree(tree, palette, sequence = TRUE)
 #'
 #' @export
-aggregation_tree <- function(cates, X, maxdepth, cp) {
+aggregation_tree <- function(cates, X, maxdepth, cp, honesty = FALSE, honest_frac = 0.5) {
   ## Growing tree.
+  if (honesty) {
+    honest_idx <- sample(1:dim(X)[1], floor(dim(X)[1] * honest_frac), replace = FALSE)
+
+    tree <- rpart::rpart(cates ~ .,
+                         data = data.frame("cates" = cates[honest_idx], X[honest_idx, ]), method = "anova",
+                         control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE)
+  } else {
     tree <- rpart::rpart(cates ~ .,
                          data = data.frame("cates" = cates, X), method = "anova",
                          control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE)
+  }
 
   ## Output.
   return(tree)
@@ -67,9 +77,9 @@ aggregation_tree <- function(cates, X, maxdepth, cp) {
 
 #' Cross-Validated Aggregation Tree
 #'
-#' Uses the cross-validation criterion to select the "best" tree from the sequence.
+#' Uses the cross-validation criterion to select the "best" subtree.
 #'
-#' @param aggregation_tree The output of \code{\link{aggregation_tree}}.
+#' @param tree A \code{\link[rpart]{rpart}} object.
 #'
 #' @return
 #' The cross-validated tree, as a \code{\link[rpart]{rpart}} object.
@@ -114,8 +124,8 @@ aggregation_tree <- function(cates, X, maxdepth, cp) {
 #' plot_aggregation_tree(cv_tree)
 #'
 #' @export
-cross_validated_tree <- function(aggregation_tree) {
-  if (!inherits(aggregation_tree, "rpart")) stop("The input must be a rpart object.")
+cross_validated_tree <- function(tree) {
+  if (!inherits(tree, "rpart")) stop("The input must be a rpart object.")
 
-  return(rpart::prune(aggregation_tree, aggregation_tree$cptable[, 1][which.min(aggregation_tree$cptable[, 4])]))
+  return(rpart::prune(tree, tree$cptable[, 1][which.min(tree$cptable[, 4])]))
 }
