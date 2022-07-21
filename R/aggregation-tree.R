@@ -85,7 +85,7 @@ aggregation_tree <- function(cates, X, maxdepth, cp, honesty = FALSE, honest_fra
 #' The cross-validated tree, as a \code{\link[rpart]{rpart}} object.
 #'
 #' @details
-#' \code{aggregation_tree} should be deep enough to allow the criterion to explore more trees \cr
+#' \code{tree} should be deep enough to allow the criterion to explore more trees. \cr
 #'
 #' @examples
 #' ## Loading data (using random subsample provided by Matias Cattaneo).
