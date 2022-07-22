@@ -2,7 +2,7 @@
 % Please edit documentation in R/aggregation-tree.R
 \name{cross_validated_tree}
 \alias{cross_validated_tree}
-\title{Cross-Validated Aggregation Tree}
+\title{Cross-Validated Tree}
 \usage{
 cross_validated_tree(tree)
 }
@@ -16,7 +16,7 @@ The cross-validated tree, as a \code{\link[rpart]{rpart}} object.
 Uses the cross-validation criterion to select the "best" subtree.
 }
 \details{
-\code{aggregation_tree} should be deep enough to allow the criterion to explore more trees \cr
+\code{tree} should be deep enough to allow the criterion to explore more trees. \cr
 }
 \examples{
 ## Loading data (using random subsample provided by Matias Cattaneo).

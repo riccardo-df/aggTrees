@@ -75,7 +75,7 @@ aggregation_tree <- function(cates, X, maxdepth, cp, honesty = FALSE, honest_fra
 }
 
 
-#' Cross-Validated Aggregation Tree
+#' Cross-Validated Tree
 #'
 #' Uses the cross-validation criterion to select the "best" subtree.
 #'
@@ -129,3 +129,24 @@ cross_validated_tree <- function(tree) {
 
   return(rpart::prune(tree, tree$cptable[, 1][which.min(tree$cptable[, 4])]))
 }
+
+
+#' Number of Leaves in Tree
+#'
+#' Extracts the number of leaves of a given tree.
+#'
+#' @param tree A \code{\link[rpart]{rpart}} object.
+#'
+#' @return
+#' The number of leaves.
+#'
+#' @details
+#' If the tree is just a root, then \code{get_leaves} returns 1.
+#'
+#' @export
+get_leaves <- function(tree) {
+  if (!inherits(tree, "rpart")) stop("The input must be a rpart object.")
+
+  return(dim(tree$frame[tree$frame$var == "<leaf>", ])[1])
+}
+
