@@ -141,7 +141,7 @@ cross_validated_tree <- function(tree) {
 #' The number of leaves.
 #'
 #' @details
-#' If the tree is just a root, then \code{get_leaves} returns 1.
+#' If \code{tree} is just a root, then \code{get_leaves} returns 1.
 #'
 #' @export
 get_leaves <- function(tree) {
