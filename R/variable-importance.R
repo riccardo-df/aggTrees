@@ -78,6 +78,7 @@ var_importance <- function(cates, X) {
 #'
 #' @param importance The output of \code{\link{var_importance}}.
 #' @param k Display only the k most important covariates. All covariates are displayed by default.
+#' @param title The title of the plot.
 #'
 #' @return
 #' None. It plots the relative importance of the covariates.
@@ -117,7 +118,7 @@ var_importance <- function(cates, X) {
 #' plot_importance(var_imp, k = 10)
 #'
 #' @export
-plot_importance <- function(importance, k = 0) {
+plot_importance <- function(importance, k = 0, title = "") {
   ## Selecting desired covariates.
   if (k == 0) idx <- 1:dim(importance)[1] else idx <- dim(importance)[1]:(dim(importance)[1]-k+1)
 
@@ -125,7 +126,7 @@ plot_importance <- function(importance, k = 0) {
   plot <- ggplot2::ggplot(importance[idx, ], ggplot2::aes(x = Variable, y = Importance)) +
     ggplot2::geom_bar(stat = "identity", fill = "steelblue", alpha = .6, width = 0.9) +
     ggplot2::coord_flip() +
-    ggplot2::xlab("Labels") + ggplot2::ylab("Variable importance") +
+    ggplot2::xlab("Labels") + ggplot2::ylab("Variable importance") + ggtitle(title) +
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
