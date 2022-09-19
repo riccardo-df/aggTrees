@@ -16,5 +16,11 @@ The number of leaves.
 Extracts the number of leaves of a given tree.
 }
 \details{
-If the tree is just a root, then \code{get_leaves} returns 1.
+If \code{tree} is just a root, then \code{get_leaves} returns 1.
+}
+\seealso{
+\code{\link{aggregation_tree}}
+}
+\author{
+Riccardo Di Francesco
 }

@@ -106,21 +106,6 @@ log_ratio_sd <- function(X, D) {
 #'   discrepancy in the dispersion of the covariate distributions across treatment arms.}
 #'   }
 #'
-#' @examples
-#' ## Loading data (using random subsample provided by Matias Cattaneo).
-#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
-#'
-#' Y <- as.matrix(dta[, "bweight"])
-#' D <- as.matrix(dta[, "mbsmoke"])
-#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
-#'
-#' # Computing balance measures.
-#' measures <- balance_measures(X, D)
-#'
-#' # Printing nice table (set latex = TRUE for latex code).
-#' print(measures)
-#'
 #' @export
 balance_measures <- function(X, D) {
   ## Handling inputs.
@@ -149,8 +134,9 @@ balance_measures <- function(X, D) {
 #'
 #' Prints a nice table displaying balance measures.
 #'
-#' @param object A \code{phased} object.
+#' @param x A \code{phased} object.
 #' @param latex Logical. If TRUE, prints latex code for the table.
+#' @param ... Further arguments passed to or from other methods.
 #'
 #' @return
 #' None. It prints a table with summary measures. Latex output can be requested by setting
@@ -159,28 +145,13 @@ balance_measures <- function(X, D) {
 #' @details
 #' Latex code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
-#' @examples
-#' ## Loading data (using random subsample provided by Matias Cattaneo).
-#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
-#'
-#' Y <- as.matrix(dta[, "bweight"])
-#' D <- as.matrix(dta[, "mbsmoke"])
-#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
-#'
-#' # Computing balance measures.
-#' measures <- balance_measures(X, D)
-#'
-#' # Printing nice table (set latex = TRUE for latex code).
-#' print(measures)
-#'
 #' @export
-print.phased <- function(object, latex = FALSE) {
+print.phased <- function(x, latex = FALSE, ...) {
   ## Handling input and check.
-  if (!inherits(object, "phased")) stop("You need to pass a 'phased' object.")
+  if (!inherits(x, "phased")) stop("You need to pass a 'phased' object.")
   if (!(latex %in% c(TRUE, FALSE))) stop("latex must be either TRUE or FALSE.")
 
-  measures <- data.frame(cbind(t(object$descriptive_stats), t(object$norm_diff), t(object$log_ratio_sd)))
+  measures <- data.frame(cbind(t(x$descriptive_stats), t(x$norm_diff), t(x$log_ratio_sd)))
   col_names <- c("Mean", "S.D.", "Mean", "S.D.", "Norm.Diff.", "Log S.D.")
   row_names <- rownames(measures)
 
@@ -190,7 +161,7 @@ print.phased <- function(object, latex = FALSE) {
   # Converting to char, and automating desired widths.
   measures <- lapply(measures, sprintf, fmt = "%.3f")
 
-  var_width <- max(sapply(object$var_names, nchar))
+  var_width <- max(sapply(x$var_names, nchar))
   metrics_width <- sapply(measures, function(x) max(nchar(x)))
   col_names_width <- sapply(col_names, nchar)
   max_col_width <- apply(rbind(metrics_width, col_names_width), 2, max)
@@ -215,7 +186,7 @@ print.phased <- function(object, latex = FALSE) {
   if (latex == FALSE) {
     cat(line_thick, "\n")
     cat(paste(rep(" ", spacing_base + 9)), "Treated               Controls              Overlap measures \n", sep = "")
-    cat(paste(rep(" ", spacing_base + 7)), "(N_t = ", object$arm_sizes["treated"], ")           (N_c = ", object$arm_sizes["control"], ")      ------------------------- \n", sep = "")
+    cat(paste(rep(" ", spacing_base + 7)), "(N_t = ", x$arm_sizes["treated"], ")           (N_c = ", x$arm_sizes["control"], ")      ------------------------- \n", sep = "")
     cat(line, "\n")
     print(measures, digits = 2, nsmall = 2, big.mark = ",")
     cat(line_thick, "\n")

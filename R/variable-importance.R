@@ -11,47 +11,25 @@
 #'
 #' @details
 #' \code{var_importance} fits a regression forest using the covariates in \code{X} and \code{cates} as the
-#' dependent variable. This allows to gain some knowledge
-#' on how covariates are related to treatment effect heterogeneity. \cr\cr
+#' dependent variable. This allows to gain some knowledge on how covariates are related to treatment effect
+#' heterogeneity.\cr
 #' Variable importance is computed as a weighted sum of how many times a particular covariate was split on
 #' at each depth in the forest. For more details, please see \code{\link[grf]{variable_importance}}.
 #'
-#' @examples
-#' ## Loading data (using random subsample provided by Matias Cattaneo).
-#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
+#' @import grf magrittr
 #'
-#' Y <- as.matrix(dta[, "bweight"])
-#' D <- as.matrix(dta[, "mbsmoke"])
-#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
+#' @author Riccardo Di Francesco
 #'
-#' ## Splitting sample.
-#' set.seed(1986)
-#' n <- dim(dta)[1]
-#' est_idx <- sample(1:n, n / 2, replace = FALSE)
-#'
-#' X_est <- X[est_idx, ]
-#' Y_est <- Y[est_idx]
-#' D_est <- D[est_idx]
-#'
-#' X_agg <- X[-est_idx, ]
-#' Y_agg <- Y[-est_idx]
-#' D_agg <- D[-est_idx]
-#'
-#' ## Estimating CATEs using only estimation sample.
-#' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
-#'
-#' ## Computing importance using only aggregation sample.
-#' cates <- predict(cates_forest, newdata = X_agg)$predictions
-#'
-#' var_imp <- var_importance(cates, X_agg)
-#' plot_importance(var_imp)
-#'
-#' ## Looking only at the ten most important covariates.
-#' plot_importance(var_imp, k = 10)
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{plot_importance}}
 #'
 #' @export
 var_importance <- function(cates, X) {
+  ## Checks.
+  if (!is.numeric(cates)) stop("'cates' must be a numeric vector.", call. = FALSE)
+  if (!is.matrix(X) & !is.data.frame(X)) stop("'X' must be either a matrix or a data frame.", call. = FALSE)
+
+  `%>%` <- magrittr::`%>%`
+
   ## Fitting forest.
   forest <- grf::regression_forest(X, cates, tune.parameters = "all")
 
@@ -60,9 +38,6 @@ var_importance <- function(cates, X) {
 
   ## Handling output.
   var_df <- var_df[order(var_df$varImp, decreasing = TRUE), ]
-
-  `%>%` <- magrittr::`%>%`
-
   var_df <- dplyr::tibble(Variable = var_df$name, Importance = as.numeric(var_df$varImp)) %>%
     dplyr::arrange(Importance) %>%
     dplyr::mutate(Variable = factor(Variable, levels = unique(Variable)))
@@ -78,47 +53,22 @@ var_importance <- function(cates, X) {
 #'
 #' @param importance The output of \code{\link{var_importance}}.
 #' @param k Display only the k most important covariates. All covariates are displayed by default.
-#' @param title The title of the plot.
+#' @param title String. The title of the plot.
 #'
 #' @return
-#' None. It plots the relative importance of the covariates.
+#' A \code{\link[ggplot2]{ggplot2}} object.
 #'
-#' @examples
-#' ## Loading data (using random subsample provided by Matias Cattaneo).
-#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
+#' @import ggplot2
 #'
-#' Y <- as.matrix(dta[, "bweight"])
-#' D <- as.matrix(dta[, "mbsmoke"])
-#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
+#' @author Riccardo Di Francesco
 #'
-#' ## Splitting sample.
-#' set.seed(1986)
-#' n <- dim(dta)[1]
-#' est_idx <- sample(1:n, n / 2, replace = FALSE)
-#'
-#' X_est <- X[est_idx, ]
-#' Y_est <- Y[est_idx]
-#' D_est <- D[est_idx]
-#'
-#' X_agg <- X[-est_idx, ]
-#' Y_agg <- Y[-est_idx]
-#' D_agg <- D[-est_idx]
-#'
-#' ## Estimating CATEs using only estimation sample.
-#' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
-#'
-#' ## Computing importance using only aggregation sample.
-#' cates <- predict(cates_forest, newdata = X_agg)$predictions
-#'
-#' var_imp <- var_importance(cates, X_agg)
-#' plot_importance(var_imp)
-#'
-#' ## Looking only at the ten most important covariates.
-#' plot_importance(var_imp, k = 10)
+#' @seealso \code{\link{var_importance}}
 #'
 #' @export
 plot_importance <- function(importance, k = 0, title = "") {
+  ## Checks.
+  if (k < 1 | k > dim(importance)[1]) stop("'k' must be in the interval [1, k_max], with k_max the number of covariates.", call. = FALSE)
+
   ## Selecting desired covariates.
   if (k == 0) idx <- 1:dim(importance)[1] else idx <- dim(importance)[1]:(dim(importance)[1]-k+1)
 
@@ -126,11 +76,10 @@ plot_importance <- function(importance, k = 0, title = "") {
   plot <- ggplot2::ggplot(importance[idx, ], ggplot2::aes(x = Variable, y = Importance)) +
     ggplot2::geom_bar(stat = "identity", fill = "steelblue", alpha = .6, width = 0.9) +
     ggplot2::coord_flip() +
-    ggplot2::xlab("Labels") + ggplot2::ylab("Variable importance") + ggtitle(title) +
+    ggplot2::xlab("") + ggplot2::ylab("") + ggplot2::ggtitle(title) +
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
   ## Plotting.
   plot
 }
-

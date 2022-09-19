@@ -4,12 +4,14 @@
 \alias{print.phased}
 \title{Print Method for \code{phased} objects}
 \usage{
-\method{print}{phased}(object, latex = FALSE)
+\method{print}{phased}(x, latex = FALSE, ...)
 }
 \arguments{
-\item{object}{A \code{phased} object.}
+\item{x}{A \code{phased} object.}
 
 \item{latex}{Logical. If TRUE, prints latex code for the table.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 None. It prints a table with summary measures. Latex output can be requested by setting
@@ -20,20 +22,4 @@ Prints a nice table displaying balance measures.
 }
 \details{
 Latex code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
-}
-\examples{
-## Loading data (using random subsample provided by Matias Cattaneo).
-dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
-
-Y <- as.matrix(dta[, "bweight"])
-D <- as.matrix(dta[, "mbsmoke"])
-X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-X <- as.matrix(dta[, !(colnames(dta) \%in\% X_names)])
-
-# Computing balance measures.
-measures <- balance_measures(X, D)
-
-# Printing nice table (set latex = TRUE for latex code).
-print(measures)
-
 }

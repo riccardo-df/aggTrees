@@ -4,74 +4,58 @@
 #'
 #' @param cates CATEs vector.
 #' @param X Covariate matrix (no intercept).
-#' @param maxdepth The maximum depth (i.e, the maximum number of nodes connecting the root to the leaves) of the tree.
-#' @param cp Minimum MSE increase to accept splits.
-#' @param honest Logical. Whether honest estimation should be implemented.
-#' @param honest_frac Number in the (0, 1] interval. The fraction of observations to be used in estimating the tree structure. Ignored if \code{honesty} is \code{FALSE}.
+#' @param maxdepth The maximum depth of the tree (i.e, the maximum number of nodes connecting the root to the leaves).
+#' @param cp Any split that does not decrease the overall lack of fit by a factor of cp is not attempted. Default is zero, meaning that trees are fully grown up to \code{maxdepth}.
 #'
 #' @return
-#' A \code{\link[rpart]{rpart}} object.
+#' The tree, as a \code{\link[rpart]{rpart}} object.
 #'
-#' @details
-#' For details about aggregation trees and their use, please see Di Francesco (2022). \cr
+#' @import rpart
 #'
-#' @examples
-#' ## Loading data (using random subsample provided by Matias Cattaneo).
-#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
+#' @author Riccardo Di Francesco
 #'
-#' Y <- as.matrix(dta[, "bweight"])
-#' D <- as.matrix(dta[, "mbsmoke"])
-#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
-#'
-#' ## Splitting sample.
-#' set.seed(1986)
-#' n <- dim(dta)[1]
-#' est_idx <- sample(1:n, n / 2, replace = FALSE)
-#'
-#' X_est <- X[est_idx, ]
-#' Y_est <- Y[est_idx]
-#' D_est <- D[est_idx]
-#'
-#' X_agg <- X[-est_idx, ]
-#' Y_agg <- Y[-est_idx]
-#' D_agg <- D[-est_idx]
-#'
-#' ## Estimating CATEs using only estimation sample.
-#' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
-#'
-#' ## Growing tree using only aggregation sample.
-#' cates <- predict(cates_forest, newdata = X_agg)$predictions
-#' tree <- aggregation_tree(cates, X_agg, maxdepth = 3, cp = 0.01)
-#'
-#' ## Plotting.
-#' plot_aggregation_tree(tree)
-#'
-#' ## It can be annoying selecting a palette each time.
-#' palette <- colorspace::choose_palette()
-#' plot_aggregation_tree(tree, palette)
-#' plot_aggregation_tree(tree, palette)
-#'
-#' ## Displaying the whole sequence.
-#' plot_aggregation_tree(tree, palette, sequence = TRUE)
+#' @seealso \code{\link{subtree}}, \code{\link{plot_tree}}
 #'
 #' @export
-aggregation_tree <- function(cates, X, maxdepth, cp, honesty = FALSE, honest_frac = 0.5) {
-  ## Growing tree.
-  if (honesty) {
-    honest_idx <- sample(1:dim(X)[1], floor(dim(X)[1] * honest_frac), replace = FALSE)
+aggregation_tree <- function(cates, X, maxdepth, cp = 0) {
+  ## Checks.
+  if (!is.numeric(cates)) stop("'cates' must be a numeric vector.", call. = FALSE)
+  if (!is.matrix(X) & !is.data.frame(X)) stop("'X' must be either a matrix or a data frame.", call. = FALSE)
+  if (maxdepth < 1 | maxdepth > 30) stop("'maxdepth' must be in the interval [1, 30].", call. = FALSE)
 
-    tree <- rpart::rpart(cates ~ .,
-                         data = data.frame("cates" = cates[honest_idx], X[honest_idx, ]), method = "anova",
-                         control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE)
-  } else {
-    tree <- rpart::rpart(cates ~ .,
-                         data = data.frame("cates" = cates, X), method = "anova",
-                         control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE)
-  }
+  ## Growing tree.
+  tree <- rpart::rpart(cates ~ ., data = data.frame("cates" = cates, X), method = "anova", control = rpart::rpart.control(maxdepth = maxdepth, cp = cp), model = TRUE)
 
   ## Output.
   return(tree)
+}
+
+
+#' Subtree
+#'
+#' Extracts a subtree with a user-specified number of leaves.
+#'
+#' @param tree A \code{\link[rpart]{rpart}} object.
+#' @param leaves Number of leaves of the desired subtree.
+#'
+#' @return
+#' The subtree, as a \code{\link[rpart]{rpart}} object.
+#'
+#' @import rpart
+#'
+#' @author Riccardo Di Francesco
+#'
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot_tree}}
+#'
+#' @export
+subtree <- function(tree, leaves) {
+  ## Checks.
+  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
+  if (leaves < 1) stop("'leaves' must be a positive number.", call. = FALSE)
+  if (leaves > get_leaves(tree)) stop("'leaves' is greater than the number of leaves of 'tree'. Please provide a deeper 'tree'.", call. = FALSE)
+
+  ## Output.
+  return(rpart::prune(tree, tree$cptable[tree$cptable[, "nsplit"] == leaves - 1, "CP"])) # Number of leaves in cptable is nsplit + 1.
 }
 
 
@@ -87,45 +71,15 @@ aggregation_tree <- function(cates, X, maxdepth, cp, honesty = FALSE, honest_fra
 #' @details
 #' \code{tree} should be deep enough to allow the criterion to explore more trees. \cr
 #'
-#' @examples
-#' ## Loading data (using random subsample provided by Matias Cattaneo).
-#' dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
+#' @import rpart
 #'
-#' Y <- as.matrix(dta[, "bweight"])
-#' D <- as.matrix(dta[, "mbsmoke"])
-#' X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-#' X <- as.matrix(dta[, !(colnames(dta) %in% X_names)])
+#' @author Riccardo Di Francesco
 #'
-#' ## Splitting sample.
-#' set.seed(1986)
-#' n <- dim(dta)[1]
-#' est_idx <- sample(1:n, n / 2, replace = FALSE)
-#'
-#' X_est <- X[est_idx, ]
-#' Y_est <- Y[est_idx]
-#' D_est <- D[est_idx]
-#'
-#' X_agg <- X[-est_idx, ]
-#' Y_agg <- Y[-est_idx]
-#' D_agg <- D[-est_idx]
-#'
-#' ## Estimating CATEs using only estimation sample.
-#' cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
-#'
-#' ## Growing tree using only aggregation sample.
-#' cates <- predict(cates_forest, newdata = X_agg)$predictions
-#' tree <- aggregation_tree(cates, X_agg, maxdepth = 3, cp = 0.01)
-#'
-#' ## Plotting.
-#' plot_aggregation_tree(tree)
-#'
-#' ## Cross-validation.
-#' cv_tree <- cross_validated_tree(tree)
-#' plot_aggregation_tree(cv_tree)
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot_tree}}
 #'
 #' @export
-cross_validated_tree <- function(tree) {
-  if (!inherits(tree, "rpart")) stop("The input must be a rpart object.")
+cv_subtree <- function(tree) {
+  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
 
   return(rpart::prune(tree, tree$cptable[, 1][which.min(tree$cptable[, 4])]))
 }
@@ -143,10 +97,13 @@ cross_validated_tree <- function(tree) {
 #' @details
 #' If \code{tree} is just a root, then \code{get_leaves} returns 1.
 #'
+#' @author Riccardo Di Francesco
+#'
+#' @seealso \code{\link{aggregation_tree}}
+#'
 #' @export
 get_leaves <- function(tree) {
-  if (!inherits(tree, "rpart")) stop("The input must be a rpart object.")
+  if (!inherits(tree, "rpart")) stop("'tree must be a rpart object.")
 
   return(dim(tree$frame[tree$frame$var == "<leaf>", ])[1])
 }
-

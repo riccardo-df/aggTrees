@@ -41,7 +41,7 @@ rename_latex <- function(names) {
 expand_df <- function(X, int_order = 2, poly_order = 4, threshold = 0) {
   ## Handling inputs and checks.
   if (int_order < 1 | int_order > 4) stop("Wrong order of interactions! Must be either 1, 2, 3 or 4.")
-  if (poly_order < 1) stop("Wrong order of polynomials! Must be either greater than zero.")
+  if (poly_order < 1) stop("Wrong order of polynomials! Must be greater than zero.")
   if (threshold < 0 | threshold > 1) stop("Wrong threshold! Must lie in the open interval (0, 1).")
   if (threshold == 1) stop("Wrong threshold! Cannot drop all the units.")
 

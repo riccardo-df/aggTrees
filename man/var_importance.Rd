@@ -20,43 +20,14 @@ and provides the covariates' relative importance.
 }
 \details{
 \code{var_importance} fits a regression forest using the covariates in \code{X} and \code{cates} as the
-dependent variable. This allows to gain some knowledge
-on how covariates are related to treatment effect heterogeneity. \cr\cr
+dependent variable. This allows to gain some knowledge on how covariates are related to treatment effect
+heterogeneity.\cr
 Variable importance is computed as a weighted sum of how many times a particular covariate was split on
 at each depth in the forest. For more details, please see \code{\link[grf]{variable_importance}}.
 }
-\examples{
-## Loading data (using random subsample provided by Matias Cattaneo).
-dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
-
-Y <- as.matrix(dta[, "bweight"])
-D <- as.matrix(dta[, "mbsmoke"])
-X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-X <- as.matrix(dta[, !(colnames(dta) \%in\% X_names)])
-
-## Splitting sample.
-set.seed(1986)
-n <- dim(dta)[1]
-est_idx <- sample(1:n, n / 2, replace = FALSE)
-
-X_est <- X[est_idx, ]
-Y_est <- Y[est_idx]
-D_est <- D[est_idx]
-
-X_agg <- X[-est_idx, ]
-Y_agg <- Y[-est_idx]
-D_agg <- D[-est_idx]
-
-## Estimating CATEs using only estimation sample.
-cates_forest <- grf::causal_forest(X = X_est, Y = Y_est, W = D_est)
-
-## Computing importance using only aggregation sample.
-cates <- predict(cates_forest, newdata = X_agg)$predictions
-
-var_imp <- var_importance(cates, X_agg)
-plot_importance(var_imp)
-
-## Looking only at the ten most important covariates.
-plot_importance(var_imp, k = 10)
-
+\seealso{
+\code{\link{aggregation_tree}}, \code{\link{plot_importance}}
+}
+\author{
+Riccardo Di Francesco
 }

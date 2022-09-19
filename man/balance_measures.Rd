@@ -30,19 +30,3 @@ for both treatment arms. Additionally, two balance measures are computed:
   discrepancy in the dispersion of the covariate distributions across treatment arms.}
   }
 }
-\examples{
-## Loading data (using random subsample provided by Matias Cattaneo).
-dta <- haven::read_dta("http://www.stata-press.com/data/r13/cattaneo2.dta")
-
-Y <- as.matrix(dta[, "bweight"])
-D <- as.matrix(dta[, "mbsmoke"])
-X_names <- c("bweight", "mbsmoke", "deadkids", "monthslb", "lbweight")
-X <- as.matrix(dta[, !(colnames(dta) \%in\% X_names)])
-
-# Computing balance measures.
-measures <- balance_measures(X, D)
-
-# Printing nice table (set latex = TRUE for latex code).
-print(measures)
-
-}
