@@ -4,12 +4,14 @@
 \alias{subtree}
 \title{Subtree}
 \usage{
-subtree(tree, leaves)
+subtree(tree, leaves, cv = FALSE)
 }
 \arguments{
 \item{tree}{A \code{\link[rpart]{rpart}} object.}
 
 \item{leaves}{Number of leaves of the desired subtree.}
+
+\item{cv}{Logical. If \code{TRUE}, \code{leaves} is ignored and a cross-validation criterion is used to select a partition.}
 }
 \value{
 The subtree, as a \code{\link[rpart]{rpart}} object.
