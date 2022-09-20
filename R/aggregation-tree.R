@@ -37,6 +37,7 @@ aggregation_tree <- function(cates, X, maxdepth, cp = 0) {
 #'
 #' @param tree A \code{\link[rpart]{rpart}} object.
 #' @param leaves Number of leaves of the desired subtree.
+#' @param cv Logical. If \code{TRUE}, \code{leaves} is ignored and a cross-validation criterion is used to select a partition.
 #'
 #' @return
 #' The subtree, as a \code{\link[rpart]{rpart}} object.
@@ -48,40 +49,14 @@ aggregation_tree <- function(cates, X, maxdepth, cp = 0) {
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot_tree}}
 #'
 #' @export
-subtree <- function(tree, leaves) {
+subtree <- function(tree, leaves, cv = FALSE) {
   ## Checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if (leaves < 1) stop("'leaves' must be a positive number.", call. = FALSE)
   if (leaves > get_leaves(tree)) stop("'leaves' is greater than the number of leaves of 'tree'. Please provide a deeper 'tree'.", call. = FALSE)
 
   ## Output.
-  return(rpart::prune(tree, tree$cptable[tree$cptable[, "nsplit"] == leaves - 1, "CP"])) # Number of leaves in cptable is nsplit + 1.
-}
-
-
-#' Cross-Validated Tree
-#'
-#' Uses the cross-validation criterion to select the "best" subtree.
-#'
-#' @param tree A \code{\link[rpart]{rpart}} object.
-#'
-#' @return
-#' The cross-validated tree, as a \code{\link[rpart]{rpart}} object.
-#'
-#' @details
-#' \code{tree} should be deep enough to allow the criterion to explore more trees. \cr
-#'
-#' @import rpart
-#'
-#' @author Riccardo Di Francesco
-#'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot_tree}}
-#'
-#' @export
-cv_subtree <- function(tree) {
-  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
-
-  return(rpart::prune(tree, tree$cptable[, 1][which.min(tree$cptable[, 4])]))
+  if (cv) return(rpart::prune(tree, tree$cptable[, 1][which.min(tree$cptable[, 4])])) else return(rpart::prune(tree, tree$cptable[tree$cptable[, "nsplit"] == leaves - 1, "CP"])) # Number of leaves in cptable is nsplit + 1.
 }
 
 
