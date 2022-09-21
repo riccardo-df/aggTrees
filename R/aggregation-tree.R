@@ -52,7 +52,7 @@ aggregation_tree <- function(cates, X, maxdepth, cp = 0) {
 subtree <- function(tree, leaves = NULL, cv = FALSE) {
   ## Checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
-  if (!is.null(leaves) & cv == FALSE) stop("Invalid combination of 'leaves' and 'cv'. Please specify a number of leaves or select the cross-validation option.", call. = FALSE)
+  if (is.null(leaves) & cv == FALSE) stop("Invalid combination of 'leaves' and 'cv'. Please specify a number of leaves or select the cross-validation option.", call. = FALSE)
   if (!is.null(leaves) & leaves < 1) stop("'leaves' must be a positive number.", call. = FALSE)
   if (!is.null(leaves) & leaves > get_leaves(tree)) stop("'leaves' is greater than the number of leaves of 'tree'. Please provide a deeper 'tree'.", call. = FALSE)
 
