@@ -53,8 +53,10 @@ subtree <- function(tree, leaves = NULL, cv = FALSE) {
   ## Checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if (is.null(leaves) & cv == FALSE) stop("Invalid combination of 'leaves' and 'cv'. Please specify a number of leaves or select the cross-validation option.", call. = FALSE)
-  if (!is.null(leaves)) if (leaves < 1) stop("'leaves' must be a positive number.", call. = FALSE)
-  if (!is.null(leaves) & leaves > get_leaves(tree)) stop("'leaves' is greater than the number of leaves of 'tree'. Please provide a deeper 'tree'.", call. = FALSE)
+  if (!is.null(leaves)) {
+    if (leaves < 1) stop("'leaves' must be a positive number.", call. = FALSE)
+    if (leaves > get_leaves(tree)) stop("'leaves' is greater than the number of leaves of 'tree'. Please provide a deeper 'tree'.", call. = FALSE)
+  }
 
   ## Output.
   if (cv) return(rpart::prune(tree, tree$cptable[, 1][which.min(tree$cptable[, 4])])) else return(rpart::prune(tree, tree$cptable[tree$cptable[, "nsplit"] == leaves - 1, "CP"])) # Number of leaves in cptable is nsplit + 1.
