@@ -22,11 +22,12 @@ and provides the covariates' relative importance.
 \code{var_importance} fits a regression forest using the covariates in \code{X} and \code{cates} as the
 dependent variable. This allows to gain some knowledge on how covariates are related to treatment effect
 heterogeneity.\cr
+
 Variable importance is computed as a weighted sum of how many times a particular covariate was split on
 at each depth in the forest. For more details, please see \code{\link[grf]{variable_importance}}.
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{plot_importance}}
+\code{\link{aggregation_tree}}
 }
 \author{
 Riccardo Di Francesco

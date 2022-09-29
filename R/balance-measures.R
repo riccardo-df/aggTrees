@@ -85,14 +85,14 @@ log_ratio_sd <- function(X, D) {
 
 #' Balance Measures
 #'
-#' Compute several balance measures useful to check whether the covariate distributions are balanced across
+#' Compute several balance measures to check whether the covariate distributions are balanced across
 #' treatment arms.
 #'
 #' @param X Covariate matrix (no intercept).
 #' @param D Treatment assignment vector.
 #'
 #' @return
-#' Object of class \code{phased}.
+#' A \code{phased} object.
 #'
 #' @details
 #' For each covariate in \code{X}, \code{balance_measures} computes sample averages and standard deviations
@@ -105,6 +105,10 @@ log_ratio_sd <- function(X, D) {
 #'   within-arm standard deviations. They provide a measure of the
 #'   discrepancy in the dispersion of the covariate distributions across treatment arms.}
 #'   }
+#'
+#' @seealso \code{\link{print.phased}}
+#'
+#' @author Elena Dal Torrione, Riccardo Di Francesco
 #'
 #' @export
 balance_measures <- function(X, D) {
@@ -132,18 +136,14 @@ balance_measures <- function(X, D) {
 
 #' Print Method for \code{phased} objects
 #'
-#' Prints a nice table displaying balance measures.
+#' Prints a \code{phased} object.
 #'
 #' @param x A \code{phased} object.
-#' @param latex Logical. If TRUE, prints latex code for the table.
+#' @param latex If TRUE, prints latex code for the table.
 #' @param ... Further arguments passed to or from other methods.
 #'
-#' @return
-#' None. It prints a table with summary measures. Latex output can be requested by setting
-#' \code{latex = TRUE}.
-#'
 #' @details
-#' Latex code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
+#' For compiling the latex code, the following packages are required: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
 #' @export
 print.phased <- function(x, latex = FALSE, ...) {

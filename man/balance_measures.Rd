@@ -12,10 +12,10 @@ balance_measures(X, D)
 \item{D}{Treatment assignment vector.}
 }
 \value{
-Object of class \code{phased}.
+A \code{phased} object.
 }
 \description{
-Compute several balance measures useful to check whether the covariate distributions are balanced across
+Compute several balance measures to check whether the covariate distributions are balanced across
 treatment arms.
 }
 \details{
@@ -29,4 +29,10 @@ for both treatment arms. Additionally, two balance measures are computed:
   within-arm standard deviations. They provide a measure of the
   discrepancy in the dispersion of the covariate distributions across treatment arms.}
   }
+}
+\seealso{
+\code{\link{print.phased}}
+}
+\author{
+Elena Dal Torrione, Riccardo Di Francesco
 }

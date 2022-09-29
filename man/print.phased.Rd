@@ -9,17 +9,13 @@
 \arguments{
 \item{x}{A \code{phased} object.}
 
-\item{latex}{Logical. If TRUE, prints latex code for the table.}
+\item{latex}{If TRUE, prints latex code for the table.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
-\value{
-None. It prints a table with summary measures. Latex output can be requested by setting
-\code{latex = TRUE}.
-}
 \description{
-Prints a nice table displaying balance measures.
+Prints a \code{phased} object.
 }
 \details{
-Latex code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
+For compiling the latex code, the following packages are required: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
