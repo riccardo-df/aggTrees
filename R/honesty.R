@@ -87,6 +87,7 @@ honest_estimation_rpart <- function(tree, y_honest, X_honest) {
   ## Replace leaf estimates.
   for (leaf in unique(leaf_honest)) {
     honest_tree$frame$yval[leaf] <- honest_estimates[as.numeric(names(leaf_honest)[leaf_honest == leaf][1])]
+    honest_tree$frame$n[leaf] <- sum(leaf_honest == leaf)
   }
 
   ## Output.
@@ -115,8 +116,8 @@ honest_estimation_rpart <- function(tree, y_honest, X_honest) {
 #' coefficient corresponds to the GATEs of the l-th group. Thus, standard errors on the estimated coefficients are standard
 #' errors on the estimated GATEs.\cr
 #'
-#' Notice that honesty is a necessary requirement to get valid standard errors. Thus, \code{honest_idx} must contain indexes
-#' of observations not used to grow the tree or estimate the cates.\cr
+#' Notice that honesty is a necessary requirement to get valid standard errors. Thus, \code{X} must not have been used to
+#' grow the tree or estimate the cates.\cr
 #'
 #' Standard errors are estimated via the Eicker-Huber-White estimator.
 #'

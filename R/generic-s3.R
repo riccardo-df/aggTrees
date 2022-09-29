@@ -34,11 +34,11 @@ plot.aggTrees <- function(x, leaves = get_leaves(tree),
 
   tree <- x$tree
 
-  if (x$honesty == TRUE & !(type %in% c(3, 5))) warning("Only the leaf estimates are honest. Internal nodes show non-honest estimates. Consider using 'type' 3 or 6.")
+  if (x$honesty == TRUE & !(type %in% c(3, 5))) warning("Only the leaf estimates are honest. Internal nodes show non-honest estimates. Consider using 'type' 3 or 5.")
 
   ## Plotting.
   if (sequence) {
-    labels <- c("ATE \n", rep("GATE \n", times = (length(tree$frame$n) - 1)))
+    labels <- c("ATE: ", rep("GATE: ", times = (length(tree$frame$n) - 1)))
 
     full_nodes <- rownames(tree$frame) # Storing rownames of full tree (they serve as node labels).
     alpha_values <- rev(tree$cptable[, "CP"]) # Threshold values of cost-complexity parameter.
@@ -51,7 +51,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(tree),
 
       rpart.plot::prp(tree,
                       type = type,
-                      extra = 101,
+                      extra = 1,
                       under = FALSE,
                       fallen.leaves = TRUE,
                       round = 0,
@@ -70,11 +70,11 @@ plot.aggTrees <- function(x, leaves = get_leaves(tree),
     }
   } else {
     subtree <- subtree_rpart(tree, leaves)
-    labels <- c("ATE \n", rep("GATE \n", times = (length(subtree$frame$n) - 1)))
+    labels <- c("ATE: ", rep("GATE: ", times = (length(subtree$frame$n) - 1)))
 
     rpart.plot::prp(subtree,
                     type = type,
-                    extra = 101,
+                    extra = 1,
                     under = FALSE,
                     fallen.leaves = TRUE,
                     round = 0,
