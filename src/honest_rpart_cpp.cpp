@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Honest Rpart Estimates
+//' Honest rpart Estimates
 //'
 //' Computes honest estimates for a rpart object.
 //'

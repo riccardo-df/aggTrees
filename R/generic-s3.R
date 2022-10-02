@@ -24,8 +24,8 @@
 #' \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{recursive_partitioning_plot}}
 #'
 #' @export
-plot.aggTrees <- function(x, leaves = get_leaves(tree),
-                          type = 2, palette = c("Blue", "Red"),
+plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
+                          type = 2, palette = c("BuRd"),
                           sequence = FALSE, ...) {
   ## Handling inputs and checks.
   if (!(inherits(x, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
@@ -38,7 +38,10 @@ plot.aggTrees <- function(x, leaves = get_leaves(tree),
 
   ## Plotting.
   if (sequence) {
-    labels <- c("ATE: ", rep("GATE: ", times = (length(tree$frame$n) - 1)))
+    prefix <- c("ATE = ", rep("GATE = ", times = (length(tree$frame$n) - 1)))
+    sizes <- tree$frame$n
+    percentages <- round(tree$frame$n / tree$frame$n[1] * 100, 0)
+    suffix <- paste("\n", "n = ", sizes, "\n (", percentages, "%)", sep = "")
 
     full_nodes <- rownames(tree$frame) # Storing rownames of full tree (they serve as node labels).
     alpha_values <- rev(tree$cptable[, "CP"]) # Threshold values of cost-complexity parameter.
@@ -51,15 +54,16 @@ plot.aggTrees <- function(x, leaves = get_leaves(tree),
 
       rpart.plot::prp(tree,
                       type = type,
-                      extra = 1,
+                      extra = 0,
                       under = FALSE,
                       fallen.leaves = TRUE,
                       round = 0,
                       leaf.round = 0,
-                      prefix = labels,
+                      prefix = prefix,
+                      suffix = suffix,
+                      pal.thresh = tree$frame$yval[2],
                       box.palette = if (is.function(palette)) palette(nrow(tree$frame)) else palette,
                       branch = 0.3,
-                      tweak = 1,
                       branch.col = colors,
                       split.col = colors,
                       col = colors,
@@ -70,19 +74,23 @@ plot.aggTrees <- function(x, leaves = get_leaves(tree),
     }
   } else {
     subtree <- subtree_rpart(tree, leaves)
-    labels <- c("ATE: ", rep("GATE: ", times = (length(subtree$frame$n) - 1)))
+    prefix <- c("ATE = ", rep("GATE = ", times = (length(subtree$frame$n) - 1)))
+    sizes <- subtree$frame$n
+    percentages <- round(subtree$frame$n / subtree$frame$n[1] * 100, 0)
+    suffix <- paste("\n", "n = ", sizes, "\n (", percentages, "%)", sep = "")
 
     rpart.plot::prp(subtree,
                     type = type,
-                    extra = 1,
+                    extra = 0,
                     under = FALSE,
                     fallen.leaves = TRUE,
                     round = 0,
                     leaf.round = 0,
-                    prefix = labels,
+                    prefix = prefix,
+                    suffix = suffix,
+                    pal.thresh = subtree$frame$yval[2],
                     box.palette = if (!is.function(palette)) palette else palette(nrow(subtree$frame)),
                     branch = 0.3,
-                    tweak = 1,
                     ...)
   }
 }

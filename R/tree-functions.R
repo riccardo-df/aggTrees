@@ -141,7 +141,7 @@ subtree_rpart <- function(tree, leaves = NULL, cv = FALSE) {
 #'
 #' @export
 get_leaves <- function(tree) {
-  if (!inherits(tree, "rpart")) stop("'tree must be a rpart object.")
+  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
 
   return(dim(tree$frame[tree$frame$var == "<leaf>", ])[1])
 }
