@@ -14,7 +14,7 @@ honest_ols_rpart(tree, y_honest, X_honest)
 \item{X_honest}{Covariate matrix (no intercept) of the honest sample.}
 }
 \value{
-The fitted model, as a \code{\link[stats]{lm}} object.
+The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
 }
 \description{
 Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS.

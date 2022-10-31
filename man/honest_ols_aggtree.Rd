@@ -21,7 +21,7 @@ Uses the leaves of a tree stored in an \code{aggTrees} object to estimate a line
 the OLS estimation have not been used to grow the tree, then standard errors for the tree's estimates are valid.
 }
 \details{
-To get standard errors on the tree's estimates, \code{honest_ols} fits via OLS the following model:
+To get standard errors on the tree's estimates, \code{honest_ols_aggtree} fits via OLS the following model:
 
 \deqn{cates_i = \sum_{l = 1}^{|T|} L_l \beta_l + \epsilon_i}
 
@@ -29,8 +29,8 @@ with \code{L_l} the l-th leaf of the tree, and \code{|T|} the number of leaves. 
 coefficient corresponds to the GATEs of the l-th group. Thus, standard errors on the estimated coefficients are standard
 errors on the estimated GATEs.\cr
 
-Notice that honesty is a necessary requirement to get valid standard errors. Thus, \code{X} must not have been used to
-grow the tree or estimate the cates.\cr
+Notice that honesty is a necessary requirement to get valid standard errors. Thus, observations in \code{X} must not have
+been used to grow the tree or estimate the cates.\cr
 
 Standard errors are estimated via the Eicker-Huber-White estimator.
 }
