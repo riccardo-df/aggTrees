@@ -1,6 +1,6 @@
 #' Aggregation Trees
 #'
-#' Grows an aggregation tree for discovering heterogeneous sub-populations that differ in the magnitude
+#' Grows an aggregation tree for discovering heterogeneous subpopulations that differ in the magnitude
 #' of their treatment effects.
 #'
 #' @param cates Estimated CATEs.

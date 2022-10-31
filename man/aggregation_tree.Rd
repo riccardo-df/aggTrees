@@ -19,7 +19,7 @@ aggregation_tree(cates, X, maxdepth = 3, ...)
 An \code{aggTrees} object.
 }
 \description{
-Grows an aggregation tree for discovering heterogeneous sub-populations that differ in the magnitude
+Grows an aggregation tree for discovering heterogeneous subpopulations that differ in the magnitude
 of their treatment effects.
 }
 \details{

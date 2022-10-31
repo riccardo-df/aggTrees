@@ -12,12 +12,13 @@
 #' @details
 #' \code{honest_estimation} replaces the leaf estimates of a tree as follows. First, it "pushes" all observations in
 #' \code{X} down the tree and finds the leaves where they fall. Then, it computes the average value of \code{cates} in
-#' each leaf. These values are the new estimates, and are honest if \code{X} has not been used to construct the tree.\cr
+#' each leaf. These values are the new estimates, and are honest if observations in \code{X} have not been used to
+#' construct the tree.\cr
 #'
 #' Due to coding limitations, honest trees from \code{aggTrees} objects show honest estimates only in their leaves. The
 #' internal nodes show non-honest estimates, so the user should ignore them and focus on the leaves of tree.\cr
 #'
-#' To get standard errors on the tree's estimates, please use \code{\link{honest_ols}}.
+#' To get standard errors on the tree's estimates, please use \code{\link{honest_ols_aggtree}}.
 #'
 #' @import treeClust Rcpp
 #' @useDynLib aggTrees
@@ -27,7 +28,7 @@
 #' @seealso \code{\link{honest_ols}},\code{\link{aggregation_tree}}
 #'
 #' @export
-honest_estimation <- function(object, cates, X) {
+honest_aggtree <- function(object, cates, X) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
@@ -36,7 +37,7 @@ honest_estimation <- function(object, cates, X) {
   tree <- object$tree
 
   ## Honest re-estimation.
-  honest_tree <- honest_estimation_rpart(tree, cates, X)
+  honest_tree <- honest_rpart(tree, cates, X)
 
   ## Output.
   out <- list("tree" = honest_tree, "honesty" = TRUE)
@@ -70,7 +71,7 @@ honest_estimation <- function(object, cates, X) {
 #' @seealso \code{\link{honest_ols_rpart}}
 #'
 #' @export
-honest_estimation_rpart <- function(tree, y_honest, X_honest) {
+honest_rpart <- function(tree, y_honest, X_honest) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
 
@@ -108,7 +109,7 @@ honest_estimation_rpart <- function(tree, y_honest, X_honest) {
 #' The fitted model, as a \code{\link[stats]{lm}} object.
 #'
 #' @details
-#' To get standard errors on the tree's estimates, \code{honest_ols} fits via OLS the following model:
+#' To get standard errors on the tree's estimates, \code{honest_ols_aggtree} fits via OLS the following model:
 #'
 #' \deqn{cates_i = \sum_{l = 1}^{|T|} L_l \beta_l + \epsilon_i}
 #'
@@ -116,8 +117,8 @@ honest_estimation_rpart <- function(tree, y_honest, X_honest) {
 #' coefficient corresponds to the GATEs of the l-th group. Thus, standard errors on the estimated coefficients are standard
 #' errors on the estimated GATEs.\cr
 #'
-#' Notice that honesty is a necessary requirement to get valid standard errors. Thus, \code{X} must not have been used to
-#' grow the tree or estimate the cates.\cr
+#' Notice that honesty is a necessary requirement to get valid standard errors. Thus, observations in \code{X} must not have
+#' been used to grow the tree or estimate the cates.\cr
 #'
 #' Standard errors are estimated via the Eicker-Huber-White estimator.
 #'
@@ -126,7 +127,7 @@ honest_estimation_rpart <- function(tree, y_honest, X_honest) {
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{honest_estimation}}
 #'
 #' @export
-honest_ols <- function(object, cates, X) {
+honest_ols_aggtree <- function(object, cates, X) {
   ## Handling inputs and checks
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
@@ -153,7 +154,7 @@ honest_ols <- function(object, cates, X) {
 #' @param X_honest Covariate matrix (no intercept) of the honest sample.
 #'
 #' @return
-#' The fitted model, as a \code{\link[stats]{lm}} object.
+#' The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
 #'
 #' @details
 #' To get standard errors on the tree's estimates, \code{honest_ols_rpart} fits via OLS the following model:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{honest_rpart_cpp}
 \alias{honest_rpart_cpp}
-\title{Honest Rpart Estimates}
+\title{Honest rpart Estimates}
 \usage{
 honest_rpart_cpp(unique_leaves_honest, y_honest, honest_leaves)
 }

@@ -6,9 +6,9 @@
 \usage{
 \method{plot}{aggTrees}(
   x,
-  leaves = get_leaves(tree),
+  leaves = get_leaves(x$tree),
   type = 2,
-  palette = c("Blue", "Red"),
+  palette = c("BuRd"),
   sequence = FALSE,
   ...
 )
