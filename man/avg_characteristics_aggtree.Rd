@@ -28,7 +28,9 @@ how treatment effects relate to the covariates.\cr
 To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
 a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
-Standard errors are estimated via the Eicker-Huber-White estimator.
+Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+
+Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{honest_ols}}

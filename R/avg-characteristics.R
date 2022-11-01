@@ -18,7 +18,9 @@
 #' To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
 #' a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 #'
-#' Standard errors are estimated via the Eicker-Huber-White estimator.
+#' Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+#'
+#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -53,7 +55,7 @@ avg_characteristics_aggtree <- function(object, cates, X) {
 #' \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
 #' a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 #'
-#' Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+#' Standard errors are estimated via the Eicgetwker-Huber-White estimator.\cr
 #'
 #' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
@@ -89,15 +91,15 @@ avg_characteristics_rpart <- function(tree, y, X) {
         \\begin{table}[H]
           \\centering
           \\begin{adjustbox}{width = 0.75\\textwidth}
-          \\begin{tabular}{@{\\extracolsep{5pt}}l", rep("c", length(unique(leaves))), "}
+          \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", length(unique(leaves))), "}
           \\\\[-1.8ex]\\hline
           \\hline \\\\[-1.8ex]
           & ", c(paste("Leaf", 1:(length(unique(leaves))-1), " & ", sep = ""), paste("Leaf", length(unique(leaves)), sep = "")) ," \\\\
           \\addlinespace[2pt]
           \\hline \\\\[-1.8ex] \n\n", sep = "")
 
-  cat("          GATEs & ", paste(gates[1:(length(unique(leaves))-1)], " & ", sep = ""), gates[length(unique(leaves))], "\\\\ \n", sep = "")
-
+  cat("          GATEs & ", paste(gates[1:(length(unique(leaves))-1)], " & ", sep = ""), gates[length(unique(leaves))], " \\\\ \n\n", sep = "")
+  cat("          \\hline \\\\[-1.8ex] \n\n")
 
   for (i in seq_len(length(table_names))) {
   cat("          \\texttt{", table_names[i], "} & ", paste(round(parms[[i]][1:(length(unique(leaves))-1), 1], 2), " & ", sep = ""), round(parms[[i]][length(unique(leaves)), 1], 2), " \\\\ \n",
@@ -109,7 +111,7 @@ avg_characteristics_rpart <- function(tree, y, X) {
           \\hline \\\\[-1.8ex]
           \\end{tabular}
           \\end{adjustbox}
-          \\caption{https://soundcloud.com/theplasticchairband}
+          \\caption{\\href{https://soundcloud.com/theplasticchairband}{Secret link.})
           \\label{table:average.characterstics.leaves}
         \\end{table}
       \\endgroup")

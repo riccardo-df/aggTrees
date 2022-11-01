@@ -23,7 +23,7 @@ Compute the average characteristics of units in each leaf of a \code{\link[rpart
 \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
 a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
-Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+Standard errors are estimated via the Eicgetwker-Huber-White estimator.\cr
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
