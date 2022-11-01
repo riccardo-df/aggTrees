@@ -4,14 +4,14 @@
 \alias{avg_characteristics_rpart}
 \title{Leaves Average Characteristics}
 \usage{
-avg_characteristics_rpart(tree, cates, X)
+avg_characteristics_rpart(tree, y, X)
 }
 \arguments{
-\item{X}{Covariate matrix (no intercept).}
-
-\item{object}{A \code{rpart} object.}
+\item{tree}{A \code{rpart} object.}
 
 \item{y}{Outcome vector.}
+
+\item{X}{Covariate matrix (no intercept).}
 }
 \value{
 Prints LATEX code in the console.
@@ -20,18 +20,15 @@ Prints LATEX code in the console.
 Compute the average characteristics of units in each leaf of a \code{\link[rpart]{rpart}} object.
 }
 \details{
-The fact that the aggregation trees does not split on a particular covariate does not imply that such covariate is not related
-to treatment effect heterogeneity. In fact, there are many ways in which groups with low or high treatment effect can be formed.
-Looking at how the average characteristics of the units vary across the leaves of the tree is a more systematic way to assess 
-how treatment effects relate to the covariates.\cr
-
-To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to 
+\code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
 a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
-Standard errors are estimated via the Eicker-Huber-White estimator.
+Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+
+Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \seealso{
-\code{\link{honest_ols}},\code{\link{aggregation_tree}}
+\code{\link{honest_ols}}, \code{\link{aggregation_tree}}
 }
 \author{
 Riccardo Di Francesco

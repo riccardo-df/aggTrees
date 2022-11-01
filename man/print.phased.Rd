@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A \code{phased} object.}
 
-\item{latex}{If TRUE, prints latex code for the table.}
+\item{latex}{If TRUE, prints LATEX code for the table.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
@@ -17,5 +17,5 @@
 Prints a \code{phased} object.
 }
 \details{
-For compiling the latex code, the following packages are required: \code{booktabs}, \code{float}, \code{adjustbox}.
+Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }

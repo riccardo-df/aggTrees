@@ -31,7 +31,7 @@ internal nodes show non-honest estimates, so the user should ignore them and foc
 To get standard errors on the tree's estimates, please use \code{\link{honest_ols_aggtree}}.
 }
 \seealso{
-\code{\link{honest_ols}},\code{\link{aggregation_tree}}
+\code{\link{honest_ols}}, \code{\link{aggregation_tree}}
 }
 \author{
 Riccardo Di Francesco

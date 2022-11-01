@@ -25,7 +25,7 @@
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{honest_ols}},\code{\link{aggregation_tree}}
+#' @seealso \code{\link{honest_ols}}, \code{\link{aggregation_tree}}
 #'
 #' @export
 honest_aggtree <- function(object, cates, X) {

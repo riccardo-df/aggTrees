@@ -22,10 +22,10 @@ Compute the average characteristics of units in each leaf of an \code{aggTrees} 
 \details{
 The fact that a tree does not split on a particular covariate does not imply that such covariate is not related
 to treatment effect heterogeneity. In fact, there are many ways in which groups with low or high treatment effect can be formed.
-Looking at how the average characteristics of the units vary across the leaves of the tree is a more systematic way to assess 
+Looking at how the average characteristics of the units vary across the leaves of the tree is a more systematic way to assess
 how treatment effects relate to the covariates.\cr
 
-To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to 
+To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
 a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
 Standard errors are estimated via the Eicker-Huber-White estimator.

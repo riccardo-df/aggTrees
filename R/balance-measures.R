@@ -139,11 +139,11 @@ balance_measures <- function(X, D) {
 #' Prints a \code{phased} object.
 #'
 #' @param x A \code{phased} object.
-#' @param latex If TRUE, prints latex code for the table.
+#' @param latex If TRUE, prints LATEX code for the table.
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @details
-#' For compiling the latex code, the following packages are required: \code{booktabs}, \code{float}, \code{adjustbox}.
+#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
 #' @export
 print.phased <- function(x, latex = FALSE, ...) {
