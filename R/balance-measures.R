@@ -203,7 +203,7 @@ print.phased <- function(x, latex = FALSE, ...) {
           \\\\[-1.8ex]\\hline
           \\hline \\\\[-1.8ex]
           & \\multicolumn{2}{c}{Treated} & \\multicolumn{2}{c}{Controls} & \\multicolumn{2}{c}{Overlap measures} \\\\ \\cmidrule{6-7}
-          & \\multicolumn{2}{c}{($n_t = 81,659$)} & \\multicolumn{2}{c}{($n_c = 353,465$)} & \\\\ \\cmidrule{2-5}
+          & \\multicolumn{2}{c}{($n_t = ", x$treated, "$)} & \\multicolumn{2}{c}{($n_c =", x$control, "$)} & \\\\ \\cmidrule{2-5}
           & Mean & (S.D.) & Mean & (S.D.) & $\\hat{\\Delta}_j$ & $\\hat{\\Gamma}_j$ \\\\
           \\addlinespace[2pt]
           \\hline \\\\[-1.8ex]")
