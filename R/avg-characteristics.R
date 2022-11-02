@@ -24,7 +24,7 @@
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{honest_ols}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{ols_aggtree}}
 #'
 #' @export
 avg_characteristics_aggtree <- function(object, cates, X) {
@@ -52,34 +52,32 @@ avg_characteristics_aggtree <- function(object, cates, X) {
 #' Prints LATEX code in the console.
 #'
 #' @details
-#' \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
+#' \code{avg_characteristics_rpart} regresses each covariate on a categorical variable denoting membership to
 #' a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 #'
-#' Standard errors are estimated via the Eicgetwker-Huber-White estimator.\cr
+#' Standard errors are estimated via the Eicker-Huber-White estimator.\cr
 #'
 #' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
-#' @import estimatr
+#' @import estimatr stats
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{honest_ols}}, \code{\link{aggregation_tree}}
+#' @seealso \code{\link{ols_rpart}}, \code{\link{aggregation_tree}}
 #'
 #' @export
 avg_characteristics_rpart <- function(tree, y, X) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
 
-  ## Generate leaves indicators. Inspired by https://bookdown.org/halflearned/tutorial/hte1.html.
-  tree_predictions <- predict(tree, data.frame(X))
-  n_leaves <- length(unique(tree_predictions))
-  leaves <- factor(tree_predictions, levels = sort(unique(tree_predictions)), labels = seq(n_leaves))
+  ## Generate leaves indicators.
+  leaves <- leaf_membership(tree, X)
 
-  ## Regress each leaf on the leaf indicator.
+  ## Regress each leaf on the leaf indicator. Extension: Use linear model for continuous covariates, and logit models for dummy covariates.
   regressions <- apply(X, MARGIN = 2, function(x) {estimatr::lm_robust(x ~ 0 + leaf, data = data.frame("x" = x, "leaf" = leaves), , se_type = "HC1")})
 
   ## Extract information.
-  parms <- lapply(regressions, function(x) {coef(summary(x))[, c("Estimate", "Std. Error")]})
+  parms <- lapply(regressions, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
   gates <- round(sapply(sort(unique(leaves)), function(x) {mean(y[leaves == x])}), 2)
 
   ## Write table.
@@ -94,12 +92,13 @@ avg_characteristics_rpart <- function(tree, y, X) {
           \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", length(unique(leaves))), "}
           \\\\[-1.8ex]\\hline
           \\hline \\\\[-1.8ex]
-          & ", c(paste("Leaf", 1:(length(unique(leaves))-1), " & ", sep = ""), paste("Leaf", length(unique(leaves)), sep = "")) ," \\\\
+          & ", c(paste("\textit{Leaf ", 1:(length(unique(leaves))-1), "} & ", sep = ""), paste("\textit{Leaf ", length(unique(leaves)), "}", sep = "")) ," \\\\
           \\addlinespace[2pt]
           \\hline \\\\[-1.8ex] \n\n", sep = "")
 
   cat("          GATEs & ", paste(gates[1:(length(unique(leaves))-1)], " & ", sep = ""), gates[length(unique(leaves))], " \\\\ \n\n", sep = "")
-  cat("          \\hline \\\\[-1.8ex] \n\n")
+  cat("          \\addlinespace[2pt]
+          \\hline \\\\[-1.8ex] \n\n")
 
   for (i in seq_len(length(table_names))) {
   cat("          \\texttt{", table_names[i], "} & ", paste(round(parms[[i]][1:(length(unique(leaves))-1), 1], 2), " & ", sep = ""), round(parms[[i]][length(unique(leaves)), 1], 2), " \\\\ \n",

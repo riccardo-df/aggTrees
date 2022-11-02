@@ -31,7 +31,7 @@
 #' @author Riccardo Di Francesco
 #'
 #' @seealso
-#' \code{\link{honest_estimation}}, \code{\link{honest_ols}}, \code{\link{plot.aggTrees}}, \code{\link{subtree}}
+#' \code{\link{estimate_aggtree}}, \code{\link{ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
 #'
 #' @export
 aggregation_tree <- function(cates, X, maxdepth = 3, ...) {
@@ -68,7 +68,7 @@ aggregation_tree <- function(cates, X, maxdepth = 3, ...) {
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree_rpart}}, \code{\link{plot.aggTrees}}
 #'
 #' @export
-subtree <- function(x, leaves = NULL, cv = FALSE) {
+subtree_aggtree <- function(x, leaves = NULL, cv = FALSE) {
   ## Handling inputs and checks.
   if (!(inherits(x, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if(!(inherits(x$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
@@ -108,7 +108,7 @@ subtree <- function(x, leaves = NULL, cv = FALSE) {
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot.aggTrees}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{plot.aggTrees}}
 #'
 #' @export
 subtree_rpart <- function(tree, leaves = NULL, cv = FALSE) {
@@ -144,4 +144,32 @@ get_leaves <- function(tree) {
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
 
   return(dim(tree$frame[tree$frame$var == "<leaf>", ])[1])
+}
+
+
+#' Leaf Membership
+#'
+#' Constructs a variable that encodes in which leaf of a \code{\link[rpart]{rpart}} object the units in a given data frame fall.
+#'
+#' @param tree A \code{\link[rpart]{rpart}} object.
+#' @param X Covariate matrix (no intercept).
+#'
+#' @return
+#' A categorical variable whose levels denote in which leaf each unit falls.
+#'
+#' @author Riccardo Di Francesco
+#'
+#' @seealso \code{\link{aggregation_tree}}
+#'
+#' @export
+leaf_membership <- function(tree, X) {
+  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
+  if (!is.matrix(X) & !is.data.frame(X)) stop("'X' must be either a matrix or a data frame.", call. = FALSE)
+
+  ## Inspired by https://bookdown.org/halflearned/tutorial/hte1.html.
+  tree_predictions <- predict(tree, data.frame(X))
+  n_leaves <- length(unique(tree_predictions))
+  leaves <- factor(tree_predictions, levels = sort(unique(tree_predictions)), labels = seq(n_leaves))
+
+  return(leaves)
 }

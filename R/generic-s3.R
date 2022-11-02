@@ -21,7 +21,7 @@
 #' @author Riccardo Di Francesco
 #'
 #' @seealso
-#' \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{recursive_partitioning_plot}}
+#' \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{recursive_partitioning_plot}}
 #'
 #' @export
 plot.aggTrees <- function(x, leaves = get_leaves(x$tree),

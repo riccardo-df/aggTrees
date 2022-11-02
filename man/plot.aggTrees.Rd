@@ -37,7 +37,7 @@ the user wants to plot an honest tree, \code{type} 3 or 5 is recommended to avoi
 returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palette}} for high-quality palettes.\cr
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{recursive_partitioning_plot}}
+\code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{recursive_partitioning_plot}}
 }
 \author{
 Riccardo Di Francesco

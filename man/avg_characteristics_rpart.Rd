@@ -20,15 +20,15 @@ Prints LATEX code in the console.
 Compute the average characteristics of units in each leaf of a \code{\link[rpart]{rpart}} object.
 }
 \details{
-\code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
+\code{avg_characteristics_rpart} regresses each covariate on a categorical variable denoting membership to
 a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
-Standard errors are estimated via the Eicgetwker-Huber-White estimator.\cr
+Standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \seealso{
-\code{\link{honest_ols}}, \code{\link{aggregation_tree}}
+\code{\link{ols_rpart}}, \code{\link{aggregation_tree}}
 }
 \author{
 Riccardo Di Francesco

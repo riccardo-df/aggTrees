@@ -39,7 +39,7 @@ are stronger and lighter (colors can be specified by the user). Second, the axis
 are overimposed.
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot.aggTrees}}
+\code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{plot.aggTrees}}
 }
 \author{
 Riccardo Di Francesco

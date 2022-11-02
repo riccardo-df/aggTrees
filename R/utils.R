@@ -65,7 +65,7 @@ sample_split <- function(n,
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree}}, \code{\link{plot.aggTrees}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{plot.aggTrees}}
 #'
 #' @export
 recursive_partitioning_plot <- function(tree, cates, X, low = "yellow", high = "red", size = 1) {
