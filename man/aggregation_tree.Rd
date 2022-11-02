@@ -38,7 +38,7 @@ The tree is grown up to some stopping criteria that can be specified by the user
 the \code{\link[rpart]{rpart.control}} documentation for this.\cr
 }
 \seealso{
-\code{\link{estimatate_aggtree}}, \code{\link{ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
+\code{\link{estimate_aggtree}}, \code{\link{causal_ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
 }
 \author{
 Riccardo Di Francesco

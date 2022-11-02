@@ -31,7 +31,7 @@
 #' @author Riccardo Di Francesco
 #'
 #' @seealso
-#' \code{\link{estimate_aggtree}}, \code{\link{ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
+#' \code{\link{estimate_aggtree}}, \code{\link{causal_ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
 #'
 #' @export
 aggregation_tree <- function(cates, X, maxdepth = 3, ...) {

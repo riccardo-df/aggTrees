@@ -28,7 +28,7 @@ Standard errors are estimated via the Eicker-Huber-White estimator.\cr
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \seealso{
-\code{\link{ols_rpart}}, \code{\link{aggregation_tree}}
+\code{\link{aggregation_tree}}, \code{\link{causal_ols_rpart}}
 }
 \author{
 Riccardo Di Francesco

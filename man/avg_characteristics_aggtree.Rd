@@ -33,7 +33,7 @@ Standard errors are estimated via the Eicker-Huber-White estimator.\cr
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{ols_aggtree}}
+\code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
 }
 \author{
 Riccardo Di Francesco

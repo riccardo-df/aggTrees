@@ -19,14 +19,14 @@
 #' Due to coding limitations, \code{estimate_aggtree} replaces the estimates only in the leaves of a tree. The
 #' internal nodes' estimates are not replaced, so the user should ignore them and focus on the leaves of the tree.\cr
 #'
-#' To get standard errors on the tree's estimates, please use \code{\link{ols_aggtree}}.
+#' To get standard errors on the tree's estimates, please use \code{\link{causal_ols_aggtree}}.
 #'
 #' @import treeClust Rcpp
 #' @useDynLib aggTrees
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{ols_aggtree}}, \code{\link{aggregation_tree}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
 #'
 #' @export
 estimate_aggtree <- function(object, cates, X) {
@@ -62,14 +62,14 @@ estimate_aggtree <- function(object, cates, X) {
 #' Due to coding limitations, \code{estimate_rpart} replaces the estimates only in the leaves of a tree. The
 #' internal nodes' estimates are not replaced, so the user should ignore them and focus on the leaves of the tree.\cr
 #'
-#' To get standard errors on the tree's estimates, please use \code{\link{ols_rpart}}.
+#' To get standard errors on the tree's estimates, please use \code{\link{causal_ols_rpart}}.
 #'
 #' @import treeClust Rcpp
 #' @useDynLib aggTrees
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{ols_rpart}}
+#' @seealso \code{\link{causal_ols_rpart}}
 #'
 #' @export
 estimate_rpart <- function(tree, y, X) {
@@ -97,29 +97,34 @@ estimate_rpart <- function(tree, y, X) {
 }
 
 
-#' OLS Estimation of aggTrees Objects
+#' Causal Effects Estimation of aggTrees Objects Via Linear Models
 #'
-#' Uses the leaves of a tree stored in an \code{aggTrees} object to estimate a linear model via OLS. If the data used in
-#' the OLS estimation have not been used to grow the tree, then standard errors for the tree's estimates are valid.
+#' Uses the leaves of a tree stored in an \code{aggTrees} object to estimate a linear model via OLS. The estimated coefficients
+#' correspond to the GATEs in each leaf. If the data used in the OLS estimation have not been used to grow the tree (a condition
+#' called "honesty"), then standard errors for the tree's estimates are valid.
 #'
 #' @param object An \code{aggTrees} object.
-#' @param cates Estimated CATEs.
+#' @param y Outcome vector.
 #' @param X Covariate matrix (no intercept).
+#' @param D Treatment assignment vector.
 #'
 #' @return
 #' The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
 #'
 #' @details
-#' To get standard errors on the tree's estimates, \code{ols_aggtree} fits via OLS the following model:
+#' To get point estimates and standard errors of the GATEs, \code{causal_ols_aggtree} fits via OLS the following model:
 #'
-#' \deqn{cates_i = \sum_{l = 1}^{|T|} L_l \beta_l + \epsilon_i}
+#' \deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
-#' with \code{L_l} the l-th leaf of the tree, and \code{|T|} the number of leaves. It is immediate to notice that the l-th
-#' coefficient corresponds to the GATEs of the l-th group. Thus, standard errors on the estimated coefficients are standard
-#' errors on the estimated GATEs.\cr
+#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
+#' number of leaves. It is immediate to notice that the estimated betas corresponds to the GATEs of the l-th group:
 #'
-#' Notice that honesty is a necessary requirement to get valid standard errors. Thus, observations in \code{X} must not have
-#' been used to grow the tree or estimate the cates.\cr
+#' \deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = \] = \gamma_l + \beta_l - \gamma_l = \beta_l}
+#'
+#' Thus, standard errors on the estimated betas are standard errors on the estimated GATEs.\cr
+#'
+#' Notice that "honesty" is a necessary requirement to get valid standard errors. Thus, observations in \code{y}, \code{X} and
+#' \code{D} must not have been used to grow the tree or estimate the cates.\cr
 #'
 #' Standard errors are estimated via the Eicker-Huber-White estimator.
 #'
@@ -128,7 +133,7 @@ estimate_rpart <- function(tree, y, X) {
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{estimate_aggtree}}
 #'
 #' @export
-ols_aggtree <- function(object, cates, X) {
+causal_ols_aggtree <- function(object, y, X, D) {
   ## Handling inputs and checks
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
@@ -137,37 +142,41 @@ ols_aggtree <- function(object, cates, X) {
   tree <- object$tree
 
   ## Fit the model.
-  model <- ols_rpart(tree, cates, X)
+  model <- causal_ols_rpart(tree, y, X, D)
 
   ## Output
   return(model)
 }
 
 
-#' OLS Estimation of rpart Objects
+#' Causal Effects Estimation of rpart Objects Via Linear Models
 #'
-#' Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS.
-#' If the data used in the OLS estimation have not been used to grow the tree, then standard errors for the tree's
-#' estimates are valid.
+#' Uses the leaves of a tree stored in a \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The estimated coefficients
+#' correspond to the GATEs in each leaf. If the data used in the OLS estimation have not been used to grow the tree (a condition
+#' called "honesty"), then standard errors for the tree's estimates are valid.
 #'
 #' @param tree A \code{\link[rpart]{rpart}} object.
 #' @param y Outcome vector.
 #' @param X Covariate matrix (no intercept).
+#' @param D Treatment assignment vector.
 #'
 #' @return
 #' The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
 #'
 #' @details
-#' To get standard errors on the tree's estimates, \code{ols_rpart} fits via OLS the following model:
+#' To get point estimates and standard errors of the GATEs, \code{causal_ols_rpart} fits via OLS the following model:
 #'
-#' \deqn{y_i = \sum_{l = 1}^{|T|} L_l \beta_l + \epsilon_i}
+#' \deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
-#' with \code{L_l} the l-th leaf of the tree, and \code{|T|} the number of leaves. It is immediate to notice that the l-th
-#' coefficient corresponds to the estimated conditional expectation of \code{y_i} in the l-th leaf. Thus, standard errors
-#' on the estimated coefficients are standard errors on these estimates.\cr
+#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
+#' number of leaves. It is immediate to notice that the estimated betas corresponds to the GATEs of the l-th group:
 #'
-#' Notice that honesty is a necessary requirement to get valid standard errors. Thus, \code{y_honest} and {X_honest} must
-#' not have been used to grow the tree.\cr
+#' \deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = \] = \gamma_l + \beta_l - \gamma_l = \beta_l}
+#'
+#' Thus, standard errors on the estimated betas are standard errors on the estimated GATEs.\cr
+#'
+#' Notice that "honesty" is a necessary requirement to get valid standard errors. Thus, observations in \code{y}, \code{X} and
+#' \code{D} must not have been used to grow the tree or estimate the cates.\cr
 #'
 #' Standard errors are estimated via the Eicker-Huber-White estimator.
 #'
@@ -179,14 +188,14 @@ ols_aggtree <- function(object, cates, X) {
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{estimate_rpart}}
 #'
 #' @export
-ols_rpart <- function(tree, y, X) {
+causal_ols_rpart <- function(tree, y, X, D) {
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
 
   ## Generate leaves indicators.
   leaves <- leaf_membership(tree, X)
 
   ## OLS estimation.
-  model <- estimatr::lm_robust(y ~ 0 + leaf, data = data.frame("y" = y, "leaf" = leaves), se_type = "HC1")
+  model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
 
   ## Output.
   return(model)

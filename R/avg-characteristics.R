@@ -24,7 +24,7 @@
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{ols_aggtree}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
 #'
 #' @export
 avg_characteristics_aggtree <- function(object, cates, X) {
@@ -63,7 +63,7 @@ avg_characteristics_aggtree <- function(object, cates, X) {
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{ols_rpart}}, \code{\link{aggregation_tree}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_rpart}}
 #'
 #' @export
 avg_characteristics_rpart <- function(tree, y, X) {
