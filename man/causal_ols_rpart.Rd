@@ -38,7 +38,10 @@ Thus, standard errors on the estimated betas are standard errors on the estimate
 Notice that "honesty" is a necessary requirement to get valid standard errors. Thus, observations in \code{y}, \code{X} and
 \code{D} must not have been used to grow the tree or estimate the cates.\cr
 
-Standard errors are estimated via the Eicker-Huber-White estimator.
+Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+
+If the tree consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D}, thus estimating
+the ATE.
 }
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{estimate_rpart}}

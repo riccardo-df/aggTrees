@@ -117,16 +117,19 @@ estimate_rpart <- function(tree, y, X) {
 #' \deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
 #' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-#' number of leaves. It is immediate to notice that the estimated betas corresponds to the GATEs of the l-th group:
+#' number of leaves. It is immediate to notice that the estimated betas correspond to the GATEs of the l-th group:
 #'
-#' \deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = \] = \gamma_l + \beta_l - \gamma_l = \beta_l}
+#' \deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = 1] = \gamma_l + \beta_l - \gamma_l = \beta_l}
 #'
 #' Thus, standard errors on the estimated betas are standard errors on the estimated GATEs.\cr
 #'
 #' Notice that "honesty" is a necessary requirement to get valid standard errors. Thus, observations in \code{y}, \code{X} and
 #' \code{D} must not have been used to grow the tree or estimate the cates.\cr
 #'
-#' Standard errors are estimated via the Eicker-Huber-White estimator.
+#' Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+#'
+#' If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus estimating
+#' the ATE.
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -178,7 +181,10 @@ causal_ols_aggtree <- function(object, y, X, D) {
 #' Notice that "honesty" is a necessary requirement to get valid standard errors. Thus, observations in \code{y}, \code{X} and
 #' \code{D} must not have been used to grow the tree or estimate the cates.\cr
 #'
-#' Standard errors are estimated via the Eicker-Huber-White estimator.
+#' Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+#'
+#' If the tree consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D}, thus estimating
+#' the ATE.
 #'
 #' @import rpart estimatr
 #' @importFrom stats predict
@@ -195,7 +201,11 @@ causal_ols_rpart <- function(tree, y, X, D) {
   leaves <- leaf_membership(tree, X)
 
   ## OLS estimation.
-  model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
+  if (get_leaves(tree) == 1) {
+    model <- estimatr::lm_robust(y ~ D, data = data.frame("y" = y, "D" = D), se_type = "HC1")
+  } else {
+    model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
+  }
 
   ## Output.
   return(model)
