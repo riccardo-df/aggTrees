@@ -83,7 +83,7 @@ avg_characteristics_rpart <- function(tree, y, X) {
   ## Write table.
   table_names <- rename_latex(colnames(X))
 
-  cat("      \\begingroup
+  cat("\\begingroup
         \\setlength{\\tabcolsep}{8pt}
         \\renewcommand{\\arraystretch}{1.1}
         \\begin{table}[H]
