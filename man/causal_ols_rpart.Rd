@@ -2,9 +2,9 @@
 % Please edit documentation in R/tree-estimation.R
 \name{causal_ols_rpart}
 \alias{causal_ols_rpart}
-\title{Causal Effects Estimation of rpart Objects Via Linear Models}
+\title{Causal Effects Estimation of rpart Objects via Linear Models}
 \usage{
-causal_ols_rpart(tree, y, X, D, method = "raw")
+causal_ols_rpart(tree, y, X, D)
 }
 \arguments{
 \item{tree}{A \code{\link[rpart]{rpart}} object.}
@@ -13,7 +13,7 @@ causal_ols_rpart(tree, y, X, D, method = "raw")
 
 \item{X}{Covariate matrix (no intercept).}
 
-\item{method}{Either \code{"raw"} or \code{"aipw"}, determines the estimator of treatment effects in each leaf. See the details section below.}
+\item{D}{Treatment assignment vector.}
 }
 \value{
 The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
@@ -24,15 +24,13 @@ correspond to the GATEs in each leaf. If the data used in the OLS estimation hav
 called "honesty"), then standard errors for the tree's estimates are valid.
 }
 \details{
-Given a particular estimator of treatment effects, \code{causal_ols_aggtree} fits via OLS a linear model using leaf dummies to get
-point estimates and standard errors of the GATEs in each leaf. The model is determined via the argument \code{method}, and ensures
-that the coefficients are equivalent to the treatment effect estimator in each leaf. The advantage of using linear models is to
-get standard errors. Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y},
-\code{X}, and \code{D} must not have been used to grow the tree. Standard errors are estimated via the Eicker-Huber-White estimator.\cr
+In randomized experiments, taking the difference between the sample average of the observed outcomes of treated units and the sample
+average of the observed outcomes of control units is an unbiased estimators of Average Treatment Effect (ATE). One can use this estimator
+in different subpopulations to estimate the Group Average Treatment Effects (GATEs). Notice that this is equivalent to regress the outcome
+on a set of dummies denoting group membership and the interactions of these dummies on the binary treatment indicator. One of the advantage
+of using the regression is that one gets standard errors on the GATEs.\cr
 
-If \code{method = "raw"}, the estimator of treatment effects in each leaf consists of the difference between the sample average
-of the observed outcomes of treated units and the sample average of the observed outcomes of control units. This is equivalent
-to fit the following model:
+\code{causal_ols_rpart} fits via OLS the following model:
 
 \deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
@@ -42,29 +40,13 @@ the l-th group:
 
 \deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = 1] = \gamma_l + \beta_l - \gamma_l = \beta_l}
 
-Thus, standard errors on the estimated betas are standard errors on the estimated GATEs.\cr
+Thus, standard errors on the estimated betas are standard errors on the estimated GATEs. Standard errors are estimated via the
+Eicker-Huber-White estimator.\cr
 
-If \code{method = "aipw"}, the estimator of treatment effects in each leaf consists of constructing and averaging doubly robust
-scores for treatment effects. This is equivalent to fit the following model:
+Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{X}, and \code{D} must not
+have been used to grow the tree.\cr
 
-\deqn{y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l  + \epsilon_i}
-
-with \code{y_i^*} the doubly-robust outcome transformation. Notice that:
-
-\deqn{E[Y^*] = E[Y(1) - Y(0)]}
-
-and
-
-\deqn{E[Y^* | L_l = 1] = \gamma_l}
-
-Thus, standard errors on the estimated gammas are standard errors on the estimated GATEs. Scores are constructed via
-\code{\link[grf]{get_scores}}.\cr
-
-Notice that, in randomized experiments, both \code{"raw"} and \code{"aipw"} yield unbiased estimates of the GATEs. However, in
-observational studies, only \code{"aipw"} produces unbiased and efficient estimates.
-
-If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus estimating
-the ATE.
+If the tree consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D}, thus estimating the ATE.
 }
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{estimate_rpart}}
