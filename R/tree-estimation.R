@@ -111,10 +111,10 @@ causal_ols_rpart <- function(tree, y, X, D) {
   ## Generate leaves indicators.
   leaves <- leaf_membership(tree, X)
 
-  if (length(unique(leaves)) < get_leaves(tree)) warning("One leaf is empty: No observations in X fall there.")
+  if (length(unique(leaves)) < get_leaves(tree)) warning("One or more leaves are empty: No observations in X fall there.")
 
   ## OLS estimation.
-  if (get_leaves(tree) == 1) {
+  if (length(unique(leaves)) == 1) {
     model <- estimatr::lm_robust(y ~ D, data = data.frame("y" = y, "D" = D), se_type = "HC1")
   } else {
     model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
