@@ -115,7 +115,7 @@ balance_measures <- function(X, D) {
   ## Handling inputs.
   names <- colnames(X)
   n_t <- sum(D)
-  n_c <- dim(D)[1] - n_t
+  n_c <- length(D) - n_t
 
   ## Computing measures.
   descriptive <- descriptive_arm(X, D)
@@ -203,7 +203,7 @@ print.phased <- function(x, latex = FALSE, ...) {
           \\\\[-1.8ex]\\hline
           \\hline \\\\[-1.8ex]
           & \\multicolumn{2}{c}{Treated} & \\multicolumn{2}{c}{Controls} & \\multicolumn{2}{c}{Overlap measures} \\\\ \\cmidrule{6-7}
-          & \\multicolumn{2}{c}{($n_t = ", x$treated, "$)} & \\multicolumn{2}{c}{($n_c =", x$control, "$)} & \\\\ \\cmidrule{2-5}
+          & \\multicolumn{2}{c}{($n_t = ", x$arm_sizes["treated"], "$)} & \\multicolumn{2}{c}{($n_c =", x$arm_sizes["control"], "$)} & \\\\ \\cmidrule{2-5}
           & Mean & (S.D.) & Mean & (S.D.) & $\\hat{\\Delta}_j$ & $\\hat{\\Gamma}_j$ \\\\
           \\addlinespace[2pt]
           \\hline \\\\[-1.8ex]")
