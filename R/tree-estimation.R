@@ -146,13 +146,14 @@ estimate_rpart <- function(tree, y, X) {
 #'
 #' \deqn{E[Y^* | L_l = 1] = \gamma_l}
 #'
-#' Thus, standard errors on the estimated gammas are standard errors on the estimated GATEs.\cr
+#' Thus, standard errors on the estimated gammas are standard errors on the estimated GATEs. Scores are constructed via
+#' \code{\link[grf]{get_scores}}.\cr
 #'
 #' Notice that, in randomized experiments, both \code{"raw"} and \code{"aipw"} yield unbiased estimates of the GATEs. However, in
 #' observational studies, only \code{"aipw"} produces unbiased and efficient estimates.
 #'
-#' If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus estimating
-#' the ATE.
+#' If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D} if \code{method = "raw"},
+#' and regresses \code{y^*} on a constant if \code{method = "aipw}, thus estimating the ATE.
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -170,7 +171,7 @@ causal_ols_aggtree <- function(object, y, X, D, method = "raw") {
   tree <- object$tree
 
   ## Fit the model.
-  model <- causal_ols_rpart(tree, y, X, D, method = "raw")
+  model <- causal_ols_rpart(tree, y, X, D, method = method)
 
   ## Output
   return(model)
@@ -232,8 +233,8 @@ causal_ols_aggtree <- function(object, y, X, D, method = "raw") {
 #' Notice that, in randomized experiments, both \code{"raw"} and \code{"aipw"} yield unbiased estimates of the GATEs. However, in
 #' observational studies, only \code{"aipw"} produces unbiased and efficient estimates.
 #'
-#' If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus estimating
-#' the ATE.
+#' If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D} if \code{method = "raw"},
+#' and regresses \code{y^*} on a constant if \code{method = "aipw}, thus estimating the ATE.
 #'
 #' @import rpart estimatr grf
 #' @importFrom stats predict
