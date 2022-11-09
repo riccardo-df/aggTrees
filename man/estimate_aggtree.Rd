@@ -4,14 +4,20 @@
 \alias{estimate_aggtree}
 \title{Estimation of aggTrees Objects}
 \usage{
-estimate_aggtree(object, cates, X)
+estimate_aggtree(object, X, y = NULL, D = NULL, cates = NULL, method = "raw")
 }
 \arguments{
 \item{object}{An \code{aggTrees} object.}
 
+\item{X}{Covariate matrix (no intercept).}
+
+\item{y}{Outcome vector.}
+
+\item{D}{Treatment assignment vector.}
+
 \item{cates}{Estimated CATEs.}
 
-\item{X}{Covariate matrix (no intercept).}
+\item{method}{Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.}
 }
 \value{
 An \code{aggTrees} object.
@@ -21,15 +27,29 @@ Replace leaf predictions of a tree stored in an \code{aggTrees} object using ext
 }
 \details{
 \code{estimate_aggtree} replaces the leaf estimates of a tree as follows. First, it "pushes" all observations in
-\code{X} down the tree and finds the leaves where they fall. Then, it computes the average value of \code{cates} in
-each leaf. These values are the new estimates.\cr
+\code{X} down the tree and finds the leaves where they fall. Then, it replaces the predictions in each leaf according
+to the user-specified \code{method}.
 
-If observations in \code{X} have not been used to construct the tree, then the new predictions are "honest".\cr
+If \code{method = "raw"}, \code{estimate_aggtree} replaces leaf predictions with the difference between the sample average of
+the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf, which is
+an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to specify \code{y} and
+\code{D}.\cr
+
+If \code{method = "cates"}, \code{estimate_aggtree} replaces leaf predictions with the sample average of \code{cates} in each leaf.
+This is a valid estimator of the GATEs in observational studies.\cr
+
+\code{estimate_aggtree} allows the user to implement "honest" estimation. If observations in \code{X} have not been used to construct
+the tree, then the new predictions are honest in the sense of Athey and Imbens (2016). This allows the user to conduct valid inference
+about the estimated GATEs with standard approaches, e.g., by constructing conventional confidence intervals. To get standard errors on
+the tree's estimates, please use \code{\link{causal_ols_aggtree}}.\cr
 
 Due to coding limitations, \code{estimate_aggtree} replaces the estimates only in the leaves of a tree. The
 internal nodes' estimates are not replaced, so the user should ignore them and focus on the leaves of the tree.\cr
-
-To get standard errors on the tree's estimates, please use \code{\link{causal_ols_aggtree}}.
+}
+\references{
+\itemize{
+  \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+}
 }
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}

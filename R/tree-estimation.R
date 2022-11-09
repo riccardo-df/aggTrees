@@ -39,6 +39,11 @@
 #'
 #' @author Riccardo Di Francesco
 #'
+#' @references
+#' \itemize{
+#'   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+#' }
+#'
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{estimate_aggtree}}
 #'
 #' @export
@@ -102,6 +107,11 @@ causal_ols_aggtree <- function(object, y, X, D) {
 #'
 #' @author Riccardo Di Francesco
 #'
+#' @references
+#' \itemize{
+#'   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+#' }
+#'
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{estimate_rpart}}
 #'
 #' @export
@@ -130,42 +140,63 @@ causal_ols_rpart <- function(tree, y, X, D) {
 #' Replace leaf predictions of a tree stored in an \code{aggTrees} object using external data.
 #'
 #' @param object An \code{aggTrees} object.
-#' @param cates Estimated CATEs.
 #' @param X Covariate matrix (no intercept).
+#' @param y Outcome vector.
+#' @param D Treatment assignment vector.
+#' @param cates Estimated CATEs.
+#' @param method Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.
 #'
 #' @return
 #' An \code{aggTrees} object.
 #'
 #' @details
 #' \code{estimate_aggtree} replaces the leaf estimates of a tree as follows. First, it "pushes" all observations in
-#' \code{X} down the tree and finds the leaves where they fall. Then, it computes the average value of \code{cates} in
-#' each leaf. These values are the new estimates.\cr
+#' \code{X} down the tree and finds the leaves where they fall. Then, it replaces the predictions in each leaf according
+#' to the user-specified \code{method}.
 #'
-#' If observations in \code{X} have not been used to construct the tree, then the new predictions are "honest".\cr
+#' If \code{method = "raw"}, \code{estimate_aggtree} replaces leaf predictions with the difference between the sample average of
+#' the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf, which is
+#' an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to specify \code{y} and
+#' \code{D}.\cr
+#'
+#' If \code{method = "cates"}, \code{estimate_aggtree} replaces leaf predictions with the sample average of \code{cates} in each leaf.
+#' This is a valid estimator of the GATEs in observational studies.\cr
+#'
+#' \code{estimate_aggtree} allows the user to implement "honest" estimation. If observations in \code{X} have not been used to construct
+#' the tree, then the new predictions are honest in the sense of Athey and Imbens (2016). This allows the user to conduct valid inference
+#' about the estimated GATEs with standard approaches, e.g., by constructing conventional confidence intervals. To get standard errors on
+#' the tree's estimates, please use \code{\link{causal_ols_aggtree}}.\cr
 #'
 #' Due to coding limitations, \code{estimate_aggtree} replaces the estimates only in the leaves of a tree. The
 #' internal nodes' estimates are not replaced, so the user should ignore them and focus on the leaves of the tree.\cr
-#'
-#' To get standard errors on the tree's estimates, please use \code{\link{causal_ols_aggtree}}.
 #'
 #' @import treeClust Rcpp
 #' @useDynLib aggTrees
 #'
 #' @author Riccardo Di Francesco
 #'
+#' @references
+#' \itemize{
+#'   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+#' }
+#'
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
 #'
 #' @export
-estimate_aggtree <- function(object, cates, X) {
+estimate_aggtree <- function(object, X, y = NULL, D = NULL, cates = NULL, method = "raw") {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(object$honesty %in% c(TRUE, FALSE))) stop("You must provide a valid aggTrees object.", call. = FALSE)
 
+  if (!(method %in% c("raw", "cates"))) stop("You must provide a valid method.", call. = FALSE)
+  if (method == "raw" & (is.null(y) | is.null(D))) stop("'raw' method requires the user to specify both 'y' and 'D'.", call. = FALSE)
+  if (method == "cates" & (is.null(cates))) stop("'cates' method requires the user to specify 'cates'.", call. = FALSE)
+
   tree <- object$tree
 
   ## Honest re-estimation.
-  new_tree <- estimate_rpart(tree, cates, X)
+  new_tree <- estimate_rpart(tree, X, y, D, cates, method)
 
   ## Output.
   out <- list("tree" = new_tree, "honesty" = TRUE)
@@ -179,44 +210,75 @@ estimate_aggtree <- function(object, cates, X) {
 #' Replace leaf predictions of a \code{\link[rpart]{rpart}} object using external data.
 #'
 #' @param tree A \code{\link[rpart]{rpart}} object.
-#' @param y Outcome vector.
 #' @param X Covariate matrix (no intercept).
+#' @param y Outcome vector.
+#' @param D Treatment assignment vector.
+#' @param cates Estimated CATEs.
+#' @param method Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.
 #'
 #' @return
 #' A tree with leaf predictions replaced, as a \code{\link[rpart]{rpart}} object.
 #'
 #' @details
+#' \code{estimate_rpart} replaces the leaf estimates of a tree as follows. First, it "pushes" all observations in
+#' \code{X} down the tree and finds the leaves where they fall. Then, it replaces the predictions in each leaf according
+#' to the user-specified \code{method}.
+#'
+#' If \code{method = "raw"}, \code{estimate_rpart} replaces leaf predictions with the difference between the sample average of
+#' the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf, which is
+#' an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to specify \code{y} and
+#' \code{D}.\cr
+#'
+#' If \code{method = "cates"}, \code{estimate_rpart} replaces leaf predictions with the sample average of \code{cates} in each leaf.
+#' This is a valid estimator of the GATEs in observational studies.\cr
+#'
+#' \code{estimate_rpart} allows the user to implement "honest" estimation. If observations in \code{X} have not been used to construct
+#' the tree, then the new predictions are honest in the sense of Athey and Imbens (2016). This allows the user to conduct valid inference
+#' about the estimated GATEs with standard approaches, e.g., by constructing conventional confidence intervals. To get standard errors on
+#' the tree's estimates, please use \code{\link{causal_ols_rpart}}.\cr
+#'
 #' Due to coding limitations, \code{estimate_rpart} replaces the estimates only in the leaves of a tree. The
 #' internal nodes' estimates are not replaced, so the user should ignore them and focus on the leaves of the tree.\cr
 #'
-#' To get standard errors on the tree's estimates, please use \code{\link{causal_ols_rpart}}.
-#'
-#' @import treeClust Rcpp
+#' @import treeClust Rcpp causalTree
 #' @useDynLib aggTrees
 #'
 #' @author Riccardo Di Francesco
 #'
+#' @references
+#' \itemize{
+#'   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+#' }
+#'
 #' @seealso \code{\link{causal_ols_rpart}}
 #'
 #' @export
-estimate_rpart <- function(tree, y, X) {
+estimate_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL, method = "raw") {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
 
+  if (!(method %in% c("raw", "cates"))) stop("You must provide a valid method.", call. = FALSE)
+  if (method == "raw" & (is.null(y) | is.null(D))) stop("'raw' method requires the user to specify both 'y' and 'D'.", call. = FALSE)
+  if (method == "cates" & (is.null(cates))) stop("'cates' method requires the user to specify 'cates'.", call. = FALSE)
+
   new_tree <- tree
 
-  ## Extract leaves where observations in X fall.
-  leaves <- treeClust::rpart.predict.leaves(tree, data.frame(X), type = "where") # Row numbers of tree$frame.
-  names(leaves) <- 1:length(y)
-  unique_leaves <- unique(leaves)
+  if (method == "raw") {
+    new_tree <- causalTree::estimate.causalTree(tree, data.frame(X, y), treatment = D)
+  } else if (method == "cates") {
+    ## Extract leaves where observations in X fall.
+    leaves <- treeClust::rpart.predict.leaves(tree, data.frame(X), type = "where") # Row numbers of tree$frame.
+    names(leaves) <- 1:length(y)
+    unique_leaves <- unique(leaves)
 
-  ## Call cpp to compute honest leaf estimates.
-  honest_estimates <- as.matrix(honest_rpart_cpp(unique_leaves, y, leaves))
+    ## Call cpp to compute honest leaf estimates.
+    honest_estimates <- as.matrix(honest_rpart_cpp(unique_leaves, y, leaves))
 
-  ## Replace leaf estimates.
-  for (leaf in unique(leaves)) {
-    new_tree$frame$yval[leaf] <- honest_estimates[as.numeric(names(leaves)[leaves == leaf][1])]
-    new_tree$frame$n[leaf] <- sum(leaves == leaf)
+    ## Replace leaf estimates.
+    for (leaf in unique(leaves)) {
+      new_tree$frame$yval[leaf] <- honest_estimates[as.numeric(names(leaves)[leaves == leaf][1])]
+      new_tree$frame$n[leaf] <- sum(leaves == leaf)
+    }
   }
 
   ## Output.

@@ -20,12 +20,17 @@ Prints LATEX code in the console.
 Compute the average characteristics of units in each leaf of a \code{\link[rpart]{rpart}} object.
 }
 \details{
-\code{avg_characteristics_rpart} regresses each covariate on a categorical variable denoting membership to
-a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
+\code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership. This way,
+we get the average characteristics of units in each leaf, together with a standard error.\cr
 
 Standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
+}
+\references{
+\itemize{
+  \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
+}
 }
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{causal_ols_rpart}}

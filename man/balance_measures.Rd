@@ -30,6 +30,11 @@ for both treatment arms. Additionally, two balance measures are computed:
   discrepancy in the dispersion of the covariate distributions across treatment arms.}
   }
 }
+\references{
+\itemize{
+  \item G. W. Imbens, D. B. Rubin (2015). Causal inference in statistics, social, and biomedical sciences. Cambridge University Press. \doi{10.1017/CBO9781139025751}.
+}
+}
 \seealso{
 \code{\link{print.phased}}
 }

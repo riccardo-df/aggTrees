@@ -106,9 +106,14 @@ log_ratio_sd <- function(X, D) {
 #'   discrepancy in the dispersion of the covariate distributions across treatment arms.}
 #'   }
 #'
-#' @seealso \code{\link{print.phased}}
-#'
 #' @author Elena Dal Torrione, Riccardo Di Francesco
+#'
+#' @references
+#' \itemize{
+#'   \item G. W. Imbens, D. B. Rubin (2015). Causal inference in statistics, social, and biomedical sciences. Cambridge University Press. \doi{10.1017/CBO9781139025751}.
+#' }
+#'
+#' @seealso \code{\link{print.phased}}
 #'
 #' @export
 balance_measures <- function(X, D) {
@@ -134,99 +139,3 @@ balance_measures <- function(X, D) {
 }
 
 
-#' Print Method for \code{phased} objects
-#'
-#' Prints a \code{phased} object.
-#'
-#' @param x A \code{phased} object.
-#' @param latex If TRUE, prints LATEX code for the table.
-#' @param ... Further arguments passed to or from other methods.
-#'
-#' @details
-#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
-#'
-#' @export
-print.phased <- function(x, latex = FALSE, ...) {
-  ## Handling input and check.
-  if (!inherits(x, "phased")) stop("You need to pass a 'phased' object.")
-  if (!(latex %in% c(TRUE, FALSE))) stop("latex must be either TRUE or FALSE.")
-
-  measures <- data.frame(cbind(t(x$descriptive_stats), t(x$norm_diff), t(x$log_ratio_sd)))
-  col_names <- c("Mean", "S.D.", "Mean", "S.D.", "Norm.Diff.", "Log S.D.")
-  row_names <- rownames(measures)
-
-  ## Arranging for printing.
-  negative <- measures < 0 # This is useful later to handle negative values.
-
-  # Converting to char, and automating desired widths.
-  measures <- lapply(measures, sprintf, fmt = "%.3f")
-
-  var_width <- max(sapply(x$var_names, nchar))
-  metrics_width <- sapply(measures, function(x) max(nchar(x)))
-  col_names_width <- sapply(col_names, nchar)
-  max_col_width <- apply(rbind(metrics_width, col_names_width), 2, max)
-
-  # Formatting according to desired widths.
-  measures <- lapply(1:6, function(x) format(measures[[x]], width = max_col_width[x], justify = "centre"))
-  col_names <- sapply(1:6, function(x) format(col_names[x], width = max_col_width[x], justify = "centre"))
-  measures <- as.data.frame(do.call(cbind, measures))
-  colnames(measures) <- col_names
-
-  measures[negative] <- paste0(measures[negative], " ")
-  measures <- format(measures, width = max(max_col_width), justify = "right")
-  measures[, 5] <- paste0("   ", measures[, 5])
-  rownames(measures) <- row_names
-
-  # Final utils.
-  spacing_base <- nchar(row_names[which.max(nchar(row_names))])
-  line <- paste(rep("-", 120), collapse = "")
-  line_thick <- paste(rep("=", 120), collapse = "")
-
-  ## Printing.
-  if (latex == FALSE) {
-    cat(line_thick, "\n")
-    cat(paste(rep(" ", spacing_base + 9)), "Treated               Controls              Overlap measures \n", sep = "")
-    cat(paste(rep(" ", spacing_base + 7)), "(N_t = ", x$arm_sizes["treated"], ")           (N_c = ", x$arm_sizes["control"], ")      ------------------------- \n", sep = "")
-    cat(line, "\n")
-    print(measures, digits = 2, nsmall = 2, big.mark = ",")
-    cat(line_thick, "\n")
-  } else {
-    table_names <- rename_latex(rownames(measures))
-
-    cat("      \\begingroup
-        \\setlength{\\tabcolsep}{8pt}
-        \\renewcommand{\\arraystretch}{1.1}
-        \\begin{table}[H]
-          \\centering
-          \\begin{adjustbox}{width = 0.75\\textwidth}
-          \\begin{tabular}{@{\\extracolsep{5pt}}l c c c c c c}
-          \\\\[-1.8ex]\\hline
-          \\hline \\\\[-1.8ex]
-          & \\multicolumn{2}{c}{Treated} & \\multicolumn{2}{c}{Controls} & \\multicolumn{2}{c}{Overlap measures} \\\\ \\cmidrule{6-7}
-          & \\multicolumn{2}{c}{($n_t = ", x$arm_sizes["treated"], "$)} & \\multicolumn{2}{c}{($n_c =", x$arm_sizes["control"], "$)} & \\\\ \\cmidrule{2-5}
-          & Mean & (S.D.) & Mean & (S.D.) & $\\hat{\\Delta}_j$ & $\\hat{\\Gamma}_j$ \\\\
-          \\addlinespace[2pt]
-          \\hline \\\\[-1.8ex]")
-
-    for (i in seq_len(length(table_names))) {
-      cat("            \\texttt{", table_names[i], "} & ", stringr::str_replace_all(string = measures[i, 1], pattern = " ", repl = ""),
-        " & (", stringr::str_replace_all(string = measures[i, 2], pattern = " ", repl = ""),
-        ") & ", stringr::str_replace_all(string = measures[i, 3], pattern = " ", repl = ""),
-        " & (", stringr::str_replace_all(string = measures[i, 4], pattern = " ", repl = ""),
-        ") & ", stringr::str_replace_all(string = measures[i, 5], pattern = " ", repl = ""),
-        " & ", stringr::str_replace_all(string = measures[i, 6], pattern = " ", repl = ""), " \\\\ \n",
-        sep = ""
-      )
-    }
-
-    cat("          \\addlinespace[3pt]
-          \\\\[-1.8ex]\\hline
-          \\hline \\\\[-1.8ex]
-          \\end{tabular}
-          \\end{adjustbox}
-          \\caption{https://soundcloud.com/theplasticchairband}
-          \\label{table:descriptive.stats}
-        \\end{table}
-      \\endgroup")
-  }
-}

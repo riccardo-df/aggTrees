@@ -48,6 +48,11 @@ have been used to grow the tree.\cr
 
 If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus estimating the ATE.
 }
+\references{
+\itemize{
+  \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+}
+}
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{estimate_aggtree}}
 }

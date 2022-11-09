@@ -21,16 +21,22 @@ Compute the average characteristics of units in each leaf of an \code{aggTrees} 
 }
 \details{
 The fact that a tree does not split on a particular covariate does not imply that such covariate is not related
-to treatment effect heterogeneity. In fact, there are many ways in which groups with low or high treatment effect can be formed.
-Looking at how the average characteristics of the units vary across the leaves of the tree is a more systematic way to assess
-how treatment effects relate to the covariates.\cr
+to treatment effect heterogeneity. In fact, may exist several ways to form subpopulations that differ in the magnitude
+of their treatment effects, and if two covariates are highly correlated, trees generally split on only one of those
+covariates. A more systematic way to assess how treatment effects relate to the covariates consists of investigating
+how the average characteristics of the units vary across the leaves of the tree.\cr
 
-To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a categorical variable denoting membership to
-a particular leaf. This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
+To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a set of dummies denoting leaf membership.
+This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
 Standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
+}
+\references{
+\itemize{
+  \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
+}
 }
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
