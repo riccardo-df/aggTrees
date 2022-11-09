@@ -12,7 +12,7 @@ leaf_membership(tree, X)
 \item{X}{Covariate matrix (no intercept).}
 }
 \value{
-A categorical variable whose levels denote in which leaf each unit falls.
+A factor whose levels denote in which leaf each unit falls.
 }
 \description{
 Constructs a variable that encodes in which leaf of a \code{\link[rpart]{rpart}} object the units in a given data frame fall.

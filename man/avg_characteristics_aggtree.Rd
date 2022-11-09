@@ -24,7 +24,7 @@ avg_characteristics_aggtree(
 
 \item{cates}{Estimated CATEs.}
 
-\item{method}{Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.}
+\item{method}{Either \code{"raw"} or \code{"cates"}, defines how GATEs are estimated.}
 }
 \value{
 Prints LATEX code in the console.
@@ -57,7 +57,7 @@ Compilation of the LATEX code requires the following packages: \code{booktabs}, 
 }
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
+\code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}, \code{\link{estimate_aggtree}}
 }
 \author{
 Riccardo Di Francesco

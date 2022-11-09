@@ -2,7 +2,6 @@
 
 S3method(plot,aggTrees)
 S3method(print,aggTrees)
-S3method(print,phased)
 S3method(summary,aggTrees)
 export(aggregation_tree)
 export(avg_characteristics_aggtree)

@@ -30,18 +30,18 @@ Replace leaf predictions of a tree stored in an \code{aggTrees} object using ext
 \code{X} down the tree and finds the leaves where they fall. Then, it replaces the predictions in each leaf according
 to the user-specified \code{method}.
 
-If \code{method = "raw"}, \code{estimate_aggtree} replaces leaf predictions with the difference between the sample average of
-the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf, which is
-an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to specify \code{y} and
-\code{D}.\cr
+If \code{method = "raw"}, \code{estimate_aggtree} replaces leaf predictions with the difference between the sample average
+of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf,
+which is an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to
+specify \code{y} and \code{D}.\cr
 
-If \code{method = "cates"}, \code{estimate_aggtree} replaces leaf predictions with the sample average of \code{cates} in each leaf.
-This is a valid estimator of the GATEs in observational studies.\cr
+If \code{method = "cates"}, \code{estimate_aggtree} replaces leaf predictions with the sample average of \code{cates}
+in each leaf. This is a valid estimator of the GATEs in observational studies.\cr
 
-\code{estimate_aggtree} allows the user to implement "honest" estimation. If observations in \code{X} have not been used to construct
-the tree, then the new predictions are honest in the sense of Athey and Imbens (2016). This allows the user to conduct valid inference
-about the estimated GATEs with standard approaches, e.g., by constructing conventional confidence intervals. To get standard errors on
-the tree's estimates, please use \code{\link{causal_ols_aggtree}}.\cr
+\code{estimate_aggtree} allows the user to implement "honest" estimation. If observations in \code{X} have not been
+used to construct the tree, then the new predictions are honest in the sense of Athey and Imbens (2016). This allows
+the user to conduct valid inference about the estimated GATEs with standard approaches, e.g., by constructing conventional
+confidence intervals. To get standard errors for the tree's estimates, please use \code{\link{causal_ols_aggtree}}.\cr
 
 Due to coding limitations, \code{estimate_aggtree} replaces the estimates only in the leaves of a tree. The
 internal nodes' estimates are not replaced, so the user should ignore them and focus on the leaves of the tree.\cr

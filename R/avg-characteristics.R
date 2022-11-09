@@ -7,7 +7,7 @@
 #' @param y Outcome vector.
 #' @param D Treatment assignment vector.
 #' @param cates Estimated CATEs.
-#' @param method Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.
+#' @param method Either \code{"raw"} or \code{"cates"}, defines how GATEs are estimated.
 #'
 #' @return
 #' Prints LATEX code in the console.
@@ -38,7 +38,7 @@
 #'   \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
 #' }
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}, \code{\link{estimate_aggtree}}
 #'
 #' @export
 avg_characteristics_aggtree <- function(object, X, y = NULL, D = NULL, cates = NULL, method = "raw") {
@@ -67,7 +67,7 @@ avg_characteristics_aggtree <- function(object, X, y = NULL, D = NULL, cates = N
 #' @param y Outcome vector.
 #' @param D Treatment assignment vector.
 #' @param cates Estimated CATEs.
-#' @param method Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.
+#' @param method Either \code{"raw"} or \code{"cates"}, defines how GATEs are estimated.
 #'
 #' @return
 #' Prints LATEX code in the console.
@@ -100,7 +100,7 @@ avg_characteristics_aggtree <- function(object, X, y = NULL, D = NULL, cates = N
 #'   \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
 #' }
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_rpart}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_rpart}}, \code{\link{estimate_rpart}}
 #'
 #' @export
 avg_characteristics_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL, method = "raw") {

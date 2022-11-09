@@ -131,7 +131,7 @@ rename_latex <- function(names) {
 #' The expanded covariate matrix, as a data frame.
 #'
 #' @details
-#' It is assumed that categorical variables are coded as \code{factors}. Also, no missing values are allowed.
+#' \code{expand_df} assumes that categorical variables are coded as \code{factors}. Also, no missing values are allowed.
 #'
 #' @export
 expand_df <- function(X, int_order = 2, poly_order = 4, threshold = 0) {

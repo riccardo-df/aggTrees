@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree-estimation.R
 \name{causal_ols_aggtree}
 \alias{causal_ols_aggtree}
-\title{Causal Effects Estimation of aggTrees Objects Via Linear Models}
+\title{Estimating Leaf-Effects via Linear Models}
 \usage{
 causal_ols_aggtree(object, y, X, D)
 }
@@ -19,34 +19,37 @@ causal_ols_aggtree(object, y, X, D)
 The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
 }
 \description{
-Uses the leaves of a tree stored in an \code{aggTrees} object to estimate a linear model via OLS. The estimated coefficients
-correspond to the GATEs in each leaf. If the data used in the OLS estimation have not been used to grow the tree (a condition
-called "honesty"), then one can use the standard errors for the tree's estimates to conduct valid inference.
+Uses the leaves of a tree stored in an \code{aggTrees} object to estimate a linear model via OLS. The estimated
+coefficients correspond to the GATEs in each leaf. If the data used in the OLS estimation have not been used to
+grow the tree (a condition called "honesty"), then one can use the standard errors for the tree's estimates to
+conduct valid inference using conventional approaches.
 }
 \details{
-In randomized experiments, taking the difference between the sample average of the observed outcomes of treated units and the sample
-average of the observed outcomes of control units is an unbiased estimators of Average Treatment Effect (ATE). One can use this estimator
-in different subpopulations to estimate the Group Average Treatment Effects (GATEs). Notice that this is equivalent to regress the outcome
-on a set of dummies denoting group membership and the interactions of these dummies on the binary treatment indicator. One of the advantage
-of using the regression is that one gets standard errors on the GATEs.\cr
+In randomized experiments, taking the difference between the sample average of the observed outcomes of treated units
+and the sample average of the observed outcomes of control units is an unbiased estimators of Average Treatment Effect
+(ATE). One can use this estimator in different subpopulations to estimate the Group Average Treatment Effects (GATEs).
+Notice that this is equivalent to regress the outcome on a set of dummies denoting group membership and the interactions
+of these dummies on the binary treatment indicator. One of the advantage of using the regression is that one gets standard
+errors for the GATEs.\cr
 
 \code{causal_ols_aggtree} fits via OLS the following model:
 
 \deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
 with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-number of leaves. It is immediate to notice that, in randomized experiments, the estimated betas correspond to the GATEs of
-the l-th group:
+number of leaves. It is immediate to notice that, in randomized experiments, the estimated betas correspond to the GATEs
+of the l-th group:
 
 \deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = 1] = \gamma_l + \beta_l - \gamma_l = \beta_l}
 
-Thus, standard errors on the estimated betas are standard errors on the estimated GATEs. Standard errors are estimated via the
-Eicker-Huber-White estimator.\cr
+Thus, standard errors for the estimated betas are standard errors for the estimated GATEs. Standard errors are estimated
+via the Eicker-Huber-White estimator.\cr
 
-Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{X}, and \code{D} must not
-have been used to grow the tree.\cr
+Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{X}, and
+\code{D} must not have been used to grow the tree.\cr
 
-If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus estimating the ATE.
+If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus
+estimating the ATE.
 }
 \references{
 \itemize{

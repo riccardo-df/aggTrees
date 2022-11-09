@@ -20,7 +20,7 @@ The subtree, as a \code{\link[rpart]{rpart}} object.
 Extracts a subtree with a user-specified number of leaves from an \code{\link[rpart]{rpart}} object.
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{plot.aggTrees}}
+\code{\link{aggregation_tree}}
 }
 \author{
 Riccardo Di Francesco

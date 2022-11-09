@@ -12,7 +12,7 @@ balance_measures(X, D)
 \item{D}{Treatment assignment vector.}
 }
 \value{
-A \code{phased} object.
+Prints LATEX code in the console.
 }
 \description{
 Compute several balance measures to check whether the covariate distributions are balanced across
@@ -28,15 +28,14 @@ for both treatment arms. Additionally, two balance measures are computed:
   \item{\code{Log S.D.}}{Log ratio of standard deviations are computed as the logarithm of the ratio of the
   within-arm standard deviations. They provide a measure of the
   discrepancy in the dispersion of the covariate distributions across treatment arms.}
-  }
+  }\cr
+
+Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \references{
 \itemize{
   \item G. W. Imbens, D. B. Rubin (2015). Causal inference in statistics, social, and biomedical sciences. Cambridge University Press. \doi{10.1017/CBO9781139025751}.
 }
-}
-\seealso{
-\code{\link{print.phased}}
 }
 \author{
 Elena Dal Torrione, Riccardo Di Francesco

@@ -15,7 +15,7 @@
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
 #' to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal partitions. Different
 #' subsamples are used: an "estimation sample" for the CATEs estimation, and an "aggregation sample" for the tree-growing
-#' and the tree-pruning.\cr
+#' and the tree-pruning (see \code{\link{sample_split}}).\cr
 #'
 #' \code{aggregation_tree} uses \code{X} to grow a tree approximating the CATEs provided by the user. For this, the user
 #' passes in as an argument a vector of CATEs \code{cates} obtained by fitting a model in the estimation sample and
@@ -31,7 +31,8 @@
 #' @author Riccardo Di Francesco
 #'
 #' @seealso
-#' \code{\link{estimate_aggtree}}, \code{\link{causal_ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
+#' \code{\link{estimate_aggtree}}, \code{\link{causal_ols_aggtree}}, \code{\link{plot.aggTrees}},
+#' \code{\link{subtree_aggtree}}, \code{\link{sample_split}}
 #'
 #' @export
 aggregation_tree <- function(cates, X, maxdepth = 3, ...) {
@@ -108,7 +109,7 @@ subtree_aggtree <- function(x, leaves = NULL, cv = FALSE) {
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{plot.aggTrees}}
+#' @seealso \code{\link{aggregation_tree}}
 #'
 #' @export
 subtree_rpart <- function(tree, leaves = NULL, cv = FALSE) {
@@ -155,7 +156,7 @@ get_leaves <- function(tree) {
 #' @param X Covariate matrix (no intercept).
 #'
 #' @return
-#' A categorical variable whose levels denote in which leaf each unit falls.
+#' A factor whose levels denote in which leaf each unit falls.
 #'
 #' @author Riccardo Di Francesco
 #'

@@ -26,7 +26,7 @@ of their treatment effects.
 Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
 to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal partitions. Different
 subsamples are used: an "estimation sample" for the CATEs estimation, and an "aggregation sample" for the tree-growing
-and the tree-pruning.\cr
+and the tree-pruning (see \code{\link{sample_split}}).\cr
 
 \code{aggregation_tree} uses \code{X} to grow a tree approximating the CATEs provided by the user. For this, the user
 passes in as an argument a vector of CATEs \code{cates} obtained by fitting a model in the estimation sample and
@@ -38,7 +38,8 @@ The tree is grown up to some stopping criteria that can be specified by the user
 the \code{\link[rpart]{rpart.control}} documentation for this.\cr
 }
 \seealso{
-\code{\link{estimate_aggtree}}, \code{\link{causal_ols_aggtree}}, \code{\link{plot.aggTrees}}, \code{\link{subtree_aggtree}}
+\code{\link{estimate_aggtree}}, \code{\link{causal_ols_aggtree}}, \code{\link{plot.aggTrees}},
+\code{\link{subtree_aggtree}}, \code{\link{sample_split}}
 }
 \author{
 Riccardo Di Francesco

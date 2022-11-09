@@ -22,5 +22,5 @@ The expanded covariate matrix, as a data frame.
 Expands the covariate matrix, adding interactions and polynomials. This is particularly useful for penalized regressions.
 }
 \details{
-It is assumed that categorical variables are coded as \code{factors}. Also, no missing values are allowed.
+\code{expand_df} assumes that categorical variables are coded as \code{factors}. Also, no missing values are allowed.
 }

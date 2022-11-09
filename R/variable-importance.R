@@ -15,13 +15,20 @@
 #' heterogeneity.\cr
 #'
 #' Variable importance is computed as a weighted sum of how many times a particular covariate was split on
-#' at each depth in the forest. For more details, please see \code{\link[grf]{variable_importance}}.
+#' at each depth in the forest. For more details, please see \code{\link[grf]{variable_importance}}.\cr
+#'
+#' Notice that variable importance is generally a rough diagnostic of how treatment effects relate to the
+#' covariates. If two covariates are highly correlated, trees generally split on only one of those covariates, thus
+#' assigning low importance to the other. Therefore, one should not conclude that covariates with low importance are
+#' not related to heterogeneity. A more systematic way to assess how treatment effects relate to the covariates consists
+#' of investigating how the average characteristics of the units vary across subpopulations that differ in the magnitude
+#' of their treatment effects (see \code{\link{avg_characteristics_aggtree}}).
 #'
 #' @import grf magrittr
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso \code{\link{aggregation_tree}}
+#' @seealso \code{\link{aggregation_tree}}, \code{\link{avg_characteristics_aggtree}}
 #'
 #' @export
 var_importance <- function(cates, X) {
