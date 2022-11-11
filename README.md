@@ -105,7 +105,7 @@ Susan Athey, Julie Tibshirani and Stefan Wager.
 
 Victor Chernozhukov, Mert Demirer, Esther Duflo and Iván Fernández-Val.
 <b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an Application to Immunization in India.</b>
-<i>National Bureau of Economic Research.</i>, 2018.
+<i>National Bureau of Economic Research</i>, 2018.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
 Stefan Wager and Susan Athey.
