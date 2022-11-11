@@ -11,7 +11,9 @@ Optimality here refers to the fact that, at each granulairty level, the loss in 
 
 We use different samples to estimate the CATEs (step 1) and construct the sequence of partitions (steps 2 and 3). We call these “estimation sample” and “aggregation sample”. To conduct valid inference, we need to estimate honest trees. For this, we need an additional “honest sample”.
 
-Family of \*\_rpart functions.
+Most of the functions in the package can be divided in a family of `_rpart` functions and a family of  functions.
+
+The functions used in the examples below work with `aggTrees` objects. For each of these functions, which generally fall the syntax `*_aggtree`, I provide the corresponding `*_rpart` version that works with `rpart` objects. Thus, the package can be used with any tree that is a `rpart` object, e.g., with the output of `causalTree`.
   
 ## Installation  
 The current development version the package can be installed using the `devtools` package:
@@ -22,9 +24,7 @@ library(aggTrees)
 ```
 
 ## Usage Examples
-This section demonstrates how to use aggregation trees to discover heterogeneous subpopulations.
-
-First, we need to estimate the CATEs. This must be done outside the `aggTrees` package. The rationale for this is that one can use any estimator (or an ensemble of more estimators). Here we use the `causal_forest` function from the `grf` package:
+This section demonstrates how to use aggregation trees to discover heterogeneous subpopulations. Let us generate some data:
 
 ```
 ## Generate data.
@@ -34,13 +34,55 @@ n <- 3000
 k <- 3
 
 X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
 D <- rbinom(n, size = 1, prob = 0.5)
 mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2] # This implies that tau(x) = X_2.
 y <- mu0 + D * mu1 + rnorm(n)
+```
 
-## Split the sample.
-
-library(grf)
+We need to split the sample to perform our analysis. I also generate a honest sample to conduct valid inference.
 
 ```
+## Split the sample.
+splits <- sample_split(n, 0.5, 0.25, 0.25)
+estimation_idx <- splits$estimation_idx
+aggregation_idx <- splits$aggregation_idx
+honest_idx <- splits$honest_idx
+```
+
+First, we need to estimate the CATEs. This must be done outside the `aggTrees` package. The rationale for this is that one can use any estimator (or an ensemble of more estimators). Here we use the `causal_forest` function from the `grf` package:
+
+```
+## 1.) Estimate the CATEs. Use only estimation sample.
+library(grf)
+
+forest <- causal_forest(X[estimation_idx, ], y[estimation_idx], D[estimation_idx])
+cates <- predict(forest, X)$predictions
+```
+
+To assess treatment effect heterogeneity, one can look at the distribution of the CATEs, e.g., via histograms or kernel density estimates. However, this is not conclusive evidence of heterogeneity: if the histogram is concentrated at one point, it may be that our estimator is not able to detect heterogeneity, and if the histogram is spread, it may be that our estimates are very noisy. 
+
+A more systematic way to assess heterogeneity is to partition the population into groups that differ in the magnitude of their treatment effects. This is where aggregation trees play their role. 
+
+```
+## 2.) Construct a decision tree. Use only aggregation sample.
+tree <- aggregation_tree(cates[aggregation_idx], X[aggregation_idx, ])
+
+## 3.) Generate the sequence of partitions.
+plot(tree, sequence = TRUE) # Get a visualization of the sequence.
+```
+
+To conduct valid inference, we can use the honest sample to regress `y` on leaf dummies and interactions of these dummies and `D`. As the treatment is randomized, the coefficients of the interaction terms are unbiased estimates of the average treatment effects in each group (GATEs):
+
+```
+## Get standard errors. Use only honest sample.
+# First, we need a particular partition. 
+subtree <- subtree_aggtree(tree, leaves = 5)
+
+linear_model <- causal_ols_aggtree(subtree, y[honest_idx], X[honest_idx, ], D[honest_idx])
+summary(linear_model)
+```
+
+
+
