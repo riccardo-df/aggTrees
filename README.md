@@ -59,7 +59,7 @@ forest <- causal_forest(X[estimation_idx, ], y[estimation_idx], D[estimation_idx
 cates <- predict(forest, X)$predictions
 ```
 
-To assess treatment effect heterogeneity, one can look at the distribution of the CATEs, e.g., via histograms or kernel density estimates. However, this is not conclusive evidence of heterogeneity: if the histogram is concentrated at one point, it may be that our estimator is not able to detect heterogeneity, and if the histogram is spread, it may be that our estimates are very noisy. 
+To assess treatment effect heterogeneity, one can look at the distribution of the CATEs, e.g., via histograms or kernel density estimates. However, this is not conclusive evidence of heterogeneity: If the histogram is concentrated at one point, it may be that our estimator is not able to detect heterogeneity, and if the histogram is spread, it may be that our estimates are very noisy. 
 
 A more systematic way to assess heterogeneity is to partition the population into groups that differ in the magnitude of their treatment effects. This is where aggregation trees play their role. 
 
