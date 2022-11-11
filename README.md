@@ -91,3 +91,24 @@ A more systematic way to assess how treatment effects relate to the covariates c
 ## Assess heterogeneity.
 avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggregation_idx], method = "cates")
 ```
+
+## References
+
+Susan Athey, Julie Tibshirani and Stefan Wager.
+<b>Generalized Random Forests.</b> <i>Annals of Statistics</i>, 47(2), 2019.
+[<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
+
+Stefan Wager and Susan Athey.
+<b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
+<i>Journal of the American Statistical Association</i>, 113(523), 2018.
+[<a href="https://www.tandfonline.com/eprint/v7p66PsDhHCYiPafTJwC/full">paper</a>]
+
+Stefan Wager and Susan Athey.
+<b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
+<i>Journal of the American Statistical Association</i>, 113(523), 2018.
+[<a href="https://www.tandfonline.com/eprint/v7p66PsDhHCYiPafTJwC/full">paper</a>]
+
+Susan Athey and Guido Imbens.
+<b>Recursive Partitioning for Heterogeneous Causal Effects.<b>
+<i>Proceedings of the National Academy of Sciences<i>, 113(27), 2016.
+[<a href="https://www.pnas.org/doi/abs/10.1073/pnas.1510489113">paper</a>]
