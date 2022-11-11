@@ -11,8 +11,6 @@ Optimality here refers to the fact that, at each granulairty level, the loss in 
 
 We use different samples to estimate the CATEs (step 1) and construct the sequence of partitions (steps 2 and 3). We call these “estimation sample” and “aggregation sample”. To conduct valid inference, we need to estimate honest trees. For this, we need an additional “honest sample”.
 
-Most of the functions in the package can be divided in a family of `_rpart` functions and a family of  functions.
-
 The functions used in the examples below work with `aggTrees` objects. For each of these functions, which generally fall the syntax `*_aggtree`, I provide the corresponding `*_rpart` version that works with `rpart` objects. Thus, the package can be used with any tree that is a `rpart` object, e.g., with the output of `causalTree`.
   
 ## Installation  
