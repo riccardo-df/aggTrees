@@ -160,4 +160,15 @@ avg_characteristics_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL,
           \\label{table:average.characterstics.leaves}
         \\end{table}
       \\endgroup")
+
+  no_variation_names <- names(unlist(lapply(parms, function(x) { if (any(x[, 2] == 0)) idx <- 1})))
+
+  ## Warn the user for zero variation in leaves.
+  if (length(no_variation_names) > 1) {
+    names_string <- paste0(no_variation_names, collapse = ", ")
+    warning(paste0("Variables '", names_string, "' have no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
+  } else if (length(no_variation_names) == 1) {
+    warning(paste0("Variable '", no_variation_names, "' has no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
+
+  }
 }
