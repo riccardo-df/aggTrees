@@ -82,5 +82,12 @@ linear_model <- causal_ols_aggtree(subtree, y[honest_idx], X[honest_idx, ], D[ho
 summary(linear_model)
 ```
 
+Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form subpopulations
+that differ in the magnitude of their treatment effects, and if two covariates are highly correlated, trees generally split on only one of those covariates.
 
+A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across the leaves of the tree. For this, I provide a function that directly produces LATEX code for a nice table:
 
+```
+## Assess heterogeneity.
+avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggregation_idx], method = "cates")
+```
