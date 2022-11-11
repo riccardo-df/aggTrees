@@ -159,7 +159,7 @@ avg_characteristics_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL,
           \\caption{\\href{https://soundcloud.com/theplasticchairband}{Secret link.})
           \\label{table:average.characterstics.leaves}
         \\end{table}
-      \\endgroup")
+      \\endgroup \n\n")
 
   no_variation_names <- names(unlist(lapply(parms, function(x) { if (any(x[, 2] == 0)) idx <- 1})))
 
