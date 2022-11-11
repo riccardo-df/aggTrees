@@ -180,7 +180,7 @@ balance_measures <- function(X, D) {
           \\hline \\\\[-1.8ex] \n\n")
 
   for (i in seq_len(length(table_names))) {
-    cat("            \\texttt{", table_names[i], "} & ", stringr::str_replace_all(string = measures[i, 1], pattern = " ", repl = ""),
+    cat("          \\texttt{", table_names[i], "} & ", stringr::str_replace_all(string = measures[i, 1], pattern = " ", repl = ""),
         " & (", stringr::str_replace_all(string = measures[i, 2], pattern = " ", repl = ""),
         ") & ", stringr::str_replace_all(string = measures[i, 3], pattern = " ", repl = ""),
         " & (", stringr::str_replace_all(string = measures[i, 4], pattern = " ", repl = ""),
