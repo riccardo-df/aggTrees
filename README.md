@@ -5,7 +5,7 @@ Aggregation trees provide a completely nonparametric approach to constructing pa
 
 1. Estimate the conditional average treatment effects (CATES);
 2. Construct a decision tree using the CATEs;
-3. Generate a sequence of "optimal” partitions of the covariate space by pruning the tree.
+3. Generate a sequence of “optimal” partitions of the covariate space by pruning the tree.
 
 Optimality here refers to the fact that, at each granulairty level, the loss in explained heterogeneity resulting from aggregation is minimized. Notice that the sequence of partitions is nested, as we never undo previous aggregations. This guarantees consistency across the different granularity levels.
   
