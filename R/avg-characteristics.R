@@ -115,7 +115,7 @@ avg_characteristics_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL,
   leaves <- leaf_membership(tree, X)
 
   ## Regress each leaf on the leaf indicator.
-  regressions <- apply(X, MARGIN = 2, function(x) {estimatr::lm_robust(x ~ 0 + leaf, data = data.frame("x" = x, "leaf" = leaves), , se_type = "HC1")})
+  regressions <- apply(X, MARGIN = 2, function(x) {estimatr::lm_robust(x ~ 0 + leaf, data = data.frame("x" = x, "leaf" = leaves), se_type = "HC1")})
 
   ## Extract information.
   parms <- lapply(regressions, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
