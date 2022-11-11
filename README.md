@@ -49,7 +49,7 @@ aggregation_idx <- splits$aggregation_idx
 honest_idx <- splits$honest_idx
 ```
 
-First, we need to estimate the CATEs. This must be done outside the `aggTrees` package. The rationale for this is that one can use any estimator (or an ensemble of more estimators). Here we use the `causal_forest` function from the `grf` package:
+First, we need to estimate the CATEs. This must be done outside the `aggTrees` package. The rationale for this is that one can use any estimator (or an ensemble of more estimators). Here, we use the `causal_forest` function from the `grf` package:
 
 ```
 ## 1.) Estimate the CATEs. Use only estimation sample.
