@@ -9,7 +9,7 @@ Aggregation trees provide a completely nonparametric approach to constructing pa
 
 Optimality here refers to the fact that, at each granulairty level, the loss in explained heterogeneity resulting from aggregation is minimized. Notice that the sequence of partitions is nested, as we never undo previous aggregations. This guarantees consistency across the different granularity levels.
 
-We use different samples to estimate the CATEs (step 1) and construct the sequence of partitions (steps 2 and 3). We call these “estimation sample” and “aggregation sample”. To conduct valid inference, we need to estimate honest trees. For this, we need an additional “honest sample”.
+We use different samples to estimate the CATEs (step 1) and construct the sequence of partitions (steps 2 and 3). We call these “estimation sample” and “aggregation sample.” To conduct valid inference, we need to estimate honest trees. For this, we need an additional “honest sample.”
 
 The functions used in the examples below work with `aggTrees` objects. For each of these functions, which generally follow the syntax `*_aggtree`, I provide the corresponding `*_rpart` version that works with `rpart` objects. Thus, the package can be used with any tree that is a `rpart` object, e.g., with the output of `causalTree`.
   
