@@ -14,7 +14,7 @@ We use different samples to estimate the CATEs (step 1) and construct the sequen
 The functions used in the examples below work with `aggTrees` objects. For each of these functions, which generally follow the syntax `*_aggtree`, I provide the corresponding `*_rpart` version that works with `rpart` objects. Thus, the package can be used with any tree that is a `rpart` object, e.g., with the output of `causalTree`.
   
 ## Installation  
-The current development version the package can be installed using the `devtools` package:
+The current development version of the package can be installed using the `devtools` package:
 
 ```
 devtools::install_github("riccardo-df/aggTrees")
