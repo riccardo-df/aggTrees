@@ -1,10 +1,15 @@
 Package: aggTrees
 Type: Package
 Title: Aggregation Trees for Discovering Heterogeneous Subpopulations
-Version: 0.1.0
-Authors@R: 
-    person("Riccardo", "Di Francesco", , "difrancesco.riccardo96@gmail.com", role = c("aut", "cre"))
-Description: Implementing aggregation trees to discover heterogeneous subpopulation.
+Version: 1.0.0
+Author@R: person("Riccardo", "Di Francesco", email = "difrancesco.riccardo96@gmail.com",
+  role = c("aut", "cre"))
+Author: Riccardo Di Francesco [aut, cre]
+Maintainer: Riccardo Di Francesco <difrancesco.riccardo96@gmail.com>
+Description: A set of functions that work with 'aggTrees' and 'rpart' objects. These functions allow
+    the user to investigate how treatment effect heterogeneity varies across different subpopulations
+    identified by the leaves of a tree. The user can estimate and conduct inference about the average
+    treatment effect in each group and investigare how heterogeneity relates to the observed covariates.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
