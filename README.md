@@ -94,21 +94,21 @@ avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggrega
 
 ## References
 
-- Susan Athey and Guido Imbens.
+- Athey, S., & Imbens, G. W. (2016).
 <b>Recursive Partitioning for Heterogeneous Causal Effects.</b>
-<i>Proceedings of the National Academy of Sciences</i>, 113(27), 2016.
+<i>Proceedings of the National Academy of Sciences</i>, 113(27).
 [<a href="https://www.pnas.org/doi/abs/10.1073/pnas.1510489113">paper</a>]
 
-- Susan Athey, Julie Tibshirani and Stefan Wager.
-<b>Generalized Random Forests.</b> <i>Annals of Statistics</i>, 47(2), 2019.
+- Athey, S., Tibshirani, J., & Wager, S. (2019).
+<b>Generalized Random Forests.</b> <i>Annals of Statistics</i>, 47(2).
 [<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
 
-- Victor Chernozhukov, Mert Demirer, Esther Duflo and Iván Fernández-Val.
+- Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2018).
 <b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an Application to Immunization in India.</b>
-<i>National Bureau of Economic Research</i>, 2018.
+<i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
-- Stefan Wager and Susan Athey.
+- Wager, S., & Athey, S. (2018).
 <b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
-<i>Journal of the American Statistical Association</i>, 113(523), 2018.
+<i>Journal of the American Statistical Association</i>, 113(523).
 [<a href="https://www.tandfonline.com/eprint/v7p66PsDhHCYiPafTJwC/full">paper</a>]
