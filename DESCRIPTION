@@ -9,7 +9,7 @@ Maintainer: Riccardo Di Francesco <difrancesco.riccardo96@gmail.com>
 Description: A set of functions that work with 'aggTrees' and 'rpart' objects. These functions allow
     the user to investigate how treatment effect heterogeneity varies across different subpopulations
     identified by the leaves of a tree. The user can estimate and conduct inference about the average
-    treatment effect in each group and investigare how heterogeneity relates to the observed covariates.
+    treatment effect in each group and investigate how heterogeneity relates to the observed covariates.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
