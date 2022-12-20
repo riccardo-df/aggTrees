@@ -108,6 +108,10 @@ avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggrega
 <i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
+- Di Francesco, R. (2022).
+<b>Aggregation Trees.</b> <i>CEIS Working Paper</i>, 20(6).
+[<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]
+
 - Wager, S., & Athey, S. (2018).
 <b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
 <i>Journal of the American Statistical Association</i>, 113(523).
