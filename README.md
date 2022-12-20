@@ -109,8 +109,9 @@ avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggrega
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
 - Di Francesco, R. (2022).
-<b>Aggregation Trees.</b> <i>CEIS Working Paper</i>, 20(6).
+<b>Aggregation Trees (Research Paper No. 546).</b> <i>Tor Vergata University, CEIS.</i>
 [<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]
+[<a href="https://github.com/riccardo-df/aggTrees">code</a>]
 
 - Wager, S., & Athey, S. (2018).
 <b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
