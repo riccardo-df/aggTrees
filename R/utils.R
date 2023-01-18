@@ -1,43 +1,41 @@
 #' Sample Splitting
 #'
-#' Splits the sample in three different parts: estimation sample, aggregation sample, and honest sample.
+#' Splits the sample in estimation sample and honest sample.
 #'
 #' @param n Size of the sample to be split.
 #' @param estimation_frac Fraction of units for the estimation sample.
-#' @param aggregation_frac Fraction of units for the aggregation sample.
 #' @param honest_frac Fraction of units for the honest sample.
 #'
 #' @return
-#' A list storing the indexes for the three different subsamples.
+#' A list storing the indexes for the two different subsamples.
 #'
 #' @details
-#' The estimation and the aggregation sample are mandatory to use \code{\link{aggregation_tree}}, meaning that both
-#' \code{estimation_frac} and \code{aggregation_frac} must be non-zero.\cr
-#'
 #' The honest sample is required only if the user wants to conduct valid inference, which generally comes at the price of
-#' a larger mean squared error. If honesty is not desired, please set \code{honest_frac} equal to zero.
+#' a larger mean squared error.
 #'
 #' @seealso \code{\link{aggregation_tree}}
 #'
 #' @author Riccardo Di Francesco
 #'
+#' @references
+#' \itemize{
+#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#' }
+#'
 #' @export
-sample_split <- function(n,
-                         estimation_frac = 0.5, aggregation_frac = 0.25, honest_frac = 0.25) {
+sample_split <- function(n, estimation_frac = 0.5, honest_frac = 1 - estimation_frac) {
   ## Handling inputs and checks.
   if (n <= 0) stop("'n' cannot be equal or lower than zero.", call. = FALSE)
   if (estimation_frac <= 0 | estimation_frac >= 1) stop("'estimation_frac' must lie in the interval (0, 1).", call. = FALSE)
-  if (aggregation_frac <= 0 | aggregation_frac >= 1) stop("'aggregation_frac' must lie in the interval (0, 1).", call. = FALSE)
   if (honest_frac < 0 | honest_frac > 1) stop("'honest_frac' must lie in the interval [0, 1].", call. = FALSE)
-  if (estimation_frac + aggregation_frac + honest_frac != 1) stop("Fractions for the different samples do not sum up to one.", call. = FALSE)
+  if (estimation_frac + honest_frac != 1) stop("Fractions for the different samples do not sum up to one.", call. = FALSE)
 
   ## Split the sample.
   estimation_idx <- sample(1:n, floor(estimation_frac * n), replace = FALSE)
-  aggregation_idx <- sample(setdiff(1:n, estimation_idx), floor(aggregation_frac * n), replace = FALSE)
-  honest_idx <- setdiff(1:n, union(estimation_idx, aggregation_idx))
+  honest_idx <- setdiff(1:n, estimation_idx)
 
   ## Output.
-  return(list("estimation_idx" = estimation_idx, "aggregation_idx" = aggregation_idx, "honest_idx" = honest_idx))
+  return(list("estimation_idx" = estimation_idx, "honest_idx" = honest_idx))
 }
 
 
