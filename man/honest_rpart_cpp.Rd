@@ -9,7 +9,7 @@ honest_rpart_cpp(unique_leaves_honest, y_honest, honest_leaves)
 \arguments{
 \item{unique_leaves_honest}{Vector storing the unique leaf ids of the tree relative to the honest sample.}
 
-\item{y_honest}{Outcome vector of honest units.}
+\item{y_honest}{Outcome vector of honest units. This could be any vector. Leaf are replaced with means of this object.}
 
 \item{honest_leaves}{Vector of size \code{n.samples}. The i-th element stores the id of the leaf where the i-th honest observation falls.}
 }

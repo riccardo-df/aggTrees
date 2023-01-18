@@ -6,7 +6,7 @@
 #' Computes honest estimates for a rpart object.
 #'
 #' @param unique_leaves_honest Vector storing the unique leaf ids of the tree relative to the honest sample.
-#' @param y_honest Outcome vector of honest units.
+#' @param y_honest Outcome vector of honest units. This could be any vector. Leaf are replaced with means of this object.
 #' @param honest_leaves Vector of size \code{n.samples}. The i-th element stores the id of the leaf where the i-th honest observation falls.
 #'
 honest_rpart_cpp <- function(unique_leaves_honest, y_honest, honest_leaves) {
