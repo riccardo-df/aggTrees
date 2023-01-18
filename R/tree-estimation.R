@@ -159,7 +159,10 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw") {
     aipw <- causalDML::DML_aipw(y, D, X)
     scores <- aipw$ATE$delta
 
-    model <- estimatr::lm_robust(scores ~ 0 + leaf, data = data.frame("scores" = scores, "leaf" = leaves), se_type = "HC1")
+    if (length(unique(leaves)) == 1) {
+      model <- estimatr::lm_robust(scores ~ 1, data = data.frame("scores" = scores), se_type = "HC1")
+    } else {
+      model <- estimatr::lm_robust(scores ~ 0 + leaf, data = data.frame("scores" = scores, "leaf" = leaves), se_type = "HC1")
   }
 
   ## Output.
