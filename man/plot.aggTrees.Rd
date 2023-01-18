@@ -36,6 +36,11 @@ the user wants to plot an honest tree, \code{type} 3 or 5 is recommended to avoi
 \code{palette} can be either a vector of colors, or a function that takes as an argument the number of nodes of a tree and
 returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palette}} for high-quality palettes.\cr
 }
+\references{
+\itemize{
+  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+}
+}
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{recursive_partitioning_plot}}
 }

@@ -4,7 +4,7 @@
 \alias{estimate_aggtree}
 \title{Estimation of aggTrees Objects}
 \usage{
-estimate_aggtree(object, X, y = NULL, D = NULL, cates = NULL, method = "raw")
+estimate_aggtree(object, X, y, D, method = "aipw")
 }
 \arguments{
 \item{object}{An \code{aggTrees} object.}
@@ -15,9 +15,7 @@ estimate_aggtree(object, X, y = NULL, D = NULL, cates = NULL, method = "raw")
 
 \item{D}{Treatment assignment vector.}
 
-\item{cates}{Estimated CATEs.}
-
-\item{method}{Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.}
+\item{method}{Either \code{"raw"} or \code{"aipw"}, defines how leaf predictions are replaced.}
 }
 \value{
 An \code{aggTrees} object.
@@ -32,11 +30,12 @@ to the user-specified \code{method}.
 
 If \code{method = "raw"}, \code{estimate_aggtree} replaces leaf predictions with the difference between the sample average
 of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf,
-which is an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to
-specify \code{y} and \code{D}.\cr
+which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
 
-If \code{method = "cates"}, \code{estimate_aggtree} replaces leaf predictions with the sample average of \code{cates}
-in each leaf. This is a valid estimator of the GATEs in observational studies.\cr
+If \code{method = "aipw"}, \code{estimate_aggtree} replaces leaf predictions with the sample average of doubly-robust
+scores in each leaf. This is a valid estimator of the GATEs in observational studies. Scores are constructed via
+5-fold cross fitting. Honest regression forests are used to estimate the propensity score and the conditional mean
+function of the outcome.\cr
 
 \code{estimate_aggtree} allows the user to implement "honest" estimation. If observations in \code{X} have not been
 used to construct the tree, then the new predictions are honest in the sense of Athey and Imbens (2016). This allows
@@ -49,6 +48,8 @@ internal nodes' estimates are not replaced, so the user should ignore them and f
 \references{
 \itemize{
   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+  \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
 }
 }
 \seealso{

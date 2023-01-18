@@ -4,7 +4,7 @@
 \alias{causal_ols_aggtree}
 \title{Estimating Leaf-Effects via Linear Models}
 \usage{
-causal_ols_aggtree(object, y, X, D)
+causal_ols_aggtree(object, y, X, D, method = "aipw")
 }
 \arguments{
 \item{object}{An \code{aggTrees} object.}
@@ -14,6 +14,8 @@ causal_ols_aggtree(object, y, X, D)
 \item{X}{Covariate matrix (no intercept).}
 
 \item{D}{Treatment assignment vector.}
+
+\item{method}{Either \code{"raw"} or \code{"aipw"}, determines the outcome used in the regression.}
 }
 \value{
 The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
@@ -28,25 +30,30 @@ conduct valid inference using conventional approaches.
 In randomized experiments, taking the difference between the sample average of the observed outcomes of treated units
 and the sample average of the observed outcomes of control units is an unbiased estimators of Average Treatment Effect
 (ATE). One can use this estimator in different subpopulations to estimate the Group Average Treatment Effects (GATEs).
-Notice that this is equivalent to regress the outcome on a set of dummies denoting group membership and the interactions
-of these dummies on the binary treatment indicator. One of the advantage of using the regression is that one gets standard
-errors for the GATEs.\cr
-
-\code{causal_ols_aggtree} fits via OLS the following model:
+This is equivalent to regress the observed outcome on a set of dummies denoting group membership and the
+interactions of these dummies with the binary treatment indicator. In the case that groups are defined by the leaves
+of a tree, we get the following linear model:
 
 \deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
 with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-number of leaves. It is immediate to notice that, in randomized experiments, the estimated betas correspond to the GATEs
-of the l-th group:
+number of leaves. The estimated betas correspond to the GATEs of each group, thus standard errors for the betas are
+standard errors for the GATEs. \code{causal_ols_aggtree} estimates this model if \code{method} is \code{"raw"}.
 
-\deqn{E[Y | D = 1, L_l = 1] - E[Y | D = 0, L_l = 1] = \gamma_l + \beta_l - \gamma_l = \beta_l}
+In observational studies, the \code{"raw"} method yields biased estimates of the GATEs, and inference is not valid.
+One way out is to construct doubly-robust \code{y_i^*} scores and use them as a pseudo-outcome in the following regression:
 
-Thus, standard errors for the estimated betas are standard errors for the estimated GATEs. Standard errors are estimated
-via the Eicker-Huber-White estimator.\cr
+\deqn{y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+
+This way, we model and make inference about causal effects using standard methodologies. \code{causal_ols_aggtree}
+constructs the scores and estimates this model if \code{method} is \code{"aipw"}. Scores are constructed via
+5-fold cross fitting. Honest regression forests are used to estimate the propensity score and the conditional mean
+function of the outcome.
 
 Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{X}, and
-\code{D} must not have been used to grow the tree.\cr
+\code{D} must not have been used to grow the tree in \code{object}.\cr
+
+Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
 If the tree consists of a root only, \code{causal_ols_aggtree} regresses \code{y} on a constant and \code{D}, thus
 estimating the ATE.
@@ -54,6 +61,8 @@ estimating the ATE.
 \references{
 \itemize{
   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
+  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+  \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
 }
 }
 \seealso{

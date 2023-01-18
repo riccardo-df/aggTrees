@@ -4,30 +4,20 @@
 #'
 #' @param object An \code{aggTrees} object.
 #' @param X Covariate matrix (no intercept).
-#' @param y Outcome vector.
-#' @param D Treatment assignment vector.
-#' @param cates Estimated CATEs.
-#' @param method Either \code{"raw"} or \code{"cates"}, defines how GATEs are estimated.
+#' @param gates Estimated GATEs, one for each leaf.
 #'
 #' @return
 #' Prints LATEX code in the console.
 #'
 #' @details
-#' The fact that a tree does not split on a particular covariate does not imply that such covariate is not related
-#' to treatment effect heterogeneity. In fact, there may exist several ways to form subpopulations that differ in the
-#' magnitude of their treatment effects, and if two covariates are highly correlated, trees generally split on only one
-#' of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of
-#' investigating how the average characteristics of the units vary across the leaves of the tree.\cr
+#' If two covariates are highly correlated, trees generally split on only one of those covariates.Thus, the fact
+#' that a tree does not split on a particular covariate does not imply that such covariate is not related
+#' to treatment effect heterogeneity. A more systematic way to assess how treatment effects relate to the covariates
+#' consists of investigating how the average characteristics of the units vary across the leaves of the tree.\cr
 #'
 #' To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a set of dummies denoting leaf membership.
 #' This way, we get the average characteristics of units in each leaf, together with a standard error. Standard errors are
 #' estimated via the Eicker-Huber-White estimator.\cr
-#'
-#' \code{avg_characteristics_aggtree} also computes the GATE in each leaf. This is achieved either by taking the difference
-#' between the sample average of the observed outcomes of treated units and the sample average of the observed outcomes of
-#' control units in each leaf if \code{method = "raw"}, or by computing the sample average of the estimated CATEs in each
-#' leaf if \code{method = "cates"}. Both methods yield unbiased estimates in randomized experiments, while
-#' \code{method = "raw"} is biased in observational studies.
 #'
 #' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
@@ -36,25 +26,22 @@
 #' @references
 #' \itemize{
 #'   \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
+#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 #' }
 #'
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_aggtree}}, \code{\link{estimate_aggtree}}
 #'
 #' @export
-avg_characteristics_aggtree <- function(object, X, y = NULL, D = NULL, cates = NULL, method = "raw") {
+avg_characteristics_aggtree <- function(object, X, gates = NULL) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(object$honesty %in% c(TRUE, FALSE))) stop("You must provide a valid aggTrees object.", call. = FALSE)
 
-  if (!(method %in% c("raw", "cates"))) stop("You must provide a valid method.", call. = FALSE)
-  if (method == "raw" & (is.null(y) | is.null(D))) stop("'raw' method requires the user to specify both 'y' and 'D'.", call. = FALSE)
-  if (method == "cates" & (is.null(cates))) stop("'cates' method requires the user to specify 'cates'.", call. = FALSE)
-
   tree <- object$tree
 
   ## Compute average characteristics.
-  avg_char <- avg_characteristics_rpart(tree, X, y, D, cates, method)
+  avg_char <- avg_characteristics_rpart(tree, X, gates)
 }
 
 
@@ -64,30 +51,20 @@ avg_characteristics_aggtree <- function(object, X, y = NULL, D = NULL, cates = N
 #'
 #' @param tree A \code{rpart} object.
 #' @param X Covariate matrix (no intercept).
-#' @param y Outcome vector.
-#' @param D Treatment assignment vector.
-#' @param cates Estimated CATEs.
-#' @param method Either \code{"raw"} or \code{"cates"}, defines how GATEs are estimated.
+#' @param gates Estimated GATEs, one for each leaf.
 #'
 #' @return
 #' Prints LATEX code in the console.
 #'
 #' @details
-#' The fact that a tree does not split on a particular covariate does not imply that such covariate is not related
-#' to treatment effect heterogeneity. In fact, there may exist several ways to form subpopulations that differ in the
-#' magnitude of their treatment effects, and if two covariates are highly correlated, trees generally split on only one
-#' of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of
-#' investigating how the average characteristics of the units vary across the leaves of the tree.\cr
+#' If two covariates are highly correlated, trees generally split on only one of those covariates.Thus, the fact
+#' that a tree does not split on a particular covariate does not imply that such covariate is not related
+#' to treatment effect heterogeneity. A more systematic way to assess how treatment effects relate to the covariates
+#' consists of investigating how the average characteristics of the units vary across the leaves of the tree.\cr
 #'
 #' To achieve this, \code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
 #' This way, we get the average characteristics of units in each leaf, together with a standard error. Standard errors are
 #' estimated via the Eicker-Huber-White estimator.\cr
-#'
-#' \code{avg_characteristics_rpart} also computes the GATE in each leaf. This is achieved either by taking the difference
-#' between the sample average of the observed outcomes of treated units and the sample average of the observed outcomes of
-#' control units in each leaf if \code{method = "raw"}, or by computing the sample average of the estimated CATEs in each
-#' leaf if \code{method = "cates"}. Both methods yield unbiased estimates in randomized experiments, while
-#' \code{method = "raw"} is biased in observational studies.
 #'
 #' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 #'
@@ -103,13 +80,9 @@ avg_characteristics_aggtree <- function(object, X, y = NULL, D = NULL, cates = N
 #' @seealso \code{\link{aggregation_tree}}, \code{\link{causal_ols_rpart}}, \code{\link{estimate_rpart}}
 #'
 #' @export
-avg_characteristics_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL, method = "raw") {
+avg_characteristics_rpart <- function(tree, X, gates) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
-
-  if (!(method %in% c("raw", "cates"))) stop("You must provide a valid method.", call. = FALSE)
-  if (method == "raw" & (is.null(y) | is.null(D))) stop("'raw' method requires the user to specify both 'y' and 'D'.", call. = FALSE)
-  if (method == "cates" & (is.null(cates))) stop("'cates' method requires the user to specify 'cates'.", call. = FALSE)
 
   ## Generate leaves indicators.
   leaves <- leaf_membership(tree, X)
@@ -119,12 +92,7 @@ avg_characteristics_rpart <- function(tree, X, y = NULL, D = NULL, cates = NULL,
 
   ## Extract information.
   parms <- lapply(regressions, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
-
-  if (method == "raw") {
-    gates <- round(sapply(sort(unique(leaves)), function(x) {mean(y[leaves == x][D[leaves == x] == 1]) - mean(y[leaves == x][D[leaves == x] == 0])}), 2)
-  } else if (method == "cates") {
-    gates <- round(sapply(sort(unique(leaves)), function(x) {mean(cates[leaves == x])}), 2)
-  }
+  if (is.null(gates)) gates <- rep("NA", lenght = length(unique(leaves)))
 
   ## Write table.
   table_names <- rename_latex(colnames(X))

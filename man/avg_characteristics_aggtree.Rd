@@ -4,27 +4,14 @@
 \alias{avg_characteristics_aggtree}
 \title{Leaves Average Characteristics}
 \usage{
-avg_characteristics_aggtree(
-  object,
-  X,
-  y = NULL,
-  D = NULL,
-  cates = NULL,
-  method = "raw"
-)
+avg_characteristics_aggtree(object, X, gates = NULL)
 }
 \arguments{
 \item{object}{An \code{aggTrees} object.}
 
 \item{X}{Covariate matrix (no intercept).}
 
-\item{y}{Outcome vector.}
-
-\item{D}{Treatment assignment vector.}
-
-\item{cates}{Estimated CATEs.}
-
-\item{method}{Either \code{"raw"} or \code{"cates"}, defines how GATEs are estimated.}
+\item{gates}{Estimated GATEs, one for each leaf.}
 }
 \value{
 Prints LATEX code in the console.
@@ -33,27 +20,21 @@ Prints LATEX code in the console.
 Compute the average characteristics of units in each leaf of an \code{aggTrees} object.
 }
 \details{
-The fact that a tree does not split on a particular covariate does not imply that such covariate is not related
-to treatment effect heterogeneity. In fact, there may exist several ways to form subpopulations that differ in the
-magnitude of their treatment effects, and if two covariates are highly correlated, trees generally split on only one
-of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of
-investigating how the average characteristics of the units vary across the leaves of the tree.\cr
+If two covariates are highly correlated, trees generally split on only one of those covariates.Thus, the fact
+that a tree does not split on a particular covariate does not imply that such covariate is not related
+to treatment effect heterogeneity. A more systematic way to assess how treatment effects relate to the covariates
+consists of investigating how the average characteristics of the units vary across the leaves of the tree.\cr
 
 To achieve this, \code{avg_characteristics_aggtree} regresses each covariate on a set of dummies denoting leaf membership.
 This way, we get the average characteristics of units in each leaf, together with a standard error. Standard errors are
 estimated via the Eicker-Huber-White estimator.\cr
-
-\code{avg_characteristics_aggtree} also computes the GATE in each leaf. This is achieved either by taking the difference
-between the sample average of the observed outcomes of treated units and the sample average of the observed outcomes of
-control units in each leaf if \code{method = "raw"}, or by computing the sample average of the estimated CATEs in each
-leaf if \code{method = "cates"}. Both methods yield unbiased estimates in randomized experiments, while
-\code{method = "raw"} is biased in observational studies.
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \references{
 \itemize{
   \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
+  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{

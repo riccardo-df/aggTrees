@@ -17,11 +17,6 @@
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @references
-#' \itemize{
-#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
-#' }
-#'
 #' @export
 sample_split <- function(n, estimation_frac = 0.5, honest_frac = 1 - estimation_frac) {
   ## Handling inputs and checks.

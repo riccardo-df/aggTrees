@@ -19,6 +19,11 @@ An \code{aggTrees} object.
 \description{
 Extracts a subtree with a user-specified number of leaves from an \code{aggTrees} object.
 }
+\references{
+\itemize{
+  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+}
+}
 \seealso{
 \code{\link{aggregation_tree}}, \code{\link{subtree_rpart}}, \code{\link{plot.aggTrees}}
 }

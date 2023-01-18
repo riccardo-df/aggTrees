@@ -20,6 +20,11 @@
 #'
 #' @author Riccardo Di Francesco
 #'
+#' @references
+#' \itemize{
+#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#' }
+#'
 #' @seealso
 #' \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{recursive_partitioning_plot}}
 #'
@@ -105,6 +110,11 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
 #'
 #' @seealso \code{\link{aggregation_tree}}
 #'
+#' @references
+#' \itemize{
+#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#' }
+#'
 #' @author Riccardo Di Francesco
 #'
 #' @export
@@ -122,6 +132,11 @@ summary.aggTrees <- function(object, ...) {
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @seealso \code{\link{aggregation_tree}}
+#'
+#' @references
+#' \itemize{
+#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#' }
 #'
 #' @author Riccardo Di Francesco
 #'
