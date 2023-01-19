@@ -1,10 +1,9 @@
 #' Sample Splitting
 #'
-#' Splits the sample in estimation sample and honest sample.
+#' Splits the sample in training and honest subsamples.
 #'
 #' @param n Size of the sample to be split.
-#' @param estimation_frac Fraction of units for the estimation sample.
-#' @param honest_frac Fraction of units for the honest sample.
+#' @param training_frac Fraction of units for the training sample.
 #'
 #' @return
 #' A list storing the indexes for the two different subsamples.
@@ -18,19 +17,17 @@
 #' @author Riccardo Di Francesco
 #'
 #' @export
-sample_split <- function(n, estimation_frac = 0.5, honest_frac = 1 - estimation_frac) {
+sample_split <- function(n, training_frac = 0.5) {
   ## Handling inputs and checks.
   if (n <= 0) stop("'n' cannot be equal or lower than zero.", call. = FALSE)
-  if (estimation_frac <= 0 | estimation_frac >= 1) stop("'estimation_frac' must lie in the interval (0, 1).", call. = FALSE)
-  if (honest_frac < 0 | honest_frac > 1) stop("'honest_frac' must lie in the interval [0, 1].", call. = FALSE)
-  if (estimation_frac + honest_frac != 1) stop("Fractions for the different samples do not sum up to one.", call. = FALSE)
+  if (training_frac <= 0 | training_frac >= 1) stop("'training_frac' must lie in the interval (0, 1).", call. = FALSE)
 
   ## Split the sample.
-  estimation_idx <- sample(1:n, floor(estimation_frac * n), replace = FALSE)
-  honest_idx <- setdiff(1:n, estimation_idx)
+  training_idx <- sample(1:n, floor(training_frac * n), replace = FALSE)
+  honest_idx <- setdiff(1:n, training_idx)
 
   ## Output.
-  return(list("estimation_idx" = estimation_idx, "honest_idx" = honest_idx))
+  return(list("estimation_idx" = training_idx, "honest_idx" = honest_idx))
 }
 
 

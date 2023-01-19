@@ -4,20 +4,18 @@
 \alias{sample_split}
 \title{Sample Splitting}
 \usage{
-sample_split(n, estimation_frac = 0.5, honest_frac = 1 - estimation_frac)
+sample_split(n, training_frac = 0.5)
 }
 \arguments{
 \item{n}{Size of the sample to be split.}
 
-\item{estimation_frac}{Fraction of units for the estimation sample.}
-
-\item{honest_frac}{Fraction of units for the honest sample.}
+\item{training_frac}{Fraction of units for the training sample.}
 }
 \value{
 A list storing the indexes for the two different subsamples.
 }
 \description{
-Splits the sample in estimation sample and honest sample.
+Splits the sample in training and honest subsamples.
 }
 \details{
 The honest sample is required only if the user wants to conduct valid inference, which generally comes at the price of
