@@ -27,7 +27,7 @@ sample_split <- function(n, training_frac = 0.5) {
   honest_idx <- setdiff(1:n, training_idx)
 
   ## Output.
-  return(list("estimation_idx" = training_idx, "honest_idx" = honest_idx))
+  return(list("training_idx" = training_idx, "honest_idx" = honest_idx))
 }
 
 
