@@ -85,9 +85,9 @@ build_aggtree <- function(y, D, X, honest_frac = 0.5, cates = NULL, is_honest = 
   ## Output.
   out <- list("tree" = tree,
               "cates" = cates,
+              if (is.null(is_honest)) "forest" = forest else "forest" = NULL,
               "dta" = data.frame(y, D, X),
-              "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx),
-              "honest_estimates" = FALSE)
+              "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx))
   class(out) <- "aggTrees"
   return(out)
 }
@@ -101,9 +101,10 @@ build_aggtree <- function(y, D, X, honest_frac = 0.5, cates = NULL, is_honest = 
 #' @param object An \code{aggTrees} object.
 #' @param n_groups Number of desired groups.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how GATEs are estimated.
+#' @param verbose Logical, whether to print in console.
 #'
 #' @return
-#' None.
+#' The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
 #'
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
@@ -153,7 +154,7 @@ build_aggtree <- function(y, D, X, honest_frac = 0.5, cates = NULL, is_honest = 
 #' \code{\link{build_aggtree}}
 #'
 #' @export
-analyze_aggtree <- function(object, n_groups, method = "aipw", ...) {
+analyze_aggtree <- function(object, n_groups, method = "aipw", verbose = TRUE, ...) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
@@ -191,5 +192,9 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", ...) {
   }
 
   ## Print table.
-  avg_characteristics_rpart(groups, X_hon, gates_point, gates_sd)
+  if (verbose) avg_characteristics_rpart(groups, X_hon, gates_point, gates_sd)
+
+  ## Output.
+  return(list("tree" = tree,
+              "model" = model))
 }
