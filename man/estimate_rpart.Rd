@@ -7,7 +7,7 @@
 estimate_rpart(tree, X, y, D, method = "aipw")
 }
 \arguments{
-\item{tree}{A \code{\link[rpart]{rpart}} object.}
+\item{tree}{An \code{\link[rpart]{rpart}} object.}
 
 \item{X}{Covariate matrix (no intercept).}
 
@@ -15,13 +15,13 @@ estimate_rpart(tree, X, y, D, method = "aipw")
 
 \item{D}{Treatment assignment vector.}
 
-\item{method}{Either \code{"raw"} or \code{"cates"}, defines how leaf predictions are replaced.}
+\item{method}{Either \code{"raw"} or \code{"cates"}, controls how leaf predictions are replaced.}
 }
 \value{
-A tree with leaf predictions replaced, as a \code{\link[rpart]{rpart}} object.
+A tree with leaf predictions replaced, as an \code{\link[rpart]{rpart}} object.
 }
 \description{
-Replace leaf predictions of a \code{\link[rpart]{rpart}} object using external data.
+Replace leaf predictions of an \code{\link[rpart]{rpart}} object using external data.
 }
 \details{
 \code{estimate_rpart} replaces the leaf estimates of a tree as follows. First, it "pushes" all observations in
@@ -30,8 +30,7 @@ to the user-specified \code{method}.
 
 If \code{method = "raw"}, \code{estimate_rpart} replaces leaf predictions with the difference between the sample average
 of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each leaf,
-which is an unbiased estimator of the GATEs if the assignment to treatment is randomized. This requires the user to
-specify \code{y} and \code{D}.\cr
+which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
 
 If \code{method = "aipw"}, \code{estimate_rpart} replaces leaf predictions with the sample average of doubly-robust
 scores in each leaf. This is a valid estimator of the GATEs in observational studies. Scores are constructed via

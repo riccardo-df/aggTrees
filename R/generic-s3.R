@@ -35,11 +35,10 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
   ## Handling inputs and checks.
   if (!(inherits(x, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(x$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
-  if (!(x$honesty %in% c(TRUE, FALSE))) stop("You must provide a valid aggTrees object.", call. = FALSE)
 
   tree <- x$tree
 
-  if (x$honesty == TRUE & !(type %in% c(3, 5))) warning("Only the leaf estimates are honest. Internal nodes show non-honest estimates. Consider using 'type' 3 or 5.")
+  # if (!is.null(x$idx$honest_idx) & !(type %in% c(3, 5))) warning("Only the leaf estimates are honest. Internal nodes show non-honest estimates. Consider using 'type' 3 or 5.")
 
   ## Plotting.
   if (sequence) {
@@ -78,7 +77,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
       Sys.sleep(1)
     }
   } else {
-    subtree <- subtree_rpart(tree, leaves)
+    subtree <- subtree(tree, leaves)
     prefix <- c("ATE = ", rep("GATE = ", times = (length(subtree$frame$n) - 1)))
     sizes <- subtree$frame$n
     percentages <- round(subtree$frame$n / subtree$frame$n[1] * 100, 0)
@@ -119,7 +118,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
 #'
 #' @export
 summary.aggTrees <- function(object, ...) {
-  cat("Honesty: ",object$honesty, "\n", sep = "")
+  cat("Honest estimates:", object$honest_estimates, "\n")
   summary(object$tree)
 }
 
@@ -142,6 +141,6 @@ summary.aggTrees <- function(object, ...) {
 #'
 #' @export
 print.aggTrees <- function(x, ...) {
-  cat("Honesty: ",x$honesty, "\n", sep = "")
+  cat("Honest estimates:", x$honest_estimates, "\n")
   print(x$tree)
 }

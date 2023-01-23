@@ -4,28 +4,23 @@
 \alias{avg_characteristics_rpart}
 \title{Leaves Average Characteristics}
 \usage{
-avg_characteristics_rpart(tree, X, gates)
+avg_characteristics_rpart(tree, X, gates_point = NULL, gates_sd = NULL)
 }
 \arguments{
 \item{tree}{A \code{rpart} object.}
 
 \item{X}{Covariate matrix (no intercept).}
 
-\item{gates}{Estimated GATEs, one for each leaf.}
+\item{gates_point}{Standard errors for estimated GATEs, one for each leaf.}
 }
 \value{
 Prints LATEX code in the console.
 }
 \description{
-Compute the average characteristics of units in each leaf of a \code{\link[rpart]{rpart}} object.
+Compute the average characteristics of units in each leaf of an \code{\link[rpart]{rpart}} object.
 }
 \details{
-If two covariates are highly correlated, trees generally split on only one of those covariates.Thus, the fact
-that a tree does not split on a particular covariate does not imply that such covariate is not related
-to treatment effect heterogeneity. A more systematic way to assess how treatment effects relate to the covariates
-consists of investigating how the average characteristics of the units vary across the leaves of the tree.\cr
-
-To achieve this, \code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
+\code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
 This way, we get the average characteristics of units in each leaf, together with a standard error. Standard errors are
 estimated via the Eicker-Huber-White estimator.\cr
 
@@ -34,6 +29,7 @@ Compilation of the LATEX code requires the following packages: \code{booktabs}, 
 \references{
 \itemize{
   \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
+  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{

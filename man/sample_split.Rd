@@ -15,11 +15,7 @@ sample_split(n, training_frac = 0.5)
 A list storing the indexes for the two different subsamples.
 }
 \description{
-Splits the sample in training and honest subsamples.
-}
-\details{
-The honest sample is required only if the user wants to conduct valid inference, which generally comes at the price of
-a larger mean squared error.
+Splits the sample into training and honest subsamples.
 }
 \seealso{
 \code{\link{aggregation_tree}}

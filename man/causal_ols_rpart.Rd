@@ -13,50 +13,44 @@ causal_ols_rpart(tree, y, X, D, method = "aipw")
 
 \item{X}{Covariate matrix (no intercept).}
 
-\item{D}{Treatment assignment vector.}
+\item{D}{Treatment assignment vector}
 
-\item{method}{Either \code{"raw"} or \code{"aipw"}, determines the outcome used in the regression.}
+\item{method}{Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.}
 }
 \value{
-The fitted model, as a \code{\link[estimatr]{lm_robust}} object.
+The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
 }
 \description{
 Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
 estimated coefficients correspond to the GATEs in each leaf. If the data used in the OLS estimation have not been
 used to grow the tree (a condition called "honesty"), then one can use the standard errors for the tree's estimates
-to conduct valid inference using conventional approaches.
+to construct valid confidence intervals.
 }
 \details{
-In randomized experiments, taking the difference between the sample average of the observed outcomes of treated units
-and the sample average of the observed outcomes of control units is an unbiased estimators of Average Treatment Effect
-(ATE). One can use this estimator in different subpopulations to estimate the Group Average Treatment Effects (GATEs).
-This is equivalent to regress the observed outcome on a set of dummies denoting group membership and the
-interactions of these dummies with the binary treatment indicator. In the case that groups are defined by the leaves
-of a tree, we get the following linear model:
+The \code{method} argument controls how GATEs are estimated. If \code{"method" == "raw"}, we estimate via OLS the following
+linear model:
 
-\deqn{y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
+\deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
 with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-number of leaves. The estimated betas correspond to the GATEs of each group, thus standard errors for the betas are
-standard errors for the GATEs. \code{causal_ols_rpart} estimates this model if \code{method} is \code{"raw"}.
+number of groups. If the treatment is randomly assigned, one can show that the estimated betas identify the GATEs of
+each group. Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
+due to selection into treatment. To get unbiased estimates, we can set \code{"method"} to \code{"aipw"} to construct
+doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
 
-In observational studies, the \code{"raw"} method yields biased estimates of the GATEs, and inference is not valid.
-One way out is to construct doubly-robust \code{y_i^*} scores and use them as a pseudo-outcome in the following regression:
+\deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
-\deqn{y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
-
-This way, we model and make inference about causal effects using standard methodologies. \code{causal_ols_rpart}
-constructs the scores and estimates this model if \code{method} is \code{"aipw"}. Scores are constructed via
-5-fold cross fitting. Honest regression forests are used to estimate the propensity score and the conditional mean
-function of the outcome.
+This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual. Scores are
+constructed via 5-fold cross fitting. Honest regression forests are used to estimate the propensity score and the
+conditional mean function of the outcome.\cr
 
 Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{X}, and
-\code{D} must not have been used to grow the tree in \code{object}.\cr
+\code{D} must not have been used to grow the \code{tree}.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
-If the tree consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D}, thus
-estimating the ATE.
+If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} or the doubly-robust scores on a constant
+and \code{D}, thus estimating the ATE.
 }
 \references{
 \itemize{
@@ -67,7 +61,7 @@ estimating the ATE.
 }
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{estimate_rpart}}
+\code{\link{estimate_rpart}}
 }
 \author{
 Riccardo Di Francesco

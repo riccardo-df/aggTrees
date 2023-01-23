@@ -13,7 +13,7 @@ get_leaves(tree)
 The number of leaves.
 }
 \description{
-Extracts the number of leaves of a given tree.
+Extracts the number of leaves of an \code{\link[rpart]{rpart}} object.
 }
 \seealso{
 \code{\link{aggregation_tree}}

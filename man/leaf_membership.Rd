@@ -15,7 +15,7 @@ leaf_membership(tree, X)
 A factor whose levels denote in which leaf each unit falls.
 }
 \description{
-Constructs a variable that encodes in which leaf of a \code{\link[rpart]{rpart}} object the units in a given data frame fall.
+Constructs a variable that encodes in which leaf of an \code{\link[rpart]{rpart}} object the units in a given data frame fall.
 }
 \seealso{
 \code{\link{aggregation_tree}}
