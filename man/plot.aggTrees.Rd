@@ -30,9 +30,6 @@
 Plots an \code{aggTrees} object.
 }
 \details{
-Due to coding limitations, honest trees from \code{aggTrees} objects show honest estimates only in their leaves. Thus, if
-the user wants to plot an honest tree, \code{type} 3 or 5 is recommended to avoid misleading plots.\cr
-
 \code{palette} can be either a vector of colors, or a function that takes as an argument the number of nodes of a tree and
 returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palette}} for high-quality palettes.\cr
 }
@@ -42,7 +39,7 @@ returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palet
 }
 }
 \seealso{
-\code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{recursive_partitioning_plot}}
+\code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 }
 \author{
 Riccardo Di Francesco

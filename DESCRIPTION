@@ -6,10 +6,9 @@ Author@R: person("Riccardo", "Di Francesco", email = "difrancesco.riccardo96@gma
   role = c("aut", "cre"))
 Author: Riccardo Di Francesco [aut, cre]
 Maintainer: Riccardo Di Francesco <difrancesco.riccardo96@gmail.com>
-Description: A set of functions that work with 'aggTrees' and 'rpart' objects. These functions allow
-    the user to investigate how treatment effect heterogeneity varies across different subpopulations
-    identified by the leaves of a tree. The user can estimate and conduct inference about the average
-    treatment effect in each group and investigate how heterogeneity relates to the observed covariates.
+Description: A set of functions that allows the user to investigate how treatment effect heterogeneity varies across different 
+    subpopulations identified by the leaves of an rpart tree (e.g., aggregation trees, causal trees. The user can estimate and 
+    conduct inference about the average treatment effect in each group and investigate how heterogeneity relates to the observed covariates.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,23 +16,10 @@ Depends:
     R (>= 2.10)
 RoxygenNote: 7.2.3
 Imports: 
-    causalDML,
-    causalTree (>= 0.0),
-    dplyr,
+    causalDML (>= 0.1.0),
     estimatr,
-    ggplot2,
-    grDevices,
     grf,
-    magrittr,
-    parttree (>= 0.0.1.9000),
-    Rcpp,
     rpart,
     rpart.plot,
     stats,
-    stringr,
-    treeClust
-Remotes: 
-    grantmcdermott/parttree,
-    susanathey/causalTree
-LinkingTo: 
-    Rcpp
+    stringr

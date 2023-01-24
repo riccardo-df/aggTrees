@@ -17,9 +17,6 @@ A list storing the indexes for the two different subsamples.
 \description{
 Splits the sample into training and honest subsamples.
 }
-\seealso{
-\code{\link{aggregation_tree}}
-}
 \author{
 Riccardo Di Francesco
 }

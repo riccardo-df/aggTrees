@@ -4,7 +4,7 @@
 \alias{analyze_aggtree}
 \title{Analyzing Aggregation Trees}
 \usage{
-analyze_aggtree(object, n_groups, method = "aipw", ...)
+analyze_aggtree(object, n_groups, method = "aipw", verbose = TRUE)
 }
 \arguments{
 \item{object}{An \code{aggTrees} object.}
@@ -12,9 +12,11 @@ analyze_aggtree(object, n_groups, method = "aipw", ...)
 \item{n_groups}{Number of desired groups.}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, controls how GATEs are estimated.}
+
+\item{verbose}{Logical, whether to print in console.}
 }
 \value{
-None.
+The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
 }
 \description{
 For a user-specified number of groups, select the optimal grouping and obtain point estimation and inference about
@@ -29,14 +31,15 @@ about the GATEs. \cr
 \code{analyze_aggtree} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
 desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and inference about the
 GATEs, together with the average characteristics of the units in each group. Notice that inference is valid only if the
-honest sample is non-empty, that is, the \code{honest_frac} argument of \code{build_aggtree} is non-zero.\cr
+honest sample is non-empty, that is, the user allocated some units to the honest sample when running
+\code{\link{build_aggtree}}.\cr
 
 The \code{method} argument controls how GATEs are estimated. If \code{"method" == "raw"}, we estimate via OLS the following
 linear model:
 
 \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
-with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
+with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th group, and \code{|T|} the
 number of groups. If the treatment is randomly assigned, one can show that the estimated betas identify the GATEs of
 each group. Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
 due to selection into treatment. To get unbiased estimates, we can set \code{"method"} to \code{"aipw"} to construct
@@ -44,16 +47,12 @@ doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the follow
 
 \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
-This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual. Scores are
-constructed via 5-fold cross fitting. Honest regression forests are used to estimate the propensity score and the
-conditional mean function of the outcome.\cr
+This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual.  Honest regression forests
+and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
 
-Regardless of the chosen \code{method}, GATEs are estimated using observations in the honest sample as specified in the
-output of \code{build_aggtree}. If the honest sample is empty, the same data used to construct the tree are used to estimate
-the models above. This invalidates inference and produces a warning message.
-
-If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} or the doubly-robust scores on a constant
-and \code{D}, thus estimating the ATE.
+Regardless of the chosen \code{method}, GATEs are estimated using observations in the honest sample as defined by the
+output of \code{\link{build_aggtree}}. If the honest sample is empty, the same data used to construct the tree are used to
+estimate the models above. This invalidates inference and produces a warning message.
 }
 \references{
 \itemize{

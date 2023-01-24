@@ -8,8 +8,6 @@
 #' @return
 #' A list storing the indexes for the two different subsamples.
 #'
-#' @seealso \code{\link{aggregation_tree}}
-#'
 #' @author Riccardo Di Francesco
 #'
 #' @export

@@ -4,7 +4,16 @@
 \alias{build_aggtree}
 \title{Building Aggregation Trees}
 \usage{
-build_aggtree(y, D, X, honest_frac = 0.5, cates = NULL, is_honest = NULL, ...)
+build_aggtree(
+  y,
+  D,
+  X,
+  honest_frac = 0.5,
+  method = "aipw",
+  cates = NULL,
+  is_honest = NULL,
+  ...
+)
 }
 \arguments{
 \item{y}{Outcome vector.}
@@ -14,6 +23,8 @@ build_aggtree(y, D, X, honest_frac = 0.5, cates = NULL, is_honest = NULL, ...)
 \item{X}{Covariate matrix (no intercept).}
 
 \item{honest_frac}{Fraction of observations to be allocated to honest sample.}
+
+\item{method}{Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.}
 
 \item{cates}{Estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
 
@@ -34,10 +45,19 @@ to approximate the CATEs. Third, the tree is pruned to derive a nested sequence 
 granularity level. The user can then choose her preferred level of granularity to obtain point estimation and inference
 about the GATEs. \cr
 
-\code{build_aggtree} constructs the sequence of groupings. Although node estimates are provided and shown by the generic
-S3 methods, these should be ignored by the user. To obtain point estimation and inference about the GATEs,
-please check \code{\link{analyze_aggtree}}. Notice that inference is valid only if the honest sample is non-empty, that is,
-\code{honest_frac} is non-zero.\cr
+\code{build_aggtree} constructs the sequence of groupings and estimate the GATEs in each node. To obtain inference,
+please check \code{\link{analyze_aggtree}}. Notice that inference is valid only if the honest sample is non-empty.\cr
+
+After we constructed the sequence of groupings, GATEs can be estimated in several ways. This is controlled by the
+\code{method} argument. If \code{"method" == "raw"}, we compute the difference in mean outcomes between treated and
+control observations in each node. This is an unbiased estimator in randomized experiment. If \code{"method" == "aipw"}, we
+construct doubly-robust scores and average them in each node. Honest regression forests and 5-fold cross fitting are used
+to estimate the propensity score and the conditional mean function of the outcome. This is unbiased also in observational
+studies.\cr
+
+Regardless of the chosen \code{method}, GATEs are estimated using observations in the honest sample. If the honest sample
+is empty, the same data used to construct the tree are used to estimate the GATEs. This invalidates the inference
+obtained by \code{\link{analyze_aggtree}}.\cr
 
 The user can provide a vector of estimated CATEs via the \code{cates} argument. If so, the user needs to specify a logical
 vector to denote which observations belong to the honest sample. If honesty is not desired, \code{is_honest} must be a
@@ -53,7 +73,7 @@ the \code{\link[rpart]{rpart.control}} documentation for this.\cr
 }
 }
 \seealso{
-\code{\link{analyze_aggtree}}
+\code{\link{analyze_aggtree}} \code{\link{plot.aggTrees}}
 }
 \author{
 Riccardo Di Francesco

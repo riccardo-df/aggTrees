@@ -10,9 +10,6 @@
 #' @param ... Further arguments from \code{\link[rpart.plot]{prp}}.
 #'
 #' @details
-#' Due to coding limitations, honest trees from \code{aggTrees} objects show honest estimates only in their leaves. Thus, if
-#' the user wants to plot an honest tree, \code{type} 3 or 5 is recommended to avoid misleading plots.\cr
-#'
 #' \code{palette} can be either a vector of colors, or a function that takes as an argument the number of nodes of a tree and
 #' returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palette}} for high-quality palettes.\cr
 #'
@@ -26,7 +23,7 @@
 #' }
 #'
 #' @seealso
-#' \code{\link{aggregation_tree}}, \code{\link{subtree_aggtree}}, \code{\link{recursive_partitioning_plot}}
+#' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 #'
 #' @export
 plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
@@ -37,8 +34,6 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
   if (!(inherits(x$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
 
   tree <- x$tree
-
-  # if (!is.null(x$idx$honest_idx) & !(type %in% c(3, 5))) warning("Only the leaf estimates are honest. Internal nodes show non-honest estimates. Consider using 'type' 3 or 5.")
 
   ## Plotting.
   if (sequence) {
@@ -65,7 +60,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
                       leaf.round = 0,
                       prefix = prefix,
                       suffix = suffix,
-                      pal.thresh = tree$frame$yval[2],
+                      pal.thresh = tree$frame$yval[1],
                       box.palette = if (is.function(palette)) palette(nrow(tree$frame)) else palette,
                       branch = 0.3,
                       branch.col = colors,
@@ -92,7 +87,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
                     leaf.round = 0,
                     prefix = prefix,
                     suffix = suffix,
-                    pal.thresh = subtree$frame$yval[2],
+                    pal.thresh = tree$frame$yval[1],
                     box.palette = if (!is.function(palette)) palette else palette(nrow(subtree$frame)),
                     branch = 0.3,
                     ...)
@@ -107,7 +102,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
 #' @param object \code{aggTrees} object.
 #' @param ... Further arguments passed to or from other methods.
 #'
-#' @seealso \code{\link{aggregation_tree}}
+#' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 #'
 #' @references
 #' \itemize{
@@ -118,7 +113,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
 #'
 #' @export
 summary.aggTrees <- function(object, ...) {
-  cat("Honest estimates:", object$honest_estimates, "\n")
+  if (is.null(object$idx$honest_idx)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
   summary(object$tree)
 }
 
@@ -130,7 +125,7 @@ summary.aggTrees <- function(object, ...) {
 #' @param x \code{aggTrees} object.
 #' @param ... Further arguments passed to or from other methods.
 #'
-#' @seealso \code{\link{aggregation_tree}}
+#' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 #'
 #' @references
 #' \itemize{
@@ -141,6 +136,6 @@ summary.aggTrees <- function(object, ...) {
 #'
 #' @export
 print.aggTrees <- function(x, ...) {
-  cat("Honest estimates:", x$honest_estimates, "\n")
+  if (is.null(x$idx$honest_idx)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
   print(x$tree)
 }
