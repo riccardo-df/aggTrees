@@ -72,7 +72,7 @@ build_aggtree <- function(y, D, X,
     honest_idx <- idx$honest_idx
   } else {
     training_idx <- which(!is_honest)
-    honest_idx <- which(is_honest)
+    if (sum(is_honest) > 0) honest_idx <- which(is_honest) else honest_idx = NULL
   }
 
   ## Define variables.
