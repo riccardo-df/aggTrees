@@ -94,11 +94,11 @@ build_aggtree <- function(y, D, X,
   ## Grow the tree using training sample (tree-growing step).
   tree <- rpart::rpart(cates ~ ., data = data.frame("cates" = cates[training_idx], X_tr), method = "anova", control = rpart::rpart.control(...), model = TRUE)
 
-  ## If honest, replace each node with predictions computed in honest sample. Otherwise, adaptive trees.
-  if (honest_frac > 0 | sum(is_honest) > 0) {
-    new_tree <- estimate_rpart(tree, y_hon, D_hon, X_hon, method)
-  } else {
+  ## If adaptive, replace each node with predictions computed in training sample. Otherwise, honest trees.
+  if (honest_frac == 0 | (!is.null(is_honest) & sum(is_honest) == 0)) {
     new_tree <- estimate_rpart(tree, y_tr, D_tr, X_tr, method)
+  } else {
+    new_tree <- estimate_rpart(tree, y_hon, D_hon, X_hon, method)
   }
 
   ## Output.
