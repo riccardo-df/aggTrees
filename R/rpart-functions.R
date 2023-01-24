@@ -225,8 +225,9 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw") {
 #'
 #' Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 #'
-#' If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} or the doubly-robust scores on a constant
-#' and \code{D}, thus estimating the ATE.
+#' If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D} if
+#' \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
+#' we get an estimate of the ATE.
 #'
 #' @import rpart estimatr causalDML
 #'
