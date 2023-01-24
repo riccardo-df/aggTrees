@@ -104,7 +104,7 @@ build_aggtree <- function(y, D, X,
   ## Output.
   if (is.null(is_honest)) forest <- forest else forest <- NULL
 
-  out <- list("tree" = tree,
+  out <- list("tree" = new_tree,
               "cates" = cates,
               "dta" = data.frame(y, D, X),
               "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx))
