@@ -87,7 +87,8 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #' @param X Covariate matrix (no intercept).
 #'
 #' @return
-#' A factor whose levels denote in which leaf each unit falls.
+#' A factor whose levels denote in which leaf each unit falls. Leafs are ordered in increasing order of their predictions. Thus,
+#' the first leaf has the most negative prediction.
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -290,7 +291,7 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
 #'
 #' @param tree An \code{rpart} object.
 #' @param X Covariate matrix (no intercept).
-#' @param gates_point Estimated GATEs, one for each leaf.
+#' @param gates_point Estimated GATEs, one for each leaf, in increasing order (from most negative to most positive).
 #' @param gates_sd Standard errors for estimated GATEs, one for each leaf.
 #'
 #' @return

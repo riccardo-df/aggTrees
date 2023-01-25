@@ -189,23 +189,22 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, ve
 
   if (n_groups > get_leaves(tree)) stop("The sequence you provided does not contain any grouping with ", n_groups, " groups.", call. = FALSE)
 
-  y <- object$dta$y
-  D <- object$dta$D
-  X <- object$dta[, -c(1:2)]
+  ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
+  if (is.null(object$idx$honest_idx)) {
+    y <- object$dta$y
+    D <- object$dta$D
+    X <- object$dta[, -c(1:2)]
+  } else {
+    y <- object$dta$y[object$idx$honest_idx]
+    D <- object$dta$D[object$idx$honest_idx]
+    X <- object$dta[object$idx$honest_idx, -c(1:2)]
+  }
 
   ## Select granularity level.
   groups <- subtree(tree, leaves = n_groups)
 
-  ## GATEs point estimates and standard errors. Honest only if honest sample is non-empty.
-  if (is.null(object$idx$honest_idx)) {
-    results <- causal_ols_rpart(groups, y, X, D, method = method, scores = scores)
-  } else {
-    y_hon <- y[object$idx$honest_idx]
-    D_hon <- D[object$idx$honest_idx]
-    X_hon <- X[object$idx$honest_idx, ]
-
-    results <- causal_ols_rpart(groups, y_hon, X_hon, D_hon, method = method, scores = scores)
-  }
+  ## GATEs point estimates and standard errors.
+  results <- causal_ols_rpart(groups, y, X, D, method = method, scores = scores)
 
   model <- results$model
   scores <- results$scores
@@ -223,7 +222,7 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, ve
   }
 
   ## Print table.
-  if (verbose) avg_characteristics_rpart(groups, X_hon, gates_point, gates_sd)
+  if (verbose) avg_characteristics_rpart(groups, X, gates_point, gates_sd)
 
   ## Output.
   return(list("model" = model, "scores" = scores))
