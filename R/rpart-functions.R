@@ -116,9 +116,11 @@ leaf_membership <- function(tree, X) {
 #' @param D Treatment assignment vector.
 #' @param X Covariate matrix (no intercept).
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how node predictions are replaced.
+#' @param scores Optional, vector of scores to be used in replacing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #'
 #' @return
-#' A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object.
+#' A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object, and the scores (if \code{method == "raw"},
+#' this is \code{NULL}).
 #'
 #' @details
 #' If \code{method = "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
@@ -149,7 +151,7 @@ leaf_membership <- function(tree, X) {
 #'
 #' @seealso \code{\link{causal_ols_rpart}} \code{\link{avg_characteristics_rpart}}
 #' @export
-estimate_rpart <- function(tree, y, D, X, method = "aipw") {
+estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if (!(method %in% c("raw", "aipw"))) stop("You must provide a valid method.", call. = FALSE)
@@ -168,8 +170,10 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw") {
       counter <- counter + 1
     }
   } else if (method == "aipw") {
-    aipw <- causalDML::DML_aipw(y, D, X)
-    scores <- aipw$ATE$delta
+    if (is.null(scores)) {
+      aipw <- causalDML::DML_aipw(y, D, X)
+      scores <- aipw$ATE$delta
+    }
 
     new_tree$frame$yval[1] <- mean(scores)
 
@@ -183,7 +187,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw") {
   }
 
   ## Output.
-  return(new_tree)
+  return(list("tree" = new_tree, "scores" = scores))
 }
 
 
@@ -199,9 +203,11 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw") {
 #' @param D Treatment assignment vector
 #' @param X Covariate matrix (no intercept).
 #' @param method Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.
+#' @param scores Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #'
 #' @return
-#' The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
+#' The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is
+#' \code{NULL}).
 #'
 #' @details
 #' The \code{method} argument controls how GATEs are estimated. If \code{"method" == "raw"}, we estimate via OLS the following
@@ -244,7 +250,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw") {
 #' @seealso \code{\link{estimate_rpart}} \code{\link{avg_characteristics_rpart}}
 #'
 #' @export
-causal_ols_rpart <- function(tree, y, X, D, method = "aipw") {
+causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. It must be either 'raw' or 'aipw'.", call. = FALSE)
 
@@ -261,8 +267,10 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw") {
       model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
     }
   } else if (method == "aipw") {
-    aipw <- causalDML::DML_aipw(y, D, X)
-    scores <- aipw$ATE$delta
+    if (is.null(scores)) {
+      aipw <- causalDML::DML_aipw(y, D, X)
+      scores <- aipw$ATE$delta
+    }
 
     if (length(unique(leaves)) == 1) {
       model <- estimatr::lm_robust(scores ~ 1, data = data.frame("scores" = scores), se_type = "HC1")
@@ -272,7 +280,7 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw") {
   }
 
   ## Output.
-  return(model)
+  return(list("model" = model, "scores" = scores))
 }
 
 

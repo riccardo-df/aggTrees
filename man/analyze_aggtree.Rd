@@ -4,7 +4,13 @@
 \alias{analyze_aggtree}
 \title{Analyzing Aggregation Trees}
 \usage{
-analyze_aggtree(object, n_groups, method = "aipw", verbose = TRUE)
+analyze_aggtree(
+  object,
+  n_groups,
+  method = "aipw",
+  scores = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{object}{An \code{aggTrees} object.}
@@ -12,6 +18,8 @@ analyze_aggtree(object, n_groups, method = "aipw", verbose = TRUE)
 \item{n_groups}{Number of desired groups.}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, controls how GATEs are estimated.}
+
+\item{scores}{Optional, vector of scores to be used in estimating GATEs. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
 
 \item{verbose}{Logical, whether to print in console.}
 }

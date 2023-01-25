@@ -96,16 +96,22 @@ build_aggtree <- function(y, D, X,
 
   ## If adaptive, replace each node with predictions computed in training sample. Otherwise, honest trees.
   if (honest_frac == 0 | (!is.null(is_honest) & sum(is_honest) == 0)) {
-    new_tree <- estimate_rpart(tree, y_tr, D_tr, X_tr, method)
+    results <- estimate_rpart(tree, y_tr, D_tr, X_tr, method)
+    new_tree <- results$tree
+    scores <- results$scores
   } else {
-    new_tree <- estimate_rpart(tree, y_hon, D_hon, X_hon, method)
+    results <- estimate_rpart(tree, y_hon, D_hon, X_hon, method)
+    new_tree <- results$tree
+    scores <- results$scores
   }
 
   ## Output.
   if (is.null(is_honest)) forest <- forest else forest <- NULL
+  if (method == "raw") scores <- NULL
 
   out <- list("tree" = new_tree,
-              "cates" = cates,
+              "forest" = forest,
+              "scores" = scores,
               "dta" = data.frame(y, D, X),
               "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx))
   class(out) <- "aggTrees"
@@ -121,10 +127,12 @@ build_aggtree <- function(y, D, X,
 #' @param object An \code{aggTrees} object.
 #' @param n_groups Number of desired groups.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how GATEs are estimated.
+#' @param scores Optional, vector of scores to be used in estimating GATEs. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #' @param verbose Logical, whether to print in console.
 #'
 #' @return
-#' The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
+#' The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is
+#' \code{NULL}). Additionally, it prints LATEX code in the console if \code{verbose == TRUE} (the default).
 #'
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
@@ -169,12 +177,13 @@ build_aggtree <- function(y, D, X,
 #' \code{\link{build_aggtree}}
 #'
 #' @export
-analyze_aggtree <- function(object, n_groups, method = "aipw", verbose = TRUE) {
+analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, verbose = TRUE) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate the GATEs. \n To get valid inference, set 'honest_frac' to a positive number in 'build_aggtree'.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
+  if (!(verbose %in% c(TRUE, FALSE))) stop("Invalid 'verbose'. This must be either TRUE or FALSE.", call. = FALSE)
 
   tree <- object$tree
 
@@ -184,15 +193,22 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", verbose = TRUE) {
   D <- object$dta$D
   X <- object$dta[, -c(1:2)]
 
-  y_hon <- y[object$idx$honest_idx]
-  D_hon <- D[object$idx$honest_idx]
-  X_hon <- X[object$idx$honest_idx, ]
-
   ## Select granularity level.
   groups <- subtree(tree, leaves = n_groups)
 
-  ## GATEs estimation.
-  model <- causal_ols_rpart(groups, y_hon, X_hon, D_hon, method = method)
+  ## GATEs point estimates and standard errors. Honest only if honest sample is non-empty.
+  if (is.null(object$idx$honest_idx)) {
+    results <- causal_ols_rpart(groups, y, X, D, method = method, scores = scores)
+  } else {
+    y_hon <- y[object$idx$honest_idx]
+    D_hon <- D[object$idx$honest_idx]
+    X_hon <- X[object$idx$honest_idx, ]
+
+    results <- causal_ols_rpart(groups, y_hon, X_hon, D_hon, method = method, scores = scores)
+  }
+
+  model <- results$model
+  scores <- results$scores
 
   if (method == "raw") {
     gates_point <- coef(summary(model))[(n_groups+1):(n_groups*2), "Estimate"]
@@ -210,5 +226,5 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", verbose = TRUE) {
   if (verbose) avg_characteristics_rpart(groups, X_hon, gates_point, gates_sd)
 
   ## Output.
-  return(model)
+  return(list("model" = model, "scores" = scores))
 }

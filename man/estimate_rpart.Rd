@@ -4,7 +4,7 @@
 \alias{estimate_rpart}
 \title{Estimation of rpart Objects}
 \usage{
-estimate_rpart(tree, y, D, X, method = "aipw")
+estimate_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
 \arguments{
 \item{tree}{An \code{\link[rpart]{rpart}} object.}
@@ -16,9 +16,12 @@ estimate_rpart(tree, y, D, X, method = "aipw")
 \item{X}{Covariate matrix (no intercept).}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, controls how node predictions are replaced.}
+
+\item{scores}{Optional, vector of scores to be used in replacing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
 }
 \value{
-A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object.
+A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object, and the scores (if \code{method == "raw"},
+this is \code{NULL}).
 }
 \description{
 Replace node predictions of an \code{\link[rpart]{rpart}} object using external data.

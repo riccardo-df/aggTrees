@@ -7,7 +7,7 @@
 avg_characteristics_rpart(tree, X, gates_point = NULL, gates_sd = NULL)
 }
 \arguments{
-\item{tree}{A \code{rpart} object.}
+\item{tree}{An \code{rpart} object.}
 
 \item{X}{Covariate matrix (no intercept).}
 

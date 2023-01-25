@@ -4,7 +4,7 @@
 \alias{causal_ols_rpart}
 \title{Estimating Leaf-Effects via Linear Models}
 \usage{
-causal_ols_rpart(tree, y, X, D, method = "aipw")
+causal_ols_rpart(tree, y, X, D, method = "aipw", scores = NULL)
 }
 \arguments{
 \item{tree}{An \code{\link[rpart]{rpart}} object.}
@@ -16,9 +16,12 @@ causal_ols_rpart(tree, y, X, D, method = "aipw")
 \item{D}{Treatment assignment vector}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.}
+
+\item{scores}{Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
 }
 \value{
-The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
+The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is
+\code{NULL}).
 }
 \description{
 Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
@@ -43,13 +46,14 @@ doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the follow
 This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual. Honest regression forests
 and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
 
-Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{X}, and
-\code{D} must not have been used to grow the \code{tree}.\cr
+Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
+\code{X} must not have been used to grow the \code{tree}.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
-If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} or the doubly-robust scores on a constant
-and \code{D}, thus estimating the ATE.
+If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D} if
+\code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
+we get an estimate of the ATE.
 }
 \references{
 \itemize{
