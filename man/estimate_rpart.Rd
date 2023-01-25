@@ -27,19 +27,17 @@ this is \code{NULL}).
 Replace node predictions of an \code{\link[rpart]{rpart}} object using external data.
 }
 \details{
-If \code{method = "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
+If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
 of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each node,
 which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
 
-If \code{method = "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
+If \code{method == "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
 scores in each node. This is a valid estimator of the GATEs in observational studies. Honest regression forests
 and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
 
 \code{estimate_rpart} allows the user to implement "honest" estimation. If observations in \code{y}, \code{D} and \code{X}
 have not been used to construct the \code{tree}, then the new predictions are honest in the sense of Athey and Imbens (2016).
-This allows the user to conduct valid inference about the estimated GATEs with standard approaches, e.g., by constructing
-conventional confidence intervals. To get standard errors for the tree's estimates, please use
-\code{\link{causal_ols_rpart}}.\cr
+To get standard errors for the tree's estimates, please use \code{\link{causal_ols_rpart}}.\cr
 }
 \references{
 \itemize{

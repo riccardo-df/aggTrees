@@ -11,7 +11,7 @@ avg_characteristics_rpart(tree, X, gates_point = NULL, gates_sd = NULL)
 
 \item{X}{Covariate matrix (no intercept).}
 
-\item{gates_point}{Estimated GATEs, one for each leaf.}
+\item{gates_point}{Estimated GATEs, one for each leaf, in increasing order (from most negative to most positive).}
 
 \item{gates_sd}{Standard errors for estimated GATEs, one for each leaf.}
 }
@@ -23,7 +23,8 @@ Compute the average characteristics of units in each leaf of an \code{\link[rpar
 }
 \details{
 \code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
-This way, we get the average characteristics of units in each leaf, together with a standard error. Standard errors are
+This way, we get the average characteristics of units in each leaf, together with a standard error. Leaves are
+ordered in increasing order of their predictions (from most negative to most positive). Standard errors are
 estimated via the Eicker-Huber-White estimator.\cr
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.

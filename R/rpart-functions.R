@@ -87,8 +87,8 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #' @param X Covariate matrix (no intercept).
 #'
 #' @return
-#' A factor whose levels denote in which leaf each unit falls. Leafs are ordered in increasing order of their predictions. Thus,
-#' the first leaf has the most negative prediction.
+#' A factor whose levels denote in which leaf each unit falls. Leaves are ordered in increasing order of their predictions
+#' (from most negative to most positive).
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -124,19 +124,17 @@ leaf_membership <- function(tree, X) {
 #' this is \code{NULL}).
 #'
 #' @details
-#' If \code{method = "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
+#' If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
 #' of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each node,
 #' which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
 #'
-#' If \code{method = "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
+#' If \code{method == "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
 #' scores in each node. This is a valid estimator of the GATEs in observational studies. Honest regression forests
 #' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
 #'
 #' \code{estimate_rpart} allows the user to implement "honest" estimation. If observations in \code{y}, \code{D} and \code{X}
 #' have not been used to construct the \code{tree}, then the new predictions are honest in the sense of Athey and Imbens (2016).
-#' This allows the user to conduct valid inference about the estimated GATEs with standard approaches, e.g., by constructing
-#' conventional confidence intervals. To get standard errors for the tree's estimates, please use
-#' \code{\link{causal_ols_rpart}}.\cr
+#' To get standard errors for the tree's estimates, please use \code{\link{causal_ols_rpart}}.\cr
 #'
 #' @import causalDML
 #'
@@ -299,7 +297,8 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
 #'
 #' @details
 #' \code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
-#' This way, we get the average characteristics of units in each leaf, together with a standard error. Standard errors are
+#' This way, we get the average characteristics of units in each leaf, together with a standard error. Leaves are
+#' ordered in increasing order of their predictions (from most negative to most positive). Standard errors are
 #' estimated via the Eicker-Huber-White estimator.\cr
 #'
 #' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.

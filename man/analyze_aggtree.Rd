@@ -24,7 +24,8 @@ analyze_aggtree(
 \item{verbose}{Logical, whether to print in console.}
 }
 \value{
-The fitted model, as an \code{\link[estimatr]{lm_robust}} object.
+The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is
+\code{NULL}). Additionally, it prints LATEX code in the console if \code{verbose == TRUE} (the default).
 }
 \description{
 For a user-specified number of groups, select the optimal grouping and obtain point estimation and inference about

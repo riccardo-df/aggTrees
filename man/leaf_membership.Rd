@@ -12,7 +12,8 @@ leaf_membership(tree, X)
 \item{X}{Covariate matrix (no intercept).}
 }
 \value{
-A factor whose levels denote in which leaf each unit falls.
+A factor whose levels denote in which leaf each unit falls. Leaves are ordered in increasing order of their predictions
+(from most negative to most positive).
 }
 \description{
 Constructs a variable that encodes in which leaf of an \code{\link[rpart]{rpart}} object the units in a given data frame fall.

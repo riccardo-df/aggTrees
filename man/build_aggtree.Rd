@@ -28,7 +28,7 @@ build_aggtree(
 
 \item{cates}{Estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
 
-\item{is_honest}{Logical vector denoting which observations belong to honest sample. Required only if the \code{cates} argument is used.}
+\item{is_honest}{Logical vector denoting which observations belong to the honest sample. Required only if the \code{cates} argument is used.}
 
 \item{...}{Further arguments from \code{\link[rpart]{rpart.control}}.}
 }
@@ -51,13 +51,13 @@ please check \code{\link{analyze_aggtree}}. Notice that inference is valid only 
 After we constructed the sequence of groupings, GATEs can be estimated in several ways. This is controlled by the
 \code{method} argument. If \code{"method" == "raw"}, we compute the difference in mean outcomes between treated and
 control observations in each node. This is an unbiased estimator in randomized experiment. If \code{"method" == "aipw"}, we
-construct doubly-robust scores and average them in each node. Honest regression forests and 5-fold cross fitting are used
-to estimate the propensity score and the conditional mean function of the outcome. This is unbiased also in observational
-studies.\cr
+construct doubly-robust scores and average them in each node. This is unbiased also in observational studies. Honest
+regression forests and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of
+the outcome.\cr
 
 Regardless of the chosen \code{method}, GATEs are estimated using observations in the honest sample. If the honest sample
-is empty, the same data used to construct the tree are used to estimate the GATEs. This invalidates the inference
-obtained by \code{\link{analyze_aggtree}}.\cr
+is empty, the same data used to construct the tree are used to estimate GATEs. This is fine for prediction but invalidates
+the inference obtained by \code{\link{analyze_aggtree}}.\cr
 
 The user can provide a vector of estimated CATEs via the \code{cates} argument. If so, the user needs to specify a logical
 vector to denote which observations belong to the honest sample. If honesty is not desired, \code{is_honest} must be a
