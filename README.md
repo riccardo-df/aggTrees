@@ -39,7 +39,7 @@ mu1 <- 0.5 * X[, 1] + X[, 2] # This implies that tau(x) = X_2.
 y <- mu0 + D * mu1 + rnorm(n)
 ```
 
-As a first step, we need to estimate CATEs. We can do this with any estimator we like. Then, in the second step we construct a tree using the CATEs as an outcome. Given the tree, we can compute node predictions (i.e., GATEs) as we like. In the following chunk of code, I split the data into a training sample and an honest sample (required to conduct valid inference). We use the training sample to estimate the CATEs and construct/prune the tree. Then, we use the honest sample to compute node predictions by constructing and averaging doubly-robust scores.
+As a first step, we need to estimate CATEs. We can do this with any estimator we like. Then, in the second step we construct a tree using the CATEs as an outcome. Given the tree, we can compute node predictions (i.e., GATEs) as we like. In the following chunk of code, I split the data into a training sample and an honest sample (required to conduct valid inference). We use the training sample to estimate CATEs and construct/prune the tree. Then, we use the honest sample to compute node predictions by constructing and averaging doubly-robust scores.
 
 ```
 ## Sample splitting.
