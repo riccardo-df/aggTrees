@@ -96,7 +96,7 @@ summary(results$model)
 <b>Generalized Random Forests.</b> <i>Annals of Statistics</i>, 47(2).
 [<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
 
-- Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2018).
+- Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2017).
 <b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments.</b>
 <i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
