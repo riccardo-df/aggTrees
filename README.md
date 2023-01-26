@@ -75,7 +75,7 @@ predict(tree, X)
 
 By default, `build_aggtree` estimate CATEs internally via a [https://github.com/grf-labs/grf/blob/master/r-package/grf/R/causal_forest.R](causal forest). Alternatively, we can override this by using the `cates` argument to input estimated CATEs, as I did above. When this is the case, we also need to specify `is_honest`, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions.
 
-Now we have a whole sequence of optimal groupings. We can pick the grouping associated with our preferred granularity level and run some analysis. 
+Now we have a whole sequence of optimal groupings. We can pick the grouping associated with our preferred granularity level and run some analysis. First, we would like to get standard errors for the GATEs. This is achieved by estimating via OLS appropriate linear models using the honest sample. Then, we would like to assess the driving factors of treatment effects by relating heterogeneity to observed covariates. Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form groups, and if two covariates are highly correlated, trees generally split on only one of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across the leaves of the tree. All of this is done in the following chunk of code:
 
 ```
 ## Analyze grouping with 5 groups.
@@ -83,11 +83,7 @@ results <- analyze_aggtree(groupings, n_groups = 5, method = "aipw", scores = gr
 summary(results$model)
 ```
 
-`analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and with the average charactestics of units in each leaf. 
-
-
-Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form subpopulations
-that differ in the magnitude of their treatment effects, and if two covariates are highly correlated, trees generally split on only one of those covariates A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across the leaves of the tree. For this, I provide a function that directly produces LATEX code for a nice table.
+`analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and average charactestics of units in each leaf. This way, we obtain a nice and easy-to-read output that we can plug in papers/reports.
 
 ## References
 
@@ -101,13 +97,18 @@ that differ in the magnitude of their treatment effects, and if two covariates a
 [<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
 
 - Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2018).
-<b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an Application to Immunization in India.</b>
+<b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments.</b>
 <i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
 - Di Francesco, R. (2022).
 <b>Aggregation Trees.</b> <i>CEIS Research Paper, 546.</i>
 [<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]
+
+- Semenova, V., & Chernozhukov, V. (2021).
+<b>Debiased Machine Learning of Conditional Average Treatment Effects and Other Causal Functions.</b>
+<i>The Econometrics Journal</i>, 24 (2).
+[<a href="https://academic.oup.com/ectj/article/24/2/264/5899048">paper</a>]
 
 - Wager, S., & Athey, S. (2018).
 <b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
