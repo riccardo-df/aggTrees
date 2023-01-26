@@ -70,7 +70,7 @@ plot(groupings) # Beware of interpretation here. See below.
 
 ## To predict, do the following.
 tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
-predict(tree, X)
+predict(tree, data.frame(X))
 ```
 
 By default, `build_aggtree` estimate CATEs internally via a [https://github.com/grf-labs/grf/blob/master/r-package/grf/R/causal_forest.R](causal forest). Alternatively, we can override this by using the `cates` argument to input estimated CATEs, as I did above. When this is the case, we also need to specify `is_honest`, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions.
