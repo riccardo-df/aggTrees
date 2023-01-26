@@ -8,6 +8,7 @@
 #' @param X Covariate matrix (no intercept).
 #' @param honest_frac Fraction of observations to be allocated to honest sample.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.
+#' @param scores Optional, vector of scores to be used in computing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #' @param cates Estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
 #' @param is_honest Logical vector denoting which observations belong to the honest sample. Required only if the \code{cates} argument is used.
 #' @param ... Further arguments from \code{\link[rpart]{rpart.control}}.
@@ -57,7 +58,7 @@
 #'
 #' @export
 build_aggtree <- function(y, D, X,
-                          honest_frac = 0.5, method = "aipw",
+                          honest_frac = 0.5, method = "aipw", scores = NULL,
                           cates = NULL, is_honest = NULL, ...) {
   ## Handling inputs and checks.
   if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
@@ -96,9 +97,9 @@ build_aggtree <- function(y, D, X,
 
   ## If adaptive, replace each node with predictions computed in training sample. Otherwise, honest trees.
   if (honest_frac == 0 | (!is.null(is_honest) & sum(is_honest) == 0)) {
-    results <- estimate_rpart(tree, y_tr, D_tr, X_tr, method)
+    results <- estimate_rpart(tree, y_tr, D_tr, X_tr, method, scores = scores)
   } else {
-    results <- estimate_rpart(tree, y_hon, D_hon, X_hon, method)
+    results <- estimate_rpart(tree, y_hon, D_hon, X_hon, method, scores = scores)
   }
 
   new_tree <- results$tree
@@ -106,7 +107,6 @@ build_aggtree <- function(y, D, X,
 
   ## Output.
   if (!is.null(is_honest)) forest <- NULL
-  if (method == "raw") scores <- NULL
 
   out <- list("tree" = new_tree,
               "forest" = forest,
@@ -180,7 +180,7 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, ve
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
-  if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate the GATEs. \n To get valid inference, set 'honest_frac' to a positive number in 'build_aggtree'.")
+  if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
   if (!(verbose %in% c(TRUE, FALSE))) stop("Invalid 'verbose'. This must be either TRUE or FALSE.", call. = FALSE)
 
