@@ -1,28 +1,28 @@
 # Aggregation Trees
-R package to implement aggregation trees, a data-driven approach to discover heterogeneous subpopulations in a selection-on-observables framework that avoids the risk of data snooping and the drawbacks of pre-analysis plans.
+R package to implement aggregation trees, a nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework. Additionally, it provides useful functions to work with `rpart` objects.
 
-Aggregation trees provide a completely nonparametric approach to constructing partitions of the population that can handle covariate spaces of arbitrary dimensions and an arbitrary number of interactions among covariates. The approach consists of three steps:
+The approach consists of three steps:
 
-1. Estimate the conditional average treatment effects (CATEs);
-2. Construct a decision tree using the CATEs;
-3. Generate a sequence of “optimal” partitions of the covariate space by pruning the tree.
+1. Estimate conditional average treatment effects (CATEs);
+2. Aggregate CATEs into a decision tree;
+3. Prune the tree.
 
-Optimality here refers to the fact that, at each granulairty level, the loss in explained heterogeneity resulting from aggregation is minimized. Notice that the sequence of partitions is nested, as we never undo previous aggregations. This guarantees consistency across the different granularity levels.
+This way, we generate a sequence of groupings, one for each granularity level. The resulting sequence is nested in the sense that subgroups formed at a given
+level of granularity are never broken at coarser levels. This guarantees consistency of the results across the different granularity levels, generally considered a basic requirement that every classification system should satisfy. Moreover, each grouping features an optimality property in that it ensures that the loss in
+explained heterogeneity resulting from aggregation is minimized.
 
-We use different samples to estimate the CATEs (step 1) and construct the sequence of partitions (steps 2 and 3). We call these “estimation sample” and “aggregation sample.” To conduct valid inference, we need to estimate honest trees. For this, we need an additional “honest sample.”
+Given the sequence of groupings, we can estimate group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. An honesty condition is required to construct valid confidence intervals. Thus, different subsamples must be used to construct the tree and estimate the linear models. 
 
-The functions used in the examples below work with `aggTrees` objects. For each of these functions, which generally follow the syntax `*_aggtree`, I provide the corresponding `*_rpart` version that works with `rpart` objects. Thus, the package can be used with any tree that is a `rpart` object, e.g., with the output of `causalTree`.
-  
 ## Installation  
 The current development version of the package can be installed using the `devtools` package:
 
 ```
-devtools::install_github("riccardo-df/aggTrees")
+devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtools") if needed.
 library(aggTrees)
 ```
 
 ## Usage Examples
-This section demonstrates how to use aggregation trees to discover heterogeneous subpopulations. Let us generate some data:
+This section demonstrates how to use the package. Let us generate some data:
 
 ```
 ## Generate data.
@@ -39,58 +39,51 @@ mu1 <- 0.5 * X[, 1] + X[, 2] # This implies that tau(x) = X_2.
 y <- mu0 + D * mu1 + rnorm(n)
 ```
 
-We need to split the sample to perform our analysis. I also generate a honest sample to conduct valid inference.
+As a first step, we need to estimate CATEs. We can do this with any estimator we like. Then, in the second step we construct a tree using the CATEs as an outcome. Given the tree, we can compute node predictions (i.e., GATEs) as we like. In the following chunk of code, I split the data into a training sample and an honest sample (required to conduct valid inference). We use the training sample to estimate CATEs and construct/prune the tree. Then, we use the honest sample to compute node predictions by constructing and averaging doubly-robust scores.
 
 ```
-## Split the sample.
-splits <- sample_split(n, 0.5, 0.25, 0.25)
-estimation_idx <- splits$estimation_idx
-aggregation_idx <- splits$aggregation_idx
+## Sample splitting.
+splits <- sample_split(length(y), training_frac = 0.5)
+training_idx <- splits$training_idx
 honest_idx <- splits$honest_idx
-```
 
-First, we need to estimate the CATEs. This must be done outside the `aggTrees` package. The rationale for this is that one can use any estimator (or an ensemble of more estimators). Here, we use the `causal_forest` function from the `grf` package:
+y_tr <- y[training_idx]
+D_tr <- D[training_idx]
+X_tr <- X[training_idx, ]
 
-```
-## 1.) Estimate the CATEs. Use only estimation sample.
+y_hon <- y[honest_idx]
+D_hon <- D[honest_idx]
+X_hon <- X[honest_idx, ]
+
+## Estimate CATEs. Use training sample. 
 library(grf)
-
-forest <- causal_forest(X[estimation_idx, ], y[estimation_idx], D[estimation_idx])
+forest <- causal_forest(X_tr, y_tr, D_tr) 
 cates <- predict(forest, X)$predictions
+
+## Construct and prune the tree using training sample. Also, compute node predictions (GATEs) using honest sample.
+groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates, is_honest = 1:length(y) %in% honest_idx)
+
+## We have compatibility with generic S3-methods. 
+summary(groupings)
+print(groupings)
+plot(groupings) # Beware of interpretation here. See below.
+
+## To predict, do the following.
+tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
+predict(tree, data.frame(X))
 ```
 
-To assess treatment effect heterogeneity, one can look at the distribution of the CATEs, e.g., via histograms or kernel density estimates. However, this is not conclusive evidence of heterogeneity: If the histogram is concentrated at one point, it may be that our estimator is not able to detect heterogeneity, and if the histogram is spread, it may be that our estimates are very noisy. 
+By default, `build_aggtree` estimate CATEs internally via a [causal forest](https://github.com/grf-labs/grf/blob/master/r-package/grf/R/causal_forest.R). Alternatively, we can override this by using the `cates` argument to input estimated CATEs, as I did above. When this is the case, we also need to specify `is_honest`, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions.
 
-A more systematic way to assess heterogeneity is to partition the population into groups that differ in the magnitude of their treatment effects. This is where aggregation trees play their role. 
-
-```
-## 2.) Construct a decision tree. Use only aggregation sample.
-tree <- aggregation_tree(cates[aggregation_idx], X[aggregation_idx, ])
-
-## 3.) Generate the sequence of partitions.
-plot(tree, sequence = TRUE) # Get a visualization of the sequence.
-```
-
-To conduct valid inference, we can use the honest sample to regress `y` on leaf dummies and interactions of these dummies and `D`. As the treatment is randomized, the coefficients of the interaction terms are unbiased estimates of the average treatment effects in each group (GATEs):
+Now we have a whole sequence of optimal groupings. We can pick the grouping associated with our preferred granularity level and run some analysis. First, we would like to get standard errors for the GATEs. This is achieved by estimating via OLS appropriate linear models using the honest sample. Then, we would like to assess the driving factors of treatment effects by relating heterogeneity to observed covariates. Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form groups, and if two covariates are highly correlated, trees generally split on only one of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across groups. All of this is done in the following chunk of code:
 
 ```
-## Get standard errors. Use only honest sample.
-# First, we need a particular partition. 
-subtree <- subtree_aggtree(tree, leaves = 5)
-
-linear_model <- causal_ols_aggtree(subtree, y[honest_idx], X[honest_idx, ], D[honest_idx])
-summary(linear_model)
+## Analyze grouping with 5 groups.
+results <- analyze_aggtree(groupings, n_groups = 5, method = "aipw", scores = groupings$scores)
+summary(results$model)
 ```
 
-Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form subpopulations
-that differ in the magnitude of their treatment effects, and if two covariates are highly correlated, trees generally split on only one of those covariates.
-
-A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across the leaves of the tree. For this, I provide a function that directly produces LATEX code for a nice table:
-
-```
-## Assess heterogeneity.
-avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggregation_idx], method = "cates")
-```
+`analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and average characteristics of units in each leaf. This way, we obtain a nice and easy-to-read output that we can plug in papers/reports.
 
 ## References
 
@@ -103,14 +96,19 @@ avg_characteristics_aggtree(subtree, X[aggregation_idx, ], cates = cates[aggrega
 <b>Generalized Random Forests.</b> <i>Annals of Statistics</i>, 47(2).
 [<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
 
-- Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2018).
-<b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an Application to Immunization in India.</b>
+- Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2017).
+<b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments.</b>
 <i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
 - Di Francesco, R. (2022).
 <b>Aggregation Trees.</b> <i>CEIS Research Paper, 546.</i>
 [<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]
+
+- Semenova, V., & Chernozhukov, V. (2021).
+<b>Debiased Machine Learning of Conditional Average Treatment Effects and Other Causal Functions.</b>
+<i>The Econometrics Journal</i>, 24 (2).
+[<a href="https://academic.oup.com/ectj/article/24/2/264/5899048">paper</a>]
 
 - Wager, S., & Athey, S. (2018).
 <b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
