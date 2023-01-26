@@ -10,6 +10,7 @@ build_aggtree(
   X,
   honest_frac = 0.5,
   method = "aipw",
+  scores = NULL,
   cates = NULL,
   is_honest = NULL,
   ...
@@ -25,6 +26,8 @@ build_aggtree(
 \item{honest_frac}{Fraction of observations to be allocated to honest sample.}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.}
+
+\item{scores}{Optional, vector of scores to be used in computing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
 
 \item{cates}{Estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
 

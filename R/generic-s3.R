@@ -31,7 +31,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
                           sequence = FALSE, ...) {
   ## Handling inputs and checks.
   if (!(inherits(x, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
-  if (!(inherits(x$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
+  if (!(sequence %in% c(TRUE, FALSE))) stop("Invalid 'sequence'. This must be either TRUE or FALSE.", call. = FALSE)
 
   tree <- x$tree
 
@@ -42,12 +42,15 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
     percentages <- round(tree$frame$n / tree$frame$n[1] * 100, 0)
     suffix <- paste("\n", "n = ", sizes, "\n (", percentages, "%)", sep = "")
 
-    full_nodes <- rownames(tree$frame) # Storing rownames of full tree (they serve as node labels).
+    nodes <- as.numeric(rownames(tree$frame)) # Node numbers of full tree.
+    # parents <- full_nodes %/% 2 # Parent of each node.
     alpha_values <- rev(tree$cptable[, "CP"]) # Threshold values of cost-complexity parameter.
 
     for (alpha in alpha_values) {
-      temp_nodes <- rownames(rpart::prune.rpart(tree, alpha)$frame) # Node labels of pruned tree.
-      colors <- ifelse(full_nodes %in% temp_nodes, 1, "white") # Graying out collapsed nodes.
+      temp_nodes <- as.numeric(rownames(rpart::prune.rpart(tree, alpha)$frame)) # Node numbers of subtree.
+      # temp_parents <- temp_nodes %/% 2 # Parent numbers of subtree.
+      # split_colors <- ifelse(parents %in% c(0, temp_nodes), 1, "white")
+      colors <- ifelse(nodes %in% temp_nodes, 1, "white") # Graying out pruned leaves.
 
       grDevices::dev.hold()
 
@@ -64,9 +67,9 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
                       box.palette = if (is.function(palette)) palette(nrow(tree$frame)) else palette,
                       branch = 0.3,
                       branch.col = colors,
-                      split.col = colors,
-                      col = colors,
-                      ...)
+                      split.col = "black",
+                      col = colors)
+                      # ...)
 
       grDevices::dev.flush()
       Sys.sleep(1)

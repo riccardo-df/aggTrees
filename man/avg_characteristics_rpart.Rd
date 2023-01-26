@@ -27,6 +27,9 @@ This way, we get the average characteristics of units in each leaf, together wit
 ordered in increasing order of their predictions (from most negative to most positive). Standard errors are
 estimated via the Eicker-Huber-White estimator.\cr
 
+If the user provides \code{gates_point} and \code{gates_sd}, point estimate and conventional 95% confidence intervals are
+reported.\cr
+
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
 \references{

@@ -333,6 +333,8 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
 
   gates_point <- round(gates_point, 3)
   gates_sd <- round(gates_sd, 3)
+  gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
+  gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
 
   ## Write table.
   table_names <- rename_latex(colnames(X))
@@ -351,7 +353,7 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
   cat("      GATEs & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
-      & ", paste("(", gates_sd[1:(length(unique(leaves))-1)], ") & ", sep = ""), paste("(", gates_sd[length(unique(leaves))], ")", sep = ""), " \\\\ \n\n", sep = "")
+      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
   cat("      \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n")
 
