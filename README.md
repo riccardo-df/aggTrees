@@ -83,7 +83,7 @@ results <- analyze_aggtree(groupings, n_groups = 5, method = "aipw", scores = gr
 summary(results$model)
 ```
 
-`analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and average charactestics of units in each leaf. This way, we obtain a nice and easy-to-read output that we can plug in papers/reports.
+`analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and average characteristics of units in each leaf. This way, we obtain a nice and easy-to-read output that we can plug in papers/reports.
 
 ## References
 
