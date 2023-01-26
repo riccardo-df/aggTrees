@@ -5,7 +5,7 @@
 #' @param x An \code{aggTrees} object.
 #' @param leaves Number of leaves of the desired tree. This can be used to plot subtrees.
 #' @param type Plotting style.
-#' @param palette Palette to color the nodes.
+#' @param palette Palette to color the nodes. This must be a function if \code{sequence == TRUE}.
 #' @param sequence If \code{TRUE}, the whole sequence of optimal partitions is displayed in a short animation.
 #' @param ... Further arguments from \code{\link[rpart.plot]{prp}}.
 #'
@@ -13,7 +13,7 @@
 #' \code{palette} can be either a vector of colors, or a function that takes as an argument the number of nodes of a tree and
 #' returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palette}} for high-quality palettes.\cr
 #'
-#' @import rpart.plot
+#' @import rpart.plot colorspace
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -37,20 +37,29 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
 
   ## Plotting.
   if (sequence) {
+    if (!(is.function(palette))) stop("To plot the sequence of groupings, 'palette' must be a function, e.g., as given by 'colorspace::choose_palette()'.", call. = FALSE)
     prefix <- c("ATE = ", rep("GATE = ", times = (length(tree$frame$n) - 1)))
     sizes <- tree$frame$n
     percentages <- round(tree$frame$n / tree$frame$n[1] * 100, 0)
     suffix <- paste("\n", "n = ", sizes, "\n (", percentages, "%)", sep = "")
 
     nodes <- as.numeric(rownames(tree$frame)) # Node numbers of full tree.
-    # parents <- full_nodes %/% 2 # Parent of each node.
     alpha_values <- rev(tree$cptable[, "CP"]) # Threshold values of cost-complexity parameter.
 
-    for (alpha in alpha_values) {
+    for (alpha in alpha_values[1:length(alpha_values[-1])]) {
       temp_nodes <- as.numeric(rownames(rpart::prune.rpart(tree, alpha)$frame)) # Node numbers of subtree.
-      # temp_parents <- temp_nodes %/% 2 # Parent numbers of subtree.
-      # split_colors <- ifelse(parents %in% c(0, temp_nodes), 1, "white")
       colors <- ifelse(nodes %in% temp_nodes, 1, "white") # Graying out pruned leaves.
+
+      box_colors <- palette(nrow(tree$frame))
+      median_value <- tree$frame$yval[1]
+      to_order_bottom <- sort(tree$frame$yval[-1][tree$frame$yval[-1] < median_value])
+      to_order_top <- sort(tree$frame$yval[-1][tree$frame$yval[-1] > median_value])
+      to_order_box_colors <- c(to_order_bottom, median_value, to_order_top)
+      box_colors <- box_colors[match(tree$frame$yval, to_order_box_colors)] # Order colors so that the ATE has the "middle" color.
+      box_colors[colors == "white"] <- "white"
+
+      temp_parents <- temp_nodes %/% 2
+      split_colors <- ifelse(nodes %in% temp_parents, "black", "white")
 
       grDevices::dev.hold()
 
@@ -64,10 +73,10 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
                       prefix = prefix,
                       suffix = suffix,
                       pal.thresh = tree$frame$yval[1],
-                      box.palette = if (is.function(palette)) palette(nrow(tree$frame)) else palette,
+                      box.col = box_colors,
                       branch = 0.3,
                       branch.col = colors,
-                      split.col = "black",
+                      split.col = split_colors,
                       col = colors,
                       ...)
 
