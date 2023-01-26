@@ -68,8 +68,8 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree),
                       branch = 0.3,
                       branch.col = colors,
                       split.col = "black",
-                      col = colors)
-                      # ...)
+                      col = colors,
+                      ...)
 
       grDevices::dev.flush()
       Sys.sleep(1)
