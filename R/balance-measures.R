@@ -195,7 +195,7 @@ balance_measures <- function(X, D) {
     \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Balance between treatment and control groups. The last two columns report the estimated normalized differences ($\\hat{\\Delta}_j$) and the logarithm of the ratio of standard deviations ($\\hat{\\Gamma}_j$).}
+    \\caption{Balance between treatment and control groups. The last two columns report the estimated normalized differences ($\\hat{\\Delta}_j$) and logarithms of the ratio of standard deviations ($\\hat{\\Gamma}_j$).}
     \\label{table:descriptive.stats}
     \\end{table}
 \\endgroup")
