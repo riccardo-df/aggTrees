@@ -164,23 +164,23 @@ balance_measures <- function(X, D) {
 
   table_names <- rename_latex(rownames(measures))
 
-  cat("      \\begingroup
-        \\setlength{\\tabcolsep}{8pt}
-        \\renewcommand{\\arraystretch}{1.1}
-        \\begin{table}[H]
-          \\centering
-          \\begin{adjustbox}{width = 0.75\\textwidth}
-          \\begin{tabular}{@{\\extracolsep{5pt}}l c c c c c c}
-          \\\\[-1.8ex]\\hline
-          \\hline \\\\[-1.8ex]
-          & \\multicolumn{2}{c}{Treated} & \\multicolumn{2}{c}{Controls} & \\multicolumn{2}{c}{Overlap measures} \\\\ \\cmidrule{6-7}
-          & \\multicolumn{2}{c}{($n_t = ", x$arm_sizes["treated"], "$)} & \\multicolumn{2}{c}{($n_c =", x$arm_sizes["control"], "$)} & \\\\ \\cmidrule{2-5}
-          & Mean & (S.D.) & Mean & (S.D.) & $\\hat{\\Delta}_j$ & $\\hat{\\Gamma}_j$ \\\\
-          \\addlinespace[2pt]
-          \\hline \\\\[-1.8ex] \n\n")
+  cat("\\begingroup
+  \\setlength{\\tabcolsep}{8pt}
+  \\renewcommand{\\arraystretch}{1.1}
+  \\begin{table}[H]
+    \\centering
+    \\begin{adjustbox}{width = 0.75\\textwidth}
+    \\begin{tabular}{@{\\extracolsep{5pt}}l c c c c c c}
+    \\\\[-1.8ex]\\hline
+    \\hline \\\\[-1.8ex]
+    & \\multicolumn{2}{c}{Treated} & \\multicolumn{2}{c}{Controls} & \\multicolumn{2}{c}{Overlap measures} \\\\ \\cmidrule{6-7}
+    & \\multicolumn{2}{c}{($n_t = ", x$arm_sizes["treated"], "$)} & \\multicolumn{2}{c}{($n_c =", x$arm_sizes["control"], "$)} & \\\\ \\cmidrule{2-5}
+    & Mean & (S.D.) & Mean & (S.D.) & $\\hat{\\Delta}_j$ & $\\hat{\\Gamma}_j$ \\\\
+    \\addlinespace[2pt]
+    \\hline \\\\[-1.8ex] \n\n")
 
   for (i in seq_len(length(table_names))) {
-    cat("          \\texttt{", table_names[i], "} & ", stringr::str_replace_all(string = measures[i, 1], pattern = " ", repl = ""),
+    cat("    \\texttt{", table_names[i], "} & ", stringr::str_replace_all(string = measures[i, 1], pattern = " ", repl = ""),
         " & (", stringr::str_replace_all(string = measures[i, 2], pattern = " ", repl = ""),
         ") & ", stringr::str_replace_all(string = measures[i, 3], pattern = " ", repl = ""),
         " & (", stringr::str_replace_all(string = measures[i, 4], pattern = " ", repl = ""),
@@ -190,14 +190,14 @@ balance_measures <- function(X, D) {
     )
   }
 
-  cat("\n\n          \\addlinespace[3pt]
-          \\\\[-1.8ex]\\hline
-          \\hline \\\\[-1.8ex]
-          \\end{tabular}
-          \\end{adjustbox}
-          \\caption{https://soundcloud.com/theplasticchairband}
-          \\label{table:descriptive.stats}
-        \\end{table}
-      \\endgroup")
+  cat("\n    \\addlinespace[3pt]
+    \\\\[-1.8ex]\\hline
+    \\hline \\\\[-1.8ex]
+    \\end{tabular}
+    \\end{adjustbox}
+    \\caption{Balance between treatment and control groups. The last two columns report the estimated normalized differences ($\\hat{\\Delta}_j$) and the logarithm of the ratio of standard deviations ($\\hat{\\Gamma}_j$).}
+    \\label{table:descriptive.stats}
+    \\end{table}
+\\endgroup")
 
 }
