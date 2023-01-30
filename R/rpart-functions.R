@@ -342,9 +342,9 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
   cat("\\begingroup
   \\setlength{\\tabcolsep}{8pt}
   \\renewcommand{\\arraystretch}{1.1}
-  \\begin{table}[H]
+  \\begin{table}[b!]
     \\centering
-    \\begin{adjustbox}{width = 0.75\\textwidth}
+    \\begin{adjustbox}{width = 1\\textwidth}
     \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", length(unique(leaves))), "}
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex]
@@ -365,10 +365,10 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
   cat("\n      \\addlinespace[3pt]
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex]
-      \\end{tabular}
-      \\end{adjustbox}
+    \\end{tabular}
+    \\end{adjustbox}
     \\caption{\\href{https://soundcloud.com/theplasticchairband}{Secret link.}}
-    \\label{table:average.characterstics.leaves}
+    \\label{table:average.characteristics.leaves}
     \\end{table}
 \\endgroup \n\n")
 
