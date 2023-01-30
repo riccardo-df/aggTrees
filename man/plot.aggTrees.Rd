@@ -4,23 +4,12 @@
 \alias{plot.aggTrees}
 \title{Plot Method for aggTrees Objects}
 \usage{
-\method{plot}{aggTrees}(
-  x,
-  leaves = get_leaves(x$tree),
-  type = 2,
-  palette = c("BuRd"),
-  sequence = FALSE,
-  ...
-)
+\method{plot}{aggTrees}(x, leaves = get_leaves(x$tree), sequence = FALSE, ...)
 }
 \arguments{
 \item{x}{An \code{aggTrees} object.}
 
 \item{leaves}{Number of leaves of the desired tree. This can be used to plot subtrees.}
-
-\item{type}{Plotting style.}
-
-\item{palette}{Palette to color the nodes.}
 
 \item{sequence}{If \code{TRUE}, the whole sequence of optimal partitions is displayed in a short animation.}
 
@@ -30,8 +19,10 @@
 Plots an \code{aggTrees} object.
 }
 \details{
-\code{palette} can be either a vector of colors, or a function that takes as an argument the number of nodes of a tree and
-returns a vector of colors. Please refer to \code{\link[colorspace]{choose_palette}} for high-quality palettes.\cr
+Nodes are colored using a diverging palette. Nodes with predictions smaller than the ATE (i.e., the root
+prediction) are colored in blue shades, and nodes with predictions larger than the ATE are colored in red
+shades. Moreover, predictions that are more distant in absolute value from the ATE get darker shades.
+This way, we have an immediate understanding of the groups with extreme GATEs.
 }
 \references{
 \itemize{

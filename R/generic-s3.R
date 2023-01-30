@@ -14,7 +14,6 @@
 #' This way, we have an immediate understanding of the groups with extreme GATEs.
 #'
 #' @import rpart.plot
-#'
 #' @author Riccardo Di Francesco
 #'
 #' @references
@@ -48,8 +47,8 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...)
     ## Settings for node colors.
     low_colors <- c("#002F70", "#6889D0", "#F6F6F6")
     high_colors <- c("#F6F6F6", "#CB6F70", "#5F1415")
-    color_fun_low <- colorRampPalette(low_colors)
-    color_fun_high <- colorRampPalette(high_colors)
+    color_fun_low <- grDevices::colorRampPalette(low_colors)
+    color_fun_high <- grDevices::colorRampPalette(high_colors)
 
     low_palette <- color_fun_low(sum(tree$frame$yval <= tree$frame$yval[1]))
     high_palette <- color_fun_high(sum(tree$frame$yval >= tree$frame$yval[1]))[-1]
@@ -107,8 +106,8 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...)
     ## Settings for node colors.
     low_colors <- c("#002F70", "#6889D0", "#F6F6F6")
     high_colors <- c("#F6F6F6", "#CB6F70", "#5F1415")
-    color_fun_low <- colorRampPalette(low_colors)
-    color_fun_high <- colorRampPalette(high_colors)
+    color_fun_low <- grDevices::colorRampPalette(low_colors)
+    color_fun_high <- grDevices::colorRampPalette(high_colors)
 
     low_palette <- color_fun_low(sum(subtree$frame$yval <= subtree$frame$yval[1]))
     high_palette <- color_fun_high(sum(subtree$frame$yval >= subtree$frame$yval[1]))[-1]
