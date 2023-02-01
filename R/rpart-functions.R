@@ -301,7 +301,8 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
 #' ordered in increasing order of their predictions (from most negative to most positive). Standard errors are
 #' estimated via the Eicker-Huber-White estimator.\cr
 #'
-#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
+#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox},
+#' \code{multirow}.
 #'
 #' @import estimatr stats
 #'
@@ -352,7 +353,7 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
-  cat("      GATEs & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
+  cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
       & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
   cat("      \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n")
