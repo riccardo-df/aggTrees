@@ -7,7 +7,7 @@
 #' @param cv If \code{TRUE}, \code{leaves} is ignored and a cross-validation criterion is used to select a partition.
 #'
 #' @return
-#' The subtree, as a \code{\link[rpart]{rpart}} object.
+#' The subtree, as an \code{\link[rpart]{rpart}} object.
 #'
 #' @import rpart
 #'
@@ -54,10 +54,10 @@ get_leaves <- function(tree) {
 
 #' Node Membership
 #'
-#' Constructs a binary variable that encodes whether each observations falls into a particular node of an
+#' Constructs a binary variable that encodes whether each observation falls into a particular node of an
 #' \code{\link[rpart]{rpart}} object.
 #'
-#' @param tree A \code{\link[rpart]{rpart}} object.
+#' @param tree An \code{\link[rpart]{rpart}} object.
 #' @param X Covariate matrix (no intercept).
 #' @param node Number of node.
 #'
@@ -83,7 +83,7 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #'
 #' Constructs a variable that encodes in which leaf of an \code{\link[rpart]{rpart}} object the units in a given data frame fall.
 #'
-#' @param tree A \code{\link[rpart]{rpart}} object.
+#' @param tree An \code{\link[rpart]{rpart}} object.
 #' @param X Covariate matrix (no intercept).
 #'
 #' @return
@@ -126,11 +126,12 @@ leaf_membership <- function(tree, X) {
 #' @details
 #' If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
 #' of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each node,
-#' which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
+#' which is an unbiased estimator of GATEs if the assignment to treatment is randomized.\cr
 #'
 #' If \code{method == "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
-#' scores in each node. This is a valid estimator of the GATEs in observational studies. Honest regression forests
-#' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
+#' scores in each node. This is a valid estimator of GATEs in observational studies. Honest regression forests
+#' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome
+#' (unless the user specifies the argument \code{scores}).\cr
 #'
 #' \code{estimate_rpart} allows the user to implement "honest" estimation. If observations in \code{y}, \code{D} and \code{X}
 #' have not been used to construct the \code{tree}, then the new predictions are honest in the sense of Athey and Imbens (2016).
@@ -170,8 +171,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
     }
   } else if (method == "aipw") {
     if (is.null(scores)) {
-      aipw <- causalDML::DML_aipw(y, D, X)
-      scores <- aipw$ATE$delta
+      scores <- dr_scores(y, D, X)
     }
 
     new_tree$frame$yval[1] <- mean(scores)
@@ -193,7 +193,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' Estimating Leaf-Effects via Linear Models
 #'
 #' Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
-#' estimated coefficients identify to the GATEs in each leaf. If the data used in the OLS estimation have not been
+#' estimated coefficients identify the GATE in each leaf. If the data used in the OLS estimation have not been
 #' used to grow the tree (a condition called "honesty"), then one can use the standard errors for the tree's estimates
 #' to construct valid confidence intervals.
 #'
@@ -215,7 +215,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
 #' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-#' number of leaves. If the treatment is randomly assigned, one can show that the betas identify the GATEs of each group.
+#' number of leaves. If the treatment is randomly assigned, one can show that the betas identify the GATE of each group.
 #' Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
 #' due to selection into treatment. To get unbiased estimates, we can set \code{"method"} to \code{"aipw"} to construct
 #' doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
@@ -223,7 +223,8 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 #'
 #' This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual. Honest regression forests
-#' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
+#' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome
+#' (unless the user specifies the argument \code{scores}).\cr
 #'
 #' Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
 #' \code{X} must not have been used to grow the \code{tree}.\cr
@@ -267,8 +268,7 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
     }
   } else if (method == "aipw") {
     if (is.null(scores)) {
-      aipw <- causalDML::DML_aipw(y, D, X)
-      scores <- aipw$ATE$delta
+      scores <- dr_scores(y, D, X)
     }
 
     if (length(unique(leaves)) == 1) {

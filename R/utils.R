@@ -25,6 +25,66 @@ sample_split <- function(n, training_frac = 0.5) {
 }
 
 
+#' Doubly-Robust Scores
+#'
+#' Constructs doubly-robust scores via K-fold cross-fitting.
+#'
+#' @param y Outcome vector.
+#' @param D Treatment assignment vector.
+#' @param X Covariate matrix (no intercept).
+#' @param k Number of folds.
+#'
+#' @return
+#' A vector of scores.
+#'
+#' @details
+#' Honest regression forests are used to estimate the propensity score and the conditional mean function of the outcome.
+#'
+#' @importFrom caret createFolds
+#' @import grf
+#'
+#' @author Riccardo Di Francesco
+#'
+#' @references
+#' \itemize{
+#'   \item J Robins, A Rotnitzky (1995). Semiparametric efficiency in multivariate regression models with missing data. \doi{10.2307/2291135}.
+#'   \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
+#' }
+#'
+#' @export
+dr_scores <- function(y, D, X, k = 5) {
+  ## Handling inputs and checks.
+  if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
+
+  ## Generate folds.
+  folds <- caret::createFolds(y, k = k)
+
+  ## Cross-fitting nuisances.
+  nuisances_mat <- matrix(NA, nrow = length(y), ncol = 3)
+  colnames(nuisances_mat) <- c("pscore", "mu_0", "mu_1")
+
+  for (fold in seq_len(length(folds))) {
+    ## Leave one fold out and build forests on other folds.
+    left_out_idx <- folds[[fold]]
+
+    cond_mean_forest <- grf::regression_forest(data.frame("D" = D[-left_out_idx], X[-left_out_idx, ]), y[-left_out_idx])
+    pscore_forest <- grf::regression_forest(X[-left_out_idx, ], D[-left_out_idx])
+
+    ## Predict on left-out fold.
+    nuisances_mat[left_out_idx, "mu_0"] <- predict(cond_mean_forest, data.frame("D" = rep(0, length(left_out_idx)), X[left_out_idx, ]))$predictions
+    nuisances_mat[left_out_idx, "mu_1"] <- predict(cond_mean_forest, data.frame("D" = rep(1, length(left_out_idx)), X[left_out_idx, ]))$predictions
+    nuisances_mat[left_out_idx, "pscore"] <- predict(pscore_forest, X[left_out_idx, ])$predictions
+  }
+
+  ## Construct doubly-robust scores.
+  scores <- nuisances_mat[, "mu_1"] - nuisances_mat[, "mu_0"] + (D * (y - nuisances_mat[, "mu_1"])) / (nuisances_mat[, "pscore"]) -
+    ((1 - D) * (y - nuisances_mat[, "mu_0"])) / (1 - nuisances_mat[, "pscore"])
+
+  ## Output.
+  return(scores)
+}
+
+
 #' Covariate Matrix Expansion
 #'
 #' Expands the covariate matrix, adding interactions and polynomials. This is particularly useful for penalized regressions.

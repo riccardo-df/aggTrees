@@ -4,7 +4,7 @@
 #'
 #' @param x An \code{aggTrees} object.
 #' @param leaves Number of leaves of the desired tree. This can be used to plot subtrees.
-#' @param sequence If \code{TRUE}, the whole sequence of optimal partitions is displayed in a short animation.
+#' @param sequence If \code{TRUE}, the whole sequence of optimal groupings is displayed in a short animation.
 #' @param ... Further arguments from \code{\link[rpart.plot]{prp}}.
 #'
 #' @details

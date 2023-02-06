@@ -25,7 +25,7 @@ The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores
 }
 \description{
 Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
-estimated coefficients identify to the GATEs in each leaf. If the data used in the OLS estimation have not been
+estimated coefficients identify the GATE in each leaf. If the data used in the OLS estimation have not been
 used to grow the tree (a condition called "honesty"), then one can use the standard errors for the tree's estimates
 to construct valid confidence intervals.
 }
@@ -36,7 +36,7 @@ linear model:
 \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
 with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-number of leaves. If the treatment is randomly assigned, one can show that the betas identify the GATEs of each group.
+number of leaves. If the treatment is randomly assigned, one can show that the betas identify the GATE of each group.
 Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
 due to selection into treatment. To get unbiased estimates, we can set \code{"method"} to \code{"aipw"} to construct
 doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
@@ -44,7 +44,8 @@ doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the follow
 \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
 This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual. Honest regression forests
-and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
+and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome
+(unless the user specifies the argument \code{scores}).\cr
 
 Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
 \code{X} must not have been used to grow the \code{tree}.\cr

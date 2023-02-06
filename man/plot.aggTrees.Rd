@@ -11,7 +11,7 @@
 
 \item{leaves}{Number of leaves of the desired tree. This can be used to plot subtrees.}
 
-\item{sequence}{If \code{TRUE}, the whole sequence of optimal partitions is displayed in a short animation.}
+\item{sequence}{If \code{TRUE}, the whole sequence of optimal groupings is displayed in a short animation.}
 
 \item{...}{Further arguments from \code{\link[rpart.plot]{prp}}.}
 }

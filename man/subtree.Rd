@@ -14,7 +14,7 @@ subtree(tree, leaves = NULL, cv = FALSE)
 \item{cv}{If \code{TRUE}, \code{leaves} is ignored and a cross-validation criterion is used to select a partition.}
 }
 \value{
-The subtree, as a \code{\link[rpart]{rpart}} object.
+The subtree, as an \code{\link[rpart]{rpart}} object.
 }
 \description{
 Extracts a subtree with a user-specified number of leaves from an \code{\link[rpart]{rpart}} object.

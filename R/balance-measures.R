@@ -118,6 +118,8 @@ log_ratio_sd <- function(X, D) {
 #' @export
 balance_measures <- function(X, D) {
   ## Handling inputs.
+  if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
+
   names <- colnames(X)
   n_t <- sum(D)
   n_c <- length(D) - n_t

@@ -1,7 +1,9 @@
-#' Building Aggregation Trees
+#' Aggregation Trees
 #'
-#' Builds an aggregation tree for discovering heterogeneous subpopulations that differ in the magnitude
-#' of their treatment effects.
+#' Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
+#' The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
+#' feature an optimality property. For each grouping, we obtain point estimation and inference about group average
+#' treatment effects (GATEs). Additionally, we compute the average characteristics of units in each group.
 #'
 #' @param y Outcome vector.
 #' @param D Treatment vector.
@@ -14,27 +16,72 @@
 #' @param ... Further arguments from \code{\link[rpart]{rpart.control}}.
 #'
 #' @return
-#' An \code{aggTrees} object.
+#' \code{\link{build_aggtree}} returns an \code{aggTrees} object. \code{\link{analyze_aggtree}} returns the fitted model, as an
+#' \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is \code{NULL}). Additionally,
+#' it prints LATEX code in the console if \code{verbose == TRUE} (the default).
+#'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 3000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Construct sequence of groupings. CATEs estimated internally,
+#' groupings <- build_aggtree(y, D, X, method = "aipw")
+#'
+#' ## We can estimate CATEs and pass them.
+#' splits <- sample_split(length(y), training_frac = 0.5)
+#' training_idx <- splits$training_idx
+#' honest_idx <- splits$honest_idx
+#'
+#' y_tr <- y[training_idx]
+#' D_tr <- D[training_idx]
+#' X_tr <- X[training_idx, ]
+#'
+#' y_hon <- y[honest_idx]
+#' D_hon <- D[honest_idx]
+#' X_hon <- X[honest_idx, ]
+#'
+#'  library(grf)
+#' forest <- causal_forest(X_tr, y_tr, D_tr) # Use training sample.
+#' cates <- predict(forest, X)$predictions
+#'
+#' groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates,
+#'                            is_honest = 1:length(y) %in% honest_idx)
+#'
+#' ## We have compatibility with generic S3-methods.
+#' summary(groupings)
+#' print(groupings)
+#' plot(groupings)
+#' plot(groupings, sequence = TRUE)
+#'
+#' ## To predict, do the following.
+#' tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
+#' predict(tree, data.frame(X))
+#'
+#' ## Analyze results with 4 groups.
+#' results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
+#' summary(results$model)
 #'
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
 #' to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal groupings, one for each
-#' granularity level. The user can then choose her preferred level of granularity to obtain point estimation and inference
-#' about the GATEs. \cr
+#' granularity level. For each level of granularity, we can obtain point estimation and inference about GATEs. \cr
 #'
-#' \code{build_aggtree} constructs the sequence of groupings and estimate the GATEs in each node. To obtain inference,
-#' please check \code{\link{analyze_aggtree}}. Notice that inference is valid only if the honest sample is non-empty.\cr
-#'
-#' After we constructed the sequence of groupings, GATEs can be estimated in several ways. This is controlled by the
-#' \code{method} argument. If \code{"method" == "raw"}, we compute the difference in mean outcomes between treated and
-#' control observations in each node. This is an unbiased estimator in randomized experiment. If \code{"method" == "aipw"}, we
-#' construct doubly-robust scores and average them in each node. This is unbiased also in observational studies. Honest
-#' regression forests and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of
-#' the outcome.\cr
-#'
-#' Regardless of the chosen \code{method}, GATEs are estimated using observations in the honest sample. If the honest sample
-#' is empty, the same data used to construct the tree are used to estimate GATEs. This is fine for prediction but invalidates
-#' the inference obtained by \code{\link{analyze_aggtree}}.\cr
+#' \code{\link{build_aggtree}} constructs the sequence of groupings and estimate GATEs in each node. GATEs can be estimated
+#' in several ways. This is controlled by the \code{method} argument. If \code{method == "raw"}, we compute the difference
+#' in mean outcomes between treated and control observations in each node. This is an unbiased estimator in randomized experiment.
+#' If \code{method == "aipw"}, we construct doubly-robust scores and average them in each node. This is unbiased also in
+#' observational studies. Honest regression forests and 5-fold cross fitting are used to estimate the propensity score and the
+#' conditional mean function of the outcome (unless the user specifies the argument \code{scores}).\cr
 #'
 #' The user can provide a vector of estimated CATEs via the \code{cates} argument. If so, the user needs to specify a logical
 #' vector to denote which observations belong to the honest sample. If honesty is not desired, \code{is_honest} must be a
@@ -44,17 +91,41 @@
 #' The tree is grown up to some stopping criteria that can be specified by the user. Please refer to
 #' the \code{\link[rpart]{rpart.control}} documentation for this.\cr
 #'
+#' \code{\link{analyze_aggtree}} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
+#' desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and inference about
+#' GATEs, together with the average characteristics of the units in each group. As before, the \code{method} argument controls
+#' how GATEs are estimated. If \code{method == "raw"}, we estimate via OLS the following linear model:
+#'
+#' \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
+#'
+#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th group, and \code{|T|} the
+#' number of groups. If the treatment is randomly assigned, one can show that the estimated betas identify the GATEs of
+#' each group. Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
+#' due to selection into treatment. To get unbiased estimates, we can set \code{method} to \code{"aipw"} to construct
+#' doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
+#'
+#' \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+#'
+#' This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual.
+#'
+#' Regardless of the chosen \code{method}, both functions estimate GATEs using observations in the honest sample. If the honest
+#' sample is empty, the same data used to construct the tree are used to estimate GATEs. This is fine for prediction but
+#' invalidates the inference obtained by \code{\link{analyze_aggtree}}.\cr
+#'
 #' @import rpart grf
 #'
 #' @references
 #' \itemize{
+#'   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
 #'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#'   \item J Robins, A Rotnitzky (1995). Semiparametric efficiency in multivariate regression models with missing data. \doi{10.2307/2291135}.
+#'   \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
 #' }
 #'
 #' @author Riccardo Di Francesco
 #'
 #' @seealso
-#' \code{\link{analyze_aggtree}} \code{\link{plot.aggTrees}}
+#' \code{\link{plot.aggTrees}}
 #'
 #' @export
 build_aggtree <- function(y, D, X,
@@ -120,60 +191,13 @@ build_aggtree <- function(y, D, X,
 
 #' Analyzing Aggregation Trees
 #'
-#' For a user-specified number of groups, select the optimal grouping and obtain point estimation and inference about
-#' the GATEs. Additionally, compute the average characteristics of the units in each group.
-#'
 #' @param object An \code{aggTrees} object.
 #' @param n_groups Number of desired groups.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how GATEs are estimated.
 #' @param scores Optional, vector of scores to be used in estimating GATEs. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #' @param verbose Logical, whether to print in console.
 #'
-#' @return
-#' The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is
-#' \code{NULL}). Additionally, it prints LATEX code in the console if \code{verbose == TRUE} (the default).
-#'
-#' @details
-#' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
-#' to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal groupings, one for each
-#' granularity level. The user can then choose her preferred level of granularity to obtain point estimation and inference
-#' about the GATEs. \cr
-#'
-#' \code{analyze_aggtree} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
-#' desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and inference about the
-#' GATEs, together with the average characteristics of the units in each group. Notice that inference is valid only if the
-#' honest sample is non-empty, that is, the user allocated some units to the honest sample when running
-#' \code{\link{build_aggtree}}.\cr
-#'
-#' The \code{method} argument controls how GATEs are estimated. If \code{"method" == "raw"}, we estimate via OLS the following
-#' linear model:
-#'
-#' \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
-#'
-#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th group, and \code{|T|} the
-#' number of groups. If the treatment is randomly assigned, one can show that the estimated betas identify the GATEs of
-#' each group. Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
-#' due to selection into treatment. To get unbiased estimates, we can set \code{"method"} to \code{"aipw"} to construct
-#' doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
-#'
-#' \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
-#'
-#' This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual.  Honest regression forests
-#' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome.\cr
-#'
-#' Regardless of the chosen \code{method}, GATEs are estimated using observations in the honest sample as defined by the
-#' output of \code{\link{build_aggtree}}. If the honest sample is empty, the same data used to construct the tree are used to
-#' estimate the models above. This invalidates inference and produces a warning message.
-#'
-#' @references
-#' \itemize{
-#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
-#' }
-#'
-#' @author Riccardo Di Francesco
-#'
-#' @seealso
-#' \code{\link{build_aggtree}}
+#' @rdname build_aggtree
 #'
 #' @export
 analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, verbose = TRUE) {

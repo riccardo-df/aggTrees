@@ -7,7 +7,7 @@
 leaf_membership(tree, X)
 }
 \arguments{
-\item{tree}{A \code{\link[rpart]{rpart}} object.}
+\item{tree}{An \code{\link[rpart]{rpart}} object.}
 
 \item{X}{Covariate matrix (no intercept).}
 }

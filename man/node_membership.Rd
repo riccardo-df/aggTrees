@@ -7,7 +7,7 @@
 node_membership(tree, X, node)
 }
 \arguments{
-\item{tree}{A \code{\link[rpart]{rpart}} object.}
+\item{tree}{An \code{\link[rpart]{rpart}} object.}
 
 \item{X}{Covariate matrix (no intercept).}
 
@@ -17,7 +17,7 @@ node_membership(tree, X, node)
 Logical vector denoting whether each observation in \code{X} falls into \code{node}.
 }
 \description{
-Constructs a binary variable that encodes whether each observations falls into a particular node of an
+Constructs a binary variable that encodes whether each observation falls into a particular node of an
 \code{\link[rpart]{rpart}} object.
 }
 \seealso{
