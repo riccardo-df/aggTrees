@@ -137,8 +137,6 @@ leaf_membership <- function(tree, X) {
 #' have not been used to construct the \code{tree}, then the new predictions are honest in the sense of Athey and Imbens (2016).
 #' To get standard errors for the tree's estimates, please use \code{\link{causal_ols_rpart}}.\cr
 #'
-#' @import causalDML
-#'
 #' @author Riccardo Di Francesco
 #'
 #' @references
@@ -235,7 +233,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
 #' we get an estimate of the ATE.
 #'
-#' @import rpart estimatr causalDML
+#' @import rpart estimatr
 #'
 #' @author Riccardo Di Francesco
 #'

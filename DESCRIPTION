@@ -16,12 +16,9 @@ Depends:
 RoxygenNote: 7.2.3
 Imports: 
     caret,
-    causalDML (>= 0.1.0),
     estimatr,
     grf,
     rpart,
     rpart.plot,
     stats,
     stringr
-Remotes:
-    MCKnaus/causalDML
