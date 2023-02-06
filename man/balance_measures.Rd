@@ -28,7 +28,7 @@ for both treatment arms. Additionally, two balance measures are computed:
   \item{\code{Log S.D.}}{Log ratio of standard deviations are computed as the logarithm of the ratio of the
   within-arm standard deviations. They provide a measure of the
   discrepancy in the dispersion of the covariate distributions across treatment arms.}
-  }\cr
+  }
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }

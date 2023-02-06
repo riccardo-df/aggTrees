@@ -74,7 +74,7 @@
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
 #' to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal groupings, one for each
-#' granularity level. For each level of granularity, we can obtain point estimation and inference about GATEs. \cr
+#' granularity level. For each level of granularity, we can obtain point estimation and inference about GATEs.\cr
 #'
 #' \code{\link{build_aggtree}} constructs the sequence of groupings and estimate GATEs in each node. GATEs can be estimated
 #' in several ways. This is controlled by the \code{method} argument. If \code{method == "raw"}, we compute the difference
@@ -106,11 +106,11 @@
 #'
 #' \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 #'
-#' This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual.
+#' This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual.\cr
 #'
 #' Regardless of the chosen \code{method}, both functions estimate GATEs using observations in the honest sample. If the honest
 #' sample is empty, the same data used to construct the tree are used to estimate GATEs. This is fine for prediction but
-#' invalidates the inference obtained by \code{\link{analyze_aggtree}}.\cr
+#' invalidates the inference obtained by \code{\link{analyze_aggtree}}.
 #'
 #' @import rpart grf
 #'

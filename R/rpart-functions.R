@@ -135,7 +135,7 @@ leaf_membership <- function(tree, X) {
 #'
 #' \code{estimate_rpart} allows the user to implement "honest" estimation. If observations in \code{y}, \code{D} and \code{X}
 #' have not been used to construct the \code{tree}, then the new predictions are honest in the sense of Athey and Imbens (2016).
-#' To get standard errors for the tree's estimates, please use \code{\link{causal_ols_rpart}}.\cr
+#' To get standard errors for the tree's estimates, please use \code{\link{causal_ols_rpart}}.
 #'
 #' @author Riccardo Di Francesco
 #'
