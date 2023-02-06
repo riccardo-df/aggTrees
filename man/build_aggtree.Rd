@@ -103,6 +103,7 @@ sample is empty, the same data used to construct the tree are used to estimate G
 invalidates the inference obtained by \code{\link{analyze_aggtree}}.
 }
 \examples{
+\dontrun{
 ## Generate data.
 set.seed(1986)
 
@@ -152,6 +153,7 @@ predict(tree, data.frame(X))
 ## Analyze results with 4 groups.
 results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
 summary(results$model)
+}
 
 }
 \references{

@@ -21,6 +21,7 @@
 #' it prints LATEX code in the console if \code{verbose == TRUE} (the default).
 #'
 #' @examples
+#' \dontrun{
 #' ## Generate data.
 #' set.seed(1986)
 #'
@@ -70,6 +71,7 @@
 #' ## Analyze results with 4 groups.
 #' results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
 #' summary(results$model)
+#' }
 #'
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
