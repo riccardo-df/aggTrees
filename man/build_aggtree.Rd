@@ -106,7 +106,7 @@ invalidates the inference obtained by \code{\link{analyze_aggtree}}.
 ## Generate data.
 set.seed(1986)
 
-n <- 100
+n <- 200
 k <- 3
 
 X <- matrix(rnorm(n * k), ncol = k)
