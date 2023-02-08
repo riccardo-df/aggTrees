@@ -7,6 +7,9 @@
 #' @param sequence If \code{TRUE}, the whole sequence of optimal groupings is displayed in a short animation.
 #' @param ... Further arguments from \code{\link[rpart.plot]{prp}}.
 #'
+#' @return
+#' None, plots an \code{aggTrees} object.
+#'
 #' @details
 #' Nodes are colored using a diverging palette. Nodes with predictions smaller than the ATE (i.e., the root
 #' prediction) are colored in blue shades, and nodes with predictions larger than the ATE are colored in red
@@ -143,6 +146,10 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...)
 #' @param object \code{aggTrees} object.
 #' @param ... Further arguments passed to or from other methods.
 #'
+#' @return
+#' None, prints the summary of an \code{aggTrees} object.
+#'
+#' @seealso
 #' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 #'
 #' @references
@@ -166,6 +173,10 @@ summary.aggTrees <- function(object, ...) {
 #' @param x \code{aggTrees} object.
 #' @param ... Further arguments passed to or from other methods.
 #'
+#' @return
+#' None, prints an \code{aggTrees} object.
+#'
+#' @seealso
 #' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 #'
 #' @references

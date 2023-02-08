@@ -45,12 +45,6 @@ sample_split <- function(n, training_frac = 0.5) {
 #'
 #' @author Riccardo Di Francesco
 #'
-#' @references
-#' \itemize{
-#'   \item J Robins, A Rotnitzky (1995). Semiparametric efficiency in multivariate regression models with missing data. \doi{10.2307/2291135}.
-#'   \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
-#' }
-#'
 #' @export
 dr_scores <- function(y, D, X, k = 5) {
   ## Handling inputs and checks.

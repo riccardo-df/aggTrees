@@ -24,12 +24,6 @@ Constructs doubly-robust scores via K-fold cross-fitting.
 \details{
 Honest regression forests are used to estimate the propensity score and the conditional mean function of the outcome.
 }
-\references{
-\itemize{
-  \item J Robins, A Rotnitzky (1995). Semiparametric efficiency in multivariate regression models with missing data. \doi{10.2307/2291135}.
-  \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
-}
-}
 \author{
 Riccardo Di Francesco
 }

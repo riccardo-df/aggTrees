@@ -9,9 +9,10 @@
 \arguments{
 \item{object}{\code{aggTrees} object.}
 
-\item{...}{Further arguments passed to or from other methods.
-
-\code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}}
+\item{...}{Further arguments passed to or from other methods.}
+}
+\value{
+None, prints the summary of an \code{aggTrees} object.
 }
 \description{
 Summarizes an \code{aggTrees} object.
@@ -20,6 +21,9 @@ Summarizes an \code{aggTrees} object.
 \itemize{
   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
+}
+\seealso{
+\code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
 }
 \author{
 Riccardo Di Francesco

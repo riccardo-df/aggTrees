@@ -110,11 +110,6 @@ log_ratio_sd <- function(X, D) {
 #'
 #' @author Elena Dal Torrione, Riccardo Di Francesco
 #'
-#' @references
-#' \itemize{
-#'   \item G. W. Imbens, D. B. Rubin (2015). Causal inference in statistics, social, and biomedical sciences. Cambridge University Press. \doi{10.1017/CBO9781139025751}.
-#' }
-#'
 #' @export
 balance_measures <- function(X, D) {
   ## Handling inputs.

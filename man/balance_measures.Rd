@@ -32,11 +32,6 @@ for both treatment arms. Additionally, two balance measures are computed:
 
 Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox}.
 }
-\references{
-\itemize{
-  \item G. W. Imbens, D. B. Rubin (2015). Causal inference in statistics, social, and biomedical sciences. Cambridge University Press. \doi{10.1017/CBO9781139025751}.
-}
-}
 \author{
 Elena Dal Torrione, Riccardo Di Francesco
 }

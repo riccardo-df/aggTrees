@@ -15,6 +15,9 @@
 
 \item{...}{Further arguments from \code{\link[rpart.plot]{prp}}.}
 }
+\value{
+None, plots an \code{aggTrees} object.
+}
 \description{
 Plots an \code{aggTrees} object.
 }

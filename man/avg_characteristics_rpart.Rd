@@ -32,7 +32,6 @@ Compilation of the LATEX code requires the following packages: \code{booktabs}, 
 }
 \references{
 \itemize{
-  \item V Chernozhukov, M Demirer, E Duflo, I Fernandez-Val (2018). Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments, with an application to immunization in India. arXiv preprint arXiv:1712.04802. \doi{10.48550/ARXIV.1712.04802}.
   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }

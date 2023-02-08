@@ -21,11 +21,10 @@
 #' it prints LATEX code in the console if \code{verbose == TRUE} (the default).
 #'
 #' @examples
-#' \dontrun{
 #' ## Generate data.
 #' set.seed(1986)
 #'
-#' n <- 3000
+#' n <- 500
 #' k <- 3
 #'
 #' X <- matrix(rnorm(n * k), ncol = k)
@@ -38,6 +37,7 @@
 #' ## Construct sequence of groupings. CATEs estimated internally,
 #' groupings <- build_aggtree(y, D, X, method = "aipw")
 #'
+#' \dontrun{
 #' ## We can estimate CATEs and pass them.
 #' splits <- sample_split(length(y), training_frac = 0.5)
 #' training_idx <- splits$training_idx
@@ -51,18 +51,17 @@
 #' D_hon <- D[honest_idx]
 #' X_hon <- X[honest_idx, ]
 #'
-#'  library(grf)
+#' library(grf)
 #' forest <- causal_forest(X_tr, y_tr, D_tr) # Use training sample.
 #' cates <- predict(forest, X)$predictions
 #'
 #' groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates,
-#'                            is_honest = 1:length(y) %in% honest_idx)
+#'                            is_honest = 1:length(y) %in% honest_idx)}
 #'
 #' ## We have compatibility with generic S3-methods.
 #' summary(groupings)
 #' print(groupings)
-#' plot(groupings)
-#' plot(groupings, sequence = TRUE)
+#' plot(groupings) # Try also setting 'sequence = TRUE'.
 #'
 #' ## To predict, do the following.
 #' tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
@@ -71,7 +70,6 @@
 #' ## Analyze results with 4 groups.
 #' results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
 #' summary(results$model)
-#' }
 #'
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
@@ -118,10 +116,7 @@
 #'
 #' @references
 #' \itemize{
-#'   \item S Athey, G Imbens (2016). Recursive partitioning for heterogeneous causal effects. Proceedings of the National Academy of Sciences. \doi{10.1073/pnas.1510489113}.
 #'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
-#'   \item J Robins, A Rotnitzky (1995). Semiparametric efficiency in multivariate regression models with missing data. \doi{10.2307/2291135}.
-#'   \item V Semenova, V Chernozhukov (2021). Debiased machine learning of conditional average treatment effects and other causal functions. \doi{10.1093/ectj/utaa027}.
 #' }
 #'
 #' @author Riccardo Di Francesco
