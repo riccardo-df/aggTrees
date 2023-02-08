@@ -368,10 +368,15 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
   if (is.null(gates_point)) gates_point <- rep("NA", lenght = length(unique(leaves)))
   if (is.null(gates_sd)) gates_sd <- rep("NA", lenght = length(unique(leaves)))
 
-  gates_point <- round(gates_point, 3)
-  gates_sd <- round(gates_sd, 3)
-  gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
-  gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
+  if (!is.character(gates_point)) {
+    gates_point <- round(gates_point, 3)
+    gates_sd <- round(gates_sd, 3)
+    gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
+    gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
+  } else {
+    gates_ci_lower <- rep("NA", lenght = length(unique(leaves)))
+    gates_ci_upper <- rep("NA", lenght = length(unique(leaves)))
+  }
 
   ## Write table.
   table_names <- rename_latex(colnames(X))
@@ -409,9 +414,9 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
     \\end{table}
 \\endgroup \n\n")
 
+  ## Warn the user for zero variation in leaves.
   no_variation_names <- names(unlist(lapply(parms, function(x) { if (any(x[, 2] == 0)) idx <- 1})))
 
-  ## Warn the user for zero variation in leaves.
   if (length(no_variation_names) > 1) {
     names_string <- paste0(no_variation_names, collapse = ", ")
     warning(paste0("Variables '", names_string, "' have no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
