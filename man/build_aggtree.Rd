@@ -103,10 +103,11 @@ sample is empty, the same data used to construct the tree are used to estimate G
 invalidates the inference obtained by \code{\link{analyze_aggtree}}.
 }
 \examples{
+\donttest{
 ## Generate data.
 set.seed(1986)
 
-n <- 200
+n <- 1000
 k <- 3
 
 X <- matrix(rnorm(n * k), ncol = k)
@@ -119,7 +120,6 @@ y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 ## Construct sequence of groupings. CATEs estimated internally,
 groupings <- build_aggtree(y, D, X, method = "aipw")
 
-\dontrun{
 ## We can estimate CATEs and pass them.
 splits <- sample_split(length(y), training_frac = 0.5)
 training_idx <- splits$training_idx
@@ -138,7 +138,7 @@ forest <- causal_forest(X_tr, y_tr, D_tr) # Use training sample.
 cates <- predict(forest, X)$predictions
 
 groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates,
-                           is_honest = 1:length(y) \%in\% honest_idx)}
+                           is_honest = 1:length(y) \%in\% honest_idx)
 
 ## We have compatibility with generic S3-methods.
 summary(groupings)
@@ -151,7 +151,7 @@ predict(tree, data.frame(X))
 
 ## Analyze results with 4 groups.
 results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
-summary(results$model)
+summary(results$model)}
 
 }
 \references{
