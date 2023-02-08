@@ -24,7 +24,7 @@
 #' ## Generate data.
 #' set.seed(1986)
 #'
-#' n <- 500
+#' n <- 100
 #' k <- 3
 #'
 #' X <- matrix(rnorm(n * k), ncol = k)
