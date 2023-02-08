@@ -52,14 +52,16 @@ analyze_aggtree(
 }
 \value{
 \code{\link{build_aggtree}} returns an \code{aggTrees} object. \code{\link{analyze_aggtree}} returns the fitted model, as an
-\code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is \code{NULL}). Additionally,
-it prints LATEX code in the console if \code{verbose == TRUE} (the default).
+\code{\link[estimatr]{lm_robust}} object, the results of testing whether GATEs are equal to each other, and the scores
+(if \code{method == "raw"}, this is \code{NULL}). Additionally, it prints LATEX code in the console if \code{verbose == TRUE}
+(the default).
 }
 \description{
 Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
 The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
 feature an optimality property. For each grouping, we obtain point estimation and inference about group average
-treatment effects (GATEs). Additionally, we compute the average characteristics of units in each group.
+treatment effects (GATEs). Additionally, we compute the average characteristics of units in each group and test
+the null hypothesis that GATEs are the same across groups.
 }
 \details{
 Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
@@ -151,7 +153,8 @@ predict(tree, data.frame(X))
 
 ## Analyze results with 4 groups.
 results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
-summary(results$model)}
+summary(results$model)
+results$test_results}
 
 }
 \references{

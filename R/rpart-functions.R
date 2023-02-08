@@ -359,7 +359,7 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{\\href{https://soundcloud.com/theplasticchairband}{Secret link.}}
+    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator and reported in parenthesis under each point estimate. For each leaf, point estimates and $95\\%$ confidence intervals for GATEs are displayed.}
     \\label{table:average.characteristics.leaves}
     \\end{table}
 \\endgroup \n\n")

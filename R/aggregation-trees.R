@@ -3,7 +3,8 @@
 #' Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
 #' The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
 #' feature an optimality property. For each grouping, we obtain point estimation and inference about group average
-#' treatment effects (GATEs). Additionally, we compute the average characteristics of units in each group.
+#' treatment effects (GATEs). Additionally, we compute the average characteristics of units in each group and test
+#' the null hypothesis that GATEs are the same across groups.
 #'
 #' @param y Outcome vector.
 #' @param D Treatment vector.
@@ -17,8 +18,9 @@
 #'
 #' @return
 #' \code{\link{build_aggtree}} returns an \code{aggTrees} object. \code{\link{analyze_aggtree}} returns the fitted model, as an
-#' \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is \code{NULL}). Additionally,
-#' it prints LATEX code in the console if \code{verbose == TRUE} (the default).
+#' \code{\link[estimatr]{lm_robust}} object, the results of testing whether GATEs are equal to each other, and the scores
+#' (if \code{method == "raw"}, this is \code{NULL}). Additionally, it prints LATEX code in the console if \code{verbose == TRUE}
+#' (the default).
 #'
 #' @examples
 #' \donttest{
@@ -69,7 +71,8 @@
 #'
 #' ## Analyze results with 4 groups.
 #' results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
-#' summary(results$model)}
+#' summary(results$model)
+#' results$test_results}
 #'
 #' @details
 #' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
@@ -196,6 +199,8 @@ build_aggtree <- function(y, D, X,
 #'
 #' @rdname build_aggtree
 #'
+#' @import car
+#'
 #' @export
 analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, verbose = TRUE) {
   ## Handling inputs and checks.
@@ -241,9 +246,18 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, ve
     gates_upper <- coef(summary(model))[, "CI Upper"]
   }
 
+  ## Test whether GATEs are the same across leaves.
+  if (method == "raw") {
+    null <- paste0("leaf1:D = leaf", seq(2, get_leaves(groups)), ":D")
+    test_results <- linearHypothesis(model, null, test = "F")
+  } else if (method == "aipw") {
+    null <- paste0("leaf1 = leaf", seq(2, get_leaves(groups)))
+    test_results <- linearHypothesis(model, null, test = "F")
+  }
+
   ## Print table.
   if (verbose) avg_characteristics_rpart(groups, X, gates_point, gates_sd)
 
   ## Output.
-  return(list("model" = model, "scores" = scores))
+  return(list("model" = model, "test_results" = test_results, "scores" = scores))
 }
