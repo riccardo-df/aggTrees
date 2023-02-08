@@ -20,41 +20,51 @@ causal_ols_rpart(tree, y, X, D, method = "aipw", scores = NULL)
 \item{scores}{Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
 }
 \value{
-The fitted model, as an \code{\link[estimatr]{lm_robust}} object, and the scores (if \code{method == "raw"}, this is
-\code{NULL}).
+A list storing:
+  \item{\code{model}}{The fitted model, as an \code{\link[estimatr]{lm_robust}} object.}
+  \item{\code{gates_all_equal}}{Results of testing simultaneously whether all average effects are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
+  \item{\code{gates_diff_smallest}}{Results of testing individually whether each average effect differs from smallest effect. p-values are adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
+  \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 }
 \description{
 Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
-estimated coefficients identify the GATE in each leaf. If the data used in the OLS estimation have not been
-used to grow the tree (a condition called "honesty"), then one can use the standard errors for the tree's estimates
-to construct valid confidence intervals.
+estimated coefficients identify the average treatment effect in each leaf under unconfoundedness. If the data used
+in the OLS estimation have not been used to grow the tree (a condition called "honesty"), then one can use the
+standard errors for the tree's estimates to construct valid confidence intervals.
 }
 \details{
-The \code{method} argument controls how GATEs are estimated. If \code{"method" == "raw"}, we estimate via OLS the following
-linear model:
+The \code{method} argument controls how average effects in each leaf are estimated. If \code{"method" == "raw"}, we estimate via
+OLS the following linear model:
 
 \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
 with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-number of leaves. If the treatment is randomly assigned, one can show that the betas identify the GATE of each group.
-Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
-due to selection into treatment. To get unbiased estimates, we can set \code{"method"} to \code{"aipw"} to construct
-doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
+number of leaves. If the treatment is randomly assigned, one can show that the betas identify the average treatment effect in
+each group. However, in observational studies these estimates are biased due to selection into treatment. To get unbiased
+estimates, we can set \code{"method"} to \code{"aipw"} to construct doubly-robust scores \code{y_i^*} and use them as a
+pseudo-outcome in the following regression:
 
 \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
-This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual. Honest regression forests
-and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome
-(unless the user specifies the argument \code{scores}).\cr
+Honest regression forests and 5-fold cross fitting are used to estimate the propensity
+score and the conditional mean function of the outcome (unless the user specifies the argument \code{scores}).\cr
+
+Additionally, \code{causal_ols_rpart} performs two types of hypothesis testing. First, it uses standard
+errors from the above models to test whether average treatment effects in each leaf are the same by constructing a finite-sample
+F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new
+linear model by omitting the leaf with the smallest (i.e., more negative) average effect (and its interaction with the treatment
+variable if \code{method == "raw"}) and adding an intercept (and the treatment variable if \code{method == "raw"}). This way,
+coefficients give how much each average effect is larger than the smallest effect, and we can test separately the usual null
+hypotheses that these differences are zero. We correct for multiple hypothesis testing using the Holm's procedure.\cr
 
 Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
-\code{X} must not have been used to grow the \code{tree}.\cr
+\code{X} must not have been used to construct the \code{tree}.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
 If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D} if
 \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
-we get an estimate of the ATE.
+we get an estimate of the overall average treatment effect.
 }
 \references{
 \itemize{

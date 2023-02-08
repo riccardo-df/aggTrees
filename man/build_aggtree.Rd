@@ -59,9 +59,10 @@ analyze_aggtree(
 \description{
 Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
 The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
-feature an optimality property. For each grouping, we obtain point estimation and inference about group average
-treatment effects (GATEs). Additionally, we compute the average characteristics of units in each group and test
-the null hypothesis that GATEs are the same across groups.
+feature an optimality property. For each grouping, we obtain point estimation and standard errors for group average
+treatment effects (GATEs). Additionally, we assess whether systematic heterogeneity is found by testing the hypothesis
+that GATEs are the same across groups and that each GATE is different from the smallest. Finally, we investigate the driving
+factors of effect heterogeneity by computing the average characteristics of units in each group.
 }
 \details{
 Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
@@ -80,9 +81,6 @@ vector to denote which observations belong to the honest sample. If honesty is n
 vector of \code{FALSE}s. If no vector of CATEs is provided, these are estimated internally via a
 \code{\link[grf]{causal_forest}}.\cr
 
-The tree is grown up to some stopping criteria that can be specified by the user. Please refer to
-the \code{\link[rpart]{rpart.control}} documentation for this.\cr
-
 \code{\link{analyze_aggtree}} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
 desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and inference about
 GATEs, together with the average characteristics of the units in each group. As before, the \code{method} argument controls
@@ -91,14 +89,22 @@ how GATEs are estimated. If \code{method == "raw"}, we estimate via OLS the foll
 \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
 with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th group, and \code{|T|} the
-number of groups. If the treatment is randomly assigned, one can show that the estimated betas identify the GATEs of
-each group. Thus, we can interpret the OLS results as usual. However, in observational studies these estimates are biased
-due to selection into treatment. To get unbiased estimates, we can set \code{method} to \code{"aipw"} to construct
-doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following regression:
+number of groups. If the treatment is randomly assigned, one can show that the betas identify the GATE of
+each group. However, this is not true in observational studies due to selection into treatment. In this case, we can set
+\code{method} to \code{"aipw"} to construct doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following
+regression:
 
 \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
-This way, we get unbiased GATEs estimates, and we can again interpret OLS results as usual.\cr
+This way, betas again identify GATEs.\cr
+
+Additionally, \code{analyze_aggtree} performs two types of hypothesis testing. First, it uses standard errors from the above models
+to test whether average treatment effects in each leaf are the same by constructing a finite-sample F statistic for carrying out a
+Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new linear model by omitting the leaf
+with the smallest (i.e., more negative) average effect (and its interaction with the treatment variable if \code{method == "raw"})
+and adding an intercept (and the treatment variable if \code{method == "raw"}). This way, coefficients give how much each average
+effect is larger than the smallest effect, and we can test separately the usual null hypotheses that these differences are zero.
+We correct for multiple hypothesis testing using the Holm's procedure.\cr
 
 Regardless of the chosen \code{method}, both functions estimate GATEs using observations in the honest sample. If the honest
 sample is empty, the same data used to construct the tree are used to estimate GATEs. This is fine for prediction but
