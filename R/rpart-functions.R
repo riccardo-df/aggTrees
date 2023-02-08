@@ -307,8 +307,8 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
     p_values <- new_model$p.value
     p_values_holm <- stats::p.adjust(p_values, method = "holm")
 
-    gates_diff_smallest <- data.frame("GATE_increase" = model$coefficients[parms_idx],
-                         "se" = model$std.error[parms_idx],
+    gates_diff_smallest <- data.frame("GATE_increase" = new_model$coefficients[parms_idx],
+                         "se" = new_model$std.error[parms_idx],
                          "adj_pvalue" = round(p_values_holm[parms_idx], 3))
     rownames(gates_diff_smallest) <- paste0("leaf", seq_len(get_leaves(tree))[-1])
   } else {
