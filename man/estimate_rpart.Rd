@@ -2,7 +2,7 @@
 % Please edit documentation in R/rpart-functions.R
 \name{estimate_rpart}
 \alias{estimate_rpart}
-\title{Estimation of rpart Objects}
+\title{GATEs Estimation with rpart Objects}
 \usage{
 estimate_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
@@ -24,7 +24,8 @@ A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object, 
 this is \code{NULL}).
 }
 \description{
-Replace node predictions of an \code{\link[rpart]{rpart}} object using external data.
+Replaces node predictions of an \code{\link[rpart]{rpart}} object using external data to estimate group average treatment
+effects (GATEs).
 }
 \details{
 If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
@@ -39,6 +40,42 @@ and 5-fold cross fitting are used to estimate the propensity score and the condi
 \code{estimate_rpart} allows the user to implement "honest" estimation. If observations in \code{y}, \code{D} and \code{X}
 have not been used to construct the \code{tree}, then the new predictions are honest in the sense of Athey and Imbens (2016).
 To get standard errors for the tree's estimates, please use \code{\link{causal_ols_rpart}}.
+}
+\examples{
+## Generate data.
+set.seed(1986)
+
+n <- 1000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+D <- rbinom(n, size = 1, prob = 0.5)
+mu0 <- 0.5 * X[, 1]
+mu1 <- 0.5 * X[, 1] + X[, 2]
+y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+
+## Split the sample.
+splits <- sample_split(length(y), training_frac = 0.5)
+training_idx <- splits$training_idx
+honest_idx <- splits$honest_idx
+
+y_tr <- y[training_idx]
+D_tr <- D[training_idx]
+X_tr <- X[training_idx, ]
+
+y_hon <- y[honest_idx]
+D_hon <- D[honest_idx]
+X_hon <- X[honest_idx, ]
+
+## Construct a tree using training sample.
+library(rpart)
+tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
+
+## Estimate GATEs in each node (internal and terminal) using honest sample.
+new_tree <- estimate_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
+new_tree$tree
+
 }
 \references{
 \itemize{

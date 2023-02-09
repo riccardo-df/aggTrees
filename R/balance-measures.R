@@ -94,6 +94,23 @@ log_ratio_sd <- function(X, D) {
 #' @return
 #' Prints LATEX code in the console.
 #'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 1000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Print table.
+#' balance_measures(X, D)
+#'
 #' @details
 #' For each covariate in \code{X}, \code{balance_measures} computes sample averages and standard deviations
 #' for both treatment arms. Additionally, two balance measures are computed:
@@ -196,5 +213,4 @@ balance_measures <- function(X, D) {
     \\label{table:descriptive.stats}
     \\end{table}
 \\endgroup")
-
 }

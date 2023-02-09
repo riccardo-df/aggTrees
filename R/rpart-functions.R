@@ -9,6 +9,26 @@
 #' @return
 #' The subtree, as an \code{\link[rpart]{rpart}} object.
 #'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 3000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#'
+#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#'
+#' ## Construct tree.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame(y, X), cp = 0)
+#'
+#' ## Extract subtree.
+#' sub_tree <- subtree(tree, leaves = 4)
+#' sub_tree_cv <- subtree(tree, cv = TRUE)
+#'
 #' @import rpart
 #'
 #' @author Riccardo Di Francesco
@@ -40,6 +60,26 @@ subtree <- function(tree, leaves = NULL, cv = FALSE) {
 #' @return
 #' The number of leaves.
 #'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 3000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#'
+#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#'
+#' ## Construct tree.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame(y, X))
+#'
+#' ## Extract number of leaves.
+#' n_leaves <- get_leaves(tree)
+#' n_leaves
+#'
 #' @author Riccardo Di Francesco
 #'
 #' @seealso \code{\link{subtree}} \code{\link{node_membership}} \code{\link{leaf_membership}}
@@ -63,6 +103,26 @@ get_leaves <- function(tree) {
 #'
 #' @return
 #' Logical vector denoting whether each observation in \code{X} falls into \code{node}.
+#'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 3000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#'
+#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#'
+#' ## Construct tree.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame(y, X))
+#'
+#' ## Extract number of leaves.
+#' is_in_third_node <- node_membership(tree, X, 3)
+#' is_in_third_node
 #'
 #' @importFrom utils capture.output
 #'
@@ -90,6 +150,26 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #' A factor whose levels denote in which leaf each unit falls. Leaves are ordered in increasing order of their predictions
 #' (from most negative to most positive).
 #'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 3000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#'
+#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#'
+#' ## Construct tree.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame(y, X))
+#'
+#' ## Extract number of leaves.
+#' leaves_factor <- leaf_membership(tree, X)
+#' leaves_factor
+#'
 #' @author Riccardo Di Francesco
 #'
 #' @seealso \code{\link{subtree}} \code{\link{node_membership}} \code{\link{get_leaves}}
@@ -108,9 +188,10 @@ leaf_membership <- function(tree, X) {
 }
 
 
-#' Estimation of rpart Objects
+#' GATEs Estimation with rpart Objects
 #'
-#' Replace node predictions of an \code{\link[rpart]{rpart}} object using external data.
+#' Replaces node predictions of an \code{\link[rpart]{rpart}} object using external data to estimate group average treatment
+#' effects (GATEs).
 #'
 #' @param tree An \code{\link[rpart]{rpart}} object.
 #' @param y Outcome vector.
@@ -122,6 +203,41 @@ leaf_membership <- function(tree, X) {
 #' @return
 #' A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object, and the scores (if \code{method == "raw"},
 #' this is \code{NULL}).
+#'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 1000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Split the sample.
+#' splits <- sample_split(length(y), training_frac = 0.5)
+#' training_idx <- splits$training_idx
+#' honest_idx <- splits$honest_idx
+#'
+#' y_tr <- y[training_idx]
+#' D_tr <- D[training_idx]
+#' X_tr <- X[training_idx, ]
+#'
+#' y_hon <- y[honest_idx]
+#' D_hon <- D[honest_idx]
+#' X_hon <- X[honest_idx, ]
+#'
+#' ## Construct a tree using training sample.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
+#'
+#' ## Estimate GATEs in each node (internal and terminal) using honest sample.
+#' new_tree <- estimate_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
+#' new_tree$tree
 #'
 #' @details
 #' If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
@@ -185,12 +301,10 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 }
 
 
-#' Estimating Leaf-Effects via Linear Models
+#' Estimation and Inference about GATEs with rpart Objects
 #'
-#' Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
-#' estimated coefficients identify the average treatment effect in each leaf under unconfoundedness. If the data used
-#' in the OLS estimation have not been used to grow the tree (a condition called "honesty"), then one can use the
-#' standard errors for the tree's estimates to construct valid confidence intervals.
+#' Obtains point estimates and standard errors for group average treatment effects (GATEs), where groups correspond to the leaves
+#' of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
 #'
 #' @param tree An \code{\link[rpart]{rpart}} object.
 #' @param y Outcome vector.
@@ -201,38 +315,67 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #'
 #' @return
 #' A list storing:
-#'   \item{\code{model}}{The fitted model, as an \code{\link[estimatr]{lm_robust}} object.}
+#'   \item{\code{model_gates}}{The model fitted to get point estimates and standard errors for GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
+#'   \item{\code{model_diff}}{The model fitted to get point estimates and standard errors for differences from smallest GATE, as an \code{\link[estimatr]{lm_robust}} object.}
 #'   \item{\code{gates_all_equal}}{Results of testing simultaneously whether all average effects are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
 #'   \item{\code{gates_diff_smallest}}{Results of testing individually whether each average effect differs from smallest effect. p-values are adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
 #'   \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 #'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 1000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Split the sample.
+#' splits <- sample_split(length(y), training_frac = 0.5)
+#' training_idx <- splits$training_idx
+#' honest_idx <- splits$honest_idx
+#'
+#' y_tr <- y[training_idx]
+#' D_tr <- D[training_idx]
+#' X_tr <- X[training_idx, ]
+#'
+#' y_hon <- y[honest_idx]
+#' D_hon <- D[honest_idx]
+#' X_hon <- X[honest_idx, ]
+#'
+#' ## Construct a tree using training sample.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
+#'
+#' ## Estimate GATEs in each node (internal and terminal) using honest sample.
+#' results <- causal_ols_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
+#' summary(results$model_gates) # Coefficient of leafk:D is GATE in k-th leaf.
+#' summary(results$model_diff) # leafk:D is difference between k-th GATE and smallest GATE.
+#' results$gates_all_equal # We reject the null that all GATEs are equal.
+#' results$gates_diff_smallest # GATEs in leaf 1 and leaf 2 are not significantly differ.
+#'
+#' @md
 #' @details
-#' The \code{method} argument controls how average effects in each leaf are estimated. If \code{"method" == "raw"}, we estimate via
-#' OLS the following linear model:
+#' ## Point estimates and standard errors for GATEs
+#' GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we estimate
+#' via OLS the following:
 #'
 #' \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
-#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-#' number of leaves. If the treatment is randomly assigned, one can show that the betas identify the average treatment effect in
-#' each group. However, in observational studies these estimates are biased due to selection into treatment. To get unbiased
-#' estimates, we can set \code{"method"} to \code{"aipw"} to construct doubly-robust scores \code{y_i^*} and use them as a
-#' pseudo-outcome in the following regression:
+#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of \code{tree}, and |T| the number of
+#' groups. If the treatment is randomly assigned, one can show that the betas identify the GATE in each leaf. However, this is not true
+#' in observational studies due to selection into treatment. In this case, the user is expected to use \code{method == "aipw"} to run
+#' the following regression:
 #'
-#' \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+#' \deqn{score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 #'
-#' Honest regression forests and 5-fold cross fitting are used to estimate the propensity
-#' score and the conditional mean function of the outcome (unless the user specifies the argument \code{scores}).\cr
-#'
-#' Additionally, \code{causal_ols_rpart} performs two types of hypothesis testing. First, it uses standard
-#' errors from the above models to test whether average treatment effects in each leaf are the same by constructing a finite-sample
-#' F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new
-#' linear model by omitting the leaf with the smallest (i.e., more negative) average effect (and its interaction with the treatment
-#' variable if \code{method == "raw"}) and adding an intercept (and the treatment variable if \code{method == "raw"}). This way,
-#' coefficients give how much each average effect is larger than the smallest effect, and we can test separately the usual null
-#' hypotheses that these differences are zero. We correct for multiple hypothesis testing using the Holm's procedure.\cr
-#'
-#' Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
-#' \code{X} must not have been used to construct the \code{tree}.\cr
+#' where score_i are doubly-robust scores constructed via honest regression forests and 5-fold cross fitting (unless the user specifies
+#' the argument \code{scores}). This way, betas again identify GATEs.\cr
 #'
 #' Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 #'
@@ -240,8 +383,27 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
 #' we get an estimate of the overall average treatment effect.
 #'
-#' @examples
+#' ## Hypothesis testing
+#' \code{\link{causal_ols_rpart}} performs two types of hypothesis testing. First, it uses standard
+#' errors from the above models to test whether average treatment effects in each leaf are the same by constructing a finite-sample
+#' F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new
+#' linear model to estimate and make inference about the difference between each GATE and the smallest GATE. If \code{method == "raw"},
+#' the following model is used:
 #'
+#' \deqn{Y_i = \delta + \lambda D_i + \sum_{l = 2}^{|T|} L_{i, l} \gamma_l + \sum_{l = 2}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
+#'
+#' where leaves 2, ..., |T| are ordered in increasing order of their GATEs. One can show that each beta_l identifies the difference
+#' between the l-th GATE and the smallest GATE. Similarly, if \code{method == "aipw"} we fit the following model:
+#'
+#' \deqn{score_i = \delta + \sum_{l = 2}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+#'
+#' to obtain the same result. We can then test separately the usual null hypotheses that each beta is zero. We adjust p-values to
+#' account for multiple hypothesis testing using the Holm's procedure. As before, standard errors are always estimated via the
+#' Eicker-Huber-White estimator.\cr
+#'
+#' ## Caution on Inference
+#' "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
+#' \code{X} must not have been used to construct the \code{tree} and the \code{scores}.\cr
 #'
 #' @import rpart estimatr car stats
 #'
@@ -255,16 +417,15 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' @seealso \code{\link{estimate_rpart}} \code{\link{avg_characteristics_rpart}}
 #'
 #' @export
-causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
+causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. It must be either 'raw' or 'aipw'.", call. = FALSE)
 
   ## Generate leaves indicators.
   leaves <- leaf_membership(tree, X)
-
   if (length(unique(leaves)) < get_leaves(tree)) warning("One or more leaves are empty: No observations in X fall there.")
 
-  ## OLS estimation.
+  ## GATEs point estimates and standard errors.
   if (method == "raw") {
     if (length(unique(leaves)) == 1) {
       model <- estimatr::lm_robust(y ~ D, data = data.frame("y" = y, "D" = D), se_type = "HC1")
@@ -283,7 +444,7 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
     }
   }
 
-  ## Test whether GATEs are the same across leaves.
+  ## Test whether GATEs are the same across leaves. Use standard errors from model above.
   if (method == "raw") {
     null <- paste0("leaf1:D = leaf", seq(2, get_leaves(tree)), ":D")
     gates_all_equal <- car::linearHypothesis(model, null, test = "F")
@@ -292,8 +453,7 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
     gates_all_equal <- car::linearHypothesis(model, null, test = "F")
   }
 
-  ## Test whether each GATE is different from smallest (more negative) GATE. Fit a new model so that coefficients give difference
-  ## of each GATE from smallest GATE. Use Holm's correction to test if differences are zero.
+  ## Test whether each GATE is different from smallest GATE. Fit a new model. Adjust p-values.
   if (get_leaves(tree) > 1) {
     if (method == "raw") {
       new_model <- estimatr::lm_robust(y ~ leaf*D, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
@@ -316,30 +476,53 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
   }
 
   ## Output.
-  return(list("model" = model, "gates_all_equal" = gates_all_equal, "gates_diff_smallest" = gates_diff_smallest, "scores" = scores))
+  return(list("model_gates" = model,
+              "model_diff" = new_model,
+              "gates_all_equal" = gates_all_equal,
+              "gates_diff_smallest" = gates_diff_smallest,
+              "scores" = scores))
 }
 
 
 #' Leaves Average Characteristics
 #'
-#' Compute the average characteristics of units in each leaf of an \code{\link[rpart]{rpart}} object.
+#' Computes the average characteristics of units in each leaf of an \code{\link[rpart]{rpart}} object.
 #'
 #' @param tree An \code{rpart} object.
 #' @param X Covariate matrix (no intercept).
-#' @param gates_point Estimated GATEs, one for each leaf, in increasing order (from most negative to most positive).
-#' @param gates_sd Standard errors for estimated GATEs, one for each leaf.
 #'
 #' @return
-#' Prints LATEX code in the console.
+#' A list storing each regression as an \code{\link[estimatr]{lm_robust}} object.
+#'
+#' @examples
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 1000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Construct a tree.
+#' library(rpart)
+#' tree <- rpart(y ~ ., data = data.frame("y" = y, X), maxdepth = 2)
+#'
+#' ## Compute average characteristics in each leaf.
+#' results <- avg_characteristics_rpart(tree, X)
+#' results
 #'
 #' @details
-#' \code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
-#' This way, we get the average characteristics of units in each leaf, together with a standard error. Leaves are
-#' ordered in increasing order of their predictions (from most negative to most positive). Standard errors are
-#' estimated via the Eicker-Huber-White estimator.\cr
+#' \code{\link{avg_characteristics_rpart}} regresses each covariate on a set of dummies denoting leaf membership.
+#' This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 #'
-#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox},
-#' \code{multirow}.
+#' Leaves are ordered in increasing order of their predictions (from most negative to most positive).\cr
+#'
+#' Standard errors are estimated via the Eicker-Huber-White estimator.
 #'
 #' @import estimatr stats
 #'
@@ -353,7 +536,7 @@ causal_ols_rpart <- function(tree, y, X, D, method = "aipw", scores = NULL) {
 #' @seealso \code{\link{causal_ols_rpart}}, \code{\link{estimate_rpart}}
 #'
 #' @export
-avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NULL) {
+avg_characteristics_rpart <- function(tree, X) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
 
@@ -363,65 +546,6 @@ avg_characteristics_rpart <- function(tree, X, gates_point = NULL, gates_sd = NU
   ## Regress each leaf on the leaf indicator.
   regressions <- apply(X, MARGIN = 2, function(x) {estimatr::lm_robust(x ~ 0 + leaf, data = data.frame("x" = x, "leaf" = leaves), se_type = "HC1")})
 
-  ## Extract information.
-  parms <- lapply(regressions, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
-  if (is.null(gates_point)) gates_point <- rep("NA", lenght = length(unique(leaves)))
-  if (is.null(gates_sd)) gates_sd <- rep("NA", lenght = length(unique(leaves)))
-
-  if (!is.character(gates_point)) {
-    gates_point <- round(gates_point, 3)
-    gates_sd <- round(gates_sd, 3)
-    gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
-    gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
-  } else {
-    gates_ci_lower <- rep("NA", lenght = length(unique(leaves)))
-    gates_ci_upper <- rep("NA", lenght = length(unique(leaves)))
-  }
-
-  ## Write table.
-  table_names <- rename_latex(colnames(X))
-
-  cat("\\begingroup
-  \\setlength{\\tabcolsep}{8pt}
-  \\renewcommand{\\arraystretch}{1.1}
-  \\begin{table}[b!]
-    \\centering
-    \\begin{adjustbox}{width = 1\\textwidth}
-    \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", length(unique(leaves))), "}
-      \\\\[-1.8ex]\\hline
-      \\hline \\\\[-1.8ex]
-      & ", c(paste("\\textit{Leaf ", 1:(length(unique(leaves))-1), "} & ", sep = ""), paste("\\textit{Leaf ", length(unique(leaves)), "}", sep = "")) ," \\\\
-      \\addlinespace[2pt]
-      \\hline \\\\[-1.8ex] \n\n", sep = "")
-
-  cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
-      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
-  cat("      \\addlinespace[2pt]
-      \\hline \\\\[-1.8ex] \n\n")
-
-  for (i in seq_len(length(table_names))) {
-    cat("      \\texttt{", table_names[i], "} & ", paste(round(parms[[i]][1:(length(unique(leaves))-1), 1], 2), " & ", sep = ""), round(parms[[i]][length(unique(leaves)), 1], 2), " \\\\ \n",
-        "      & ", paste("(", round(parms[[i]][1:(length(unique(leaves))-1), 2], 3), ")", " & ", sep = ""), paste("(", round(parms[[i]][length(unique(leaves)), 2], 3), ")", sep = ""), " \\\\ \n", sep = "")
-  }
-
-  cat("\n      \\addlinespace[3pt]
-      \\\\[-1.8ex]\\hline
-      \\hline \\\\[-1.8ex]
-    \\end{tabular}
-    \\end{adjustbox}
-    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator and reported in parenthesis under each point estimate. For each leaf, point estimates and $95\\%$ confidence intervals for GATEs are displayed.}
-    \\label{table:average.characteristics.leaves}
-    \\end{table}
-\\endgroup \n\n")
-
-  ## Warn the user for zero variation in leaves.
-  no_variation_names <- names(unlist(lapply(parms, function(x) { if (any(x[, 2] == 0)) idx <- 1})))
-
-  if (length(no_variation_names) > 1) {
-    names_string <- paste0(no_variation_names, collapse = ", ")
-    warning(paste0("Variables '", names_string, "' have no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
-  } else if (length(no_variation_names) == 1) {
-    warning(paste0("Variable '", no_variation_names, "' has no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
-
-  }
+  ## Output.
+  return(regressions)
 }

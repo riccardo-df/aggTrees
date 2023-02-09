@@ -19,6 +19,27 @@ The subtree, as an \code{\link[rpart]{rpart}} object.
 \description{
 Extracts a subtree with a user-specified number of leaves from an \code{\link[rpart]{rpart}} object.
 }
+\examples{
+## Generate data.
+set.seed(1986)
+
+n <- 3000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+
+y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+
+## Construct tree.
+library(rpart)
+tree <- rpart(y ~ ., data = data.frame(y, X), cp = 0)
+
+## Extract subtree.
+sub_tree <- subtree(tree, leaves = 4)
+sub_tree_cv <- subtree(tree, cv = TRUE)
+
+}
 \seealso{
 \code{\link{get_leaves}} \code{\link{node_membership}} \code{\link{leaf_membership}}
 }

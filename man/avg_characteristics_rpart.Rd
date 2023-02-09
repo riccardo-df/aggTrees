@@ -4,31 +4,49 @@
 \alias{avg_characteristics_rpart}
 \title{Leaves Average Characteristics}
 \usage{
-avg_characteristics_rpart(tree, X, gates_point = NULL, gates_sd = NULL)
+avg_characteristics_rpart(tree, X)
 }
 \arguments{
 \item{tree}{An \code{rpart} object.}
 
 \item{X}{Covariate matrix (no intercept).}
-
-\item{gates_point}{Estimated GATEs, one for each leaf, in increasing order (from most negative to most positive).}
-
-\item{gates_sd}{Standard errors for estimated GATEs, one for each leaf.}
 }
 \value{
-Prints LATEX code in the console.
+A list storing each regression as an \code{\link[estimatr]{lm_robust}} object.
 }
 \description{
-Compute the average characteristics of units in each leaf of an \code{\link[rpart]{rpart}} object.
+Computes the average characteristics of units in each leaf of an \code{\link[rpart]{rpart}} object.
 }
 \details{
-\code{avg_characteristics_rpart} regresses each covariate on a set of dummies denoting leaf membership.
-This way, we get the average characteristics of units in each leaf, together with a standard error. Leaves are
-ordered in increasing order of their predictions (from most negative to most positive). Standard errors are
-estimated via the Eicker-Huber-White estimator.\cr
+\code{\link{avg_characteristics_rpart}} regresses each covariate on a set of dummies denoting leaf membership.
+This way, we get the average characteristics of units in each leaf, together with a standard error.\cr
 
-Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox},
-\code{multirow}.
+Leaves are ordered in increasing order of their predictions (from most negative to most positive).\cr
+
+Standard errors are estimated via the Eicker-Huber-White estimator.
+}
+\examples{
+## Generate data.
+set.seed(1986)
+
+n <- 1000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+D <- rbinom(n, size = 1, prob = 0.5)
+mu0 <- 0.5 * X[, 1]
+mu1 <- 0.5 * X[, 1] + X[, 2]
+y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+
+## Construct a tree.
+library(rpart)
+tree <- rpart(y ~ ., data = data.frame("y" = y, X), maxdepth = 2)
+
+## Compute average characteristics in each leaf.
+results <- avg_characteristics_rpart(tree, X)
+results
+
 }
 \references{
 \itemize{

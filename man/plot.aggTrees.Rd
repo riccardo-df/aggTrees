@@ -16,7 +16,7 @@
 \item{...}{Further arguments from \code{\link[rpart.plot]{prp}}.}
 }
 \value{
-None, plots an \code{aggTrees} object.
+Plots an \code{aggTrees} object.
 }
 \description{
 Plots an \code{aggTrees} object.
@@ -27,13 +27,37 @@ prediction) are colored in blue shades, and nodes with predictions larger than t
 shades. Moreover, predictions that are more distant in absolute value from the ATE get darker shades.
 This way, we have an immediate understanding of the groups with extreme GATEs.
 }
+\examples{
+\donttest{
+## Generate data.
+set.seed(1986)
+
+n <- 1000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+D <- rbinom(n, size = 1, prob = 0.5)
+mu0 <- 0.5 * X[, 1]
+mu1 <- 0.5 * X[, 1] + X[, 2]
+y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+
+## Construct sequence of groupings. CATEs estimated internally,
+groupings <- build_aggtree(y, D, X, method = "aipw")
+
+## Plot.
+plot(groupings)
+plot(groupings, leaves = 3)
+plot(groupings, sequence = TRUE)}
+
+}
 \references{
 \itemize{
   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{
-\code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
+\code{\link{build_aggtree}}, \code{\link{inference_aggtree}}
 }
 \author{
 Riccardo Di Francesco

@@ -1,7 +1,7 @@
 Package: aggTrees
 Type: Package
 Title: Aggregation Trees
-Version: 1.0.0
+Version: 2.0.0
 Authors@R: person("Riccardo", "Di Francesco", email = "difrancesco.riccardo96@gmail.com", role = c("aut", "cre"))
 Description: Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
     Aggregation trees allow researchers to assess whether there is relevant heterogeneity in treatment effects. The approach 

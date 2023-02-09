@@ -18,6 +18,27 @@ A factor whose levels denote in which leaf each unit falls. Leaves are ordered i
 \description{
 Constructs a variable that encodes in which leaf of an \code{\link[rpart]{rpart}} object the units in a given data frame fall.
 }
+\examples{
+## Generate data.
+set.seed(1986)
+
+n <- 3000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+
+y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+
+## Construct tree.
+library(rpart)
+tree <- rpart(y ~ ., data = data.frame(y, X))
+
+## Extract number of leaves.
+leaves_factor <- leaf_membership(tree, X)
+leaves_factor
+
+}
 \seealso{
 \code{\link{subtree}} \code{\link{node_membership}} \code{\link{get_leaves}}
 }

@@ -13,15 +13,15 @@
 #' @param honest_frac Fraction of observations to be allocated to honest sample.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.
 #' @param scores Optional, vector of scores to be used in computing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
-#' @param cates Estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
+#' @param cates Optional, estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
 #' @param is_honest Logical vector denoting which observations belong to the honest sample. Required only if the \code{cates} argument is used.
 #' @param ... Further arguments from \code{\link[rpart]{rpart.control}}.
 #'
 #' @return
-#' \code{\link{build_aggtree}} returns an \code{aggTrees} object. \code{\link{analyze_aggtree}} returns the fitted model, as an
-#' \code{\link[estimatr]{lm_robust}} object, the results of testing whether GATEs are equal to each other, and the scores
-#' (if \code{method == "raw"}, this is \code{NULL}). Additionally, it prints LATEX code in the console if \code{verbose == TRUE}
-#' (the default).
+#' \code{\link{build_aggtree}} returns an \code{aggTrees} object.\cr
+#'
+#' \code{\link{inference_aggtree}} returns an \code{aggTrees.inference} object, which in turn contains the \code{aggTrees} object used
+#' in the call.
 #'
 #' @examples
 #' \donttest{
@@ -70,17 +70,29 @@
 #' tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
 #' predict(tree, data.frame(X))
 #'
-#' ## Analyze results with 4 groups.
-#' results <- analyze_aggtree(groupings, n_groups = 4, method = "aipw", scores = groupings$scores)
-#' summary(results$model)
-#' results$test_results}
+#' ## Inference with 4 groups.
+#' results <- inference_aggtree(groupings, n_groups = 4)
 #'
+#' summary(results$model_gates) # Coefficient of leafk is GATE in k-th leaf.
+#' results$gates_all_equal # We reject the null that all GATEs are equal.
+#'
+#' summary(results$model_diff) # leafk is difference between k-th GATE and smallest GATE.
+#' results$gates_diff_smallest # GATEs are significantly different from GATE in leaf 1.
+#' print(results, table = "diff")
+#'
+#' print(results, table = "avg_char")}
+#'
+#' @md
 #' @details
-#' Aggregation trees are a three-step procedure. First, CATEs are estimated using any estimator. Second, a tree is grown
-#' to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal groupings, one for each
-#' granularity level. For each level of granularity, we can obtain point estimation and inference about GATEs.\cr
+#' Aggregation trees are a three-step procedure. First, conditional average treatment effects (CATEs) are estimated using any
+#' estimator. Second, a tree is grown to approximate the CATEs. Third, the tree is pruned to derive a nested sequence of optimal
+#' groupings, one for each granularity level. For each level of granularity, we can obtain point estimation and inference about
+#' GATEs.\cr
 #'
-#' \code{\link{build_aggtree}} constructs the sequence of groupings and estimate GATEs in each node. GATEs can be estimated
+#' To implement this methodology, the user can rely on two core functions that handle the various steps.\cr
+#'
+#' ## Constructing the Sequence of Groupings
+#' \code{\link{build_aggtree}} constructs the sequence of groupings (i.e., the tree) and estimate GATEs in each node. GATEs can be estimated
 #' in several ways. This is controlled by the \code{method} argument. If \code{method == "raw"}, we compute the difference
 #' in mean outcomes between treated and control observations in each node. This is an unbiased estimator in randomized experiment.
 #' If \code{method == "aipw"}, we construct doubly-robust scores and average them in each node. This is unbiased also in
@@ -92,34 +104,57 @@
 #' vector of \code{FALSE}s. If no vector of CATEs is provided, these are estimated internally via a
 #' \code{\link[grf]{causal_forest}}.\cr
 #'
-#' \code{\link{analyze_aggtree}} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
-#' desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and inference about
-#' GATEs, together with the average characteristics of the units in each group. As before, the \code{method} argument controls
-#' how GATEs are estimated. If \code{method == "raw"}, we estimate via OLS the following linear model:
+#' ## GATEs Estimation and Inference
+#' \code{\link{inference_aggtree}} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
+#' desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and standard errors for
+#' GATEs. Additionally, it performs some hypothesis testing to assess whether we find systematic heterogeneity and computes
+#' the average characteristics of the units in each group to investigate the driving mechanism.
+#'
+#' ### Point estimates and standard errors for GATEs
+#' GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we estimate
+#' via OLS the following:
 #'
 #' \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
-#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th group, and \code{|T|} the
+#' with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th group, and |T| the
 #' number of groups. If the treatment is randomly assigned, one can show that the betas identify the GATE of
-#' each group. However, this is not true in observational studies due to selection into treatment. In this case, we can set
-#' \code{method} to \code{"aipw"} to construct doubly-robust scores \code{y_i^*} and use them as a pseudo-outcome in the following
-#' regression:
+#' each group. However, this is not true in observational studies due to selection into treatment. In this case, the user is expected
+#' to use \code{method == "aipw"} when calling \code{\link{build_aggtree}}. In this case, \code{\link{inference_aggtree}} uses the scores
+#' in the following regression:
 #'
-#' \deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+#' \deqn{score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 #'
-#' This way, betas again identify GATEs.\cr
+#' This way, betas again identify GATEs. Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White
+#' estimator.
 #'
-#' Additionally, \code{analyze_aggtree} performs two types of hypothesis testing. First, it uses standard errors from the above models
-#' to test whether average treatment effects in each leaf are the same by constructing a finite-sample F statistic for carrying out a
-#' Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new linear model by omitting the leaf
-#' with the smallest (i.e., more negative) average effect (and its interaction with the treatment variable if \code{method == "raw"})
-#' and adding an intercept (and the treatment variable if \code{method == "raw"}). This way, coefficients give how much each average
-#' effect is larger than the smallest effect, and we can test separately the usual null hypotheses that these differences are zero.
-#' We correct for multiple hypothesis testing using the Holm's procedure.\cr
+#' ### Hypothesis testing
+#' \code{\link{inference_aggtree}} performs two types of hypothesis testing. First, it uses standard errors from the above models
+#' to test whether GATEs in each leaf are the same by constructing a finite-sample F statistic for carrying out a Wald-test-based
+#' comparison between a model and a linearly restricted model. Second, it fits a new linear model to estimate and make inference
+#' about the difference between each GATE and the smallest GATE. If \code{method == "raw"}, the following model is used:
 #'
-#' Regardless of the chosen \code{method}, both functions estimate GATEs using observations in the honest sample. If the honest
-#' sample is empty, the same data used to construct the tree are used to estimate GATEs. This is fine for prediction but
-#' invalidates the inference obtained by \code{\link{analyze_aggtree}}.
+#' \deqn{Y_i = \delta + \lambda D_i + \sum_{l = 2}^{|T|} L_{i, l} \gamma_l + \sum_{l = 2}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
+#'
+#' where leaves 2, ..., |T| are ordered in increasing order of their GATEs. One can show that each beta_l identifies the difference
+#' between the l-th GATE and the smallest GATE. Similarly, if \code{method == "aipw"} we fit the following model:
+#'
+#' \deqn{score_i = \delta + \sum_{l = 2}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+#'
+#' to obtain the same result. We can then test separately the usual null hypotheses that each beta is zero. We adjust p-values to
+#' account for multiple hypothesis testing using the Holm's procedure. As before, standard errors are always estimated via the
+#' Eicker-Huber-White estimator.\cr
+#'
+#' ### Average Characteristics
+#' \code{\link{inference_aggtree}} regresses each covariate on a set of dummies denoting group membership. This way, we get the
+#' average characteristics of units in each leaf, together with a standard error. Leaves are ordered in increasing order of their
+#' predictions (from most negative to most positive). Standard errors are estimated via the Eicker-Huber-White estimator.
+#'
+#' ## Caution on Inference
+#' Regardless of the chosen \code{method}, both functions estimate GATEs, linear models, and average characteristics of units in each
+#' group using only observations in the honest sample. If the honest sample is empty (this happens because the user either sets
+#' \code{honest_frac = 0} or passes a vector of \code{FALSE}s as \code{is_honest} when calling \code{\link{build_aggtree}}), the
+#' same data used to construct the tree are used to estimate the above quantities. This is fine for prediction but invalidates
+#' inference.
 #'
 #' @import rpart grf
 #'
@@ -131,7 +166,7 @@
 #' @author Riccardo Di Francesco
 #'
 #' @seealso
-#' \code{\link{plot.aggTrees}}
+#' \code{\link{plot.aggTrees}} \code{\link{print.aggTrees.inference}}
 #'
 #' @export
 build_aggtree <- function(y, D, X,
@@ -188,6 +223,7 @@ build_aggtree <- function(y, D, X,
   out <- list("tree" = new_tree,
               "forest" = forest,
               "scores" = scores,
+              "method" = method,
               "dta" = data.frame(y, D, X),
               "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx))
   class(out) <- "aggTrees"
@@ -199,26 +235,25 @@ build_aggtree <- function(y, D, X,
 #'
 #' @param object An \code{aggTrees} object.
 #' @param n_groups Number of desired groups.
-#' @param method Either \code{"raw"} or \code{"aipw"}, controls how GATEs are estimated.
-#' @param scores Optional, vector of scores to be used in estimating GATEs. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
-#' @param verbose Logical, whether to print in console.
 #'
 #' @rdname build_aggtree
 #'
 #' @import car
 #'
 #' @export
-analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, verbose = TRUE) {
+inference_aggtree <- function(object, n_groups) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
-  if (!(verbose %in% c(TRUE, FALSE))) stop("Invalid 'verbose'. This must be either TRUE or FALSE.", call. = FALSE)
 
   tree <- object$tree
 
   if (n_groups > get_leaves(tree)) stop("The sequence you provided does not contain any grouping with ", n_groups, " groups.", call. = FALSE)
+
+  method <- object$method
+  scores <- object$scores
 
   ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
   if (is.null(object$idx$honest_idx)) {
@@ -235,28 +270,24 @@ analyze_aggtree <- function(object, n_groups, method = "aipw", scores = NULL, ve
   groups <- subtree(tree, leaves = n_groups)
 
   ## GATEs point estimates and standard errors, and hypotheses testing.
-  results <- causal_ols_rpart(groups, y, X, D, method = method, scores = scores)
+  results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores)
 
-  model <- results$model
+  model_gates <- results$model_gates
+  model_diff <- results$model_diff
   gates_all_equal <- results$gates_all_equal
   gates_diff_smallest <- results$gates_diff_smallest
-  scores <- results$scores
 
-  if (method == "raw") {
-    gates_point <- coef(summary(model))[(n_groups+1):(n_groups*2), "Estimate"]
-    gates_sd <- coef(summary(model))[(n_groups+1):(n_groups*2), "Std. Error"]
-    gates_lower <- coef(summary(model))[(n_groups+1):(n_groups*2), "CI Lower"]
-    gates_upper <- coef(summary(model))[(n_groups+1):(n_groups*2), "CI Upper"]
-  } else if (method == "aipw") {
-    gates_point <- coef(summary(model))[, "Estimate"]
-    gates_sd <- coef(summary(model))[, "Std. Error"]
-    gates_lower <- coef(summary(model))[, "CI Lower"]
-    gates_upper <- coef(summary(model))[, "CI Upper"]
-  }
-
-  ## Print table.
-  if (verbose) avg_characteristics_rpart(groups, X, gates_point, gates_sd)
+  ## Compute average characteristics of units in each leaf.
+  avg_characteristics <- avg_characteristics_rpart(groups, X)
 
   ## Output.
-  return(list("model" = model, "gates_all_equal" = gates_all_equal, "gates_diff_smallest" = gates_diff_smallest, "scores" = scores))
+  output <- list("aggTree" = object,
+                 "groups" = groups,
+                 "model_gates" = model_gates,
+                 "model_diff" = model_diff,
+                 "gates_all_equal" = gates_all_equal,
+                 "gates_diff_smallest" = gates_diff_smallest,
+                 "avg_characteristics" = avg_characteristics)
+  class(output) <- "aggTrees.inference"
+  return(output)
 }

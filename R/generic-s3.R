@@ -8,7 +8,30 @@
 #' @param ... Further arguments from \code{\link[rpart.plot]{prp}}.
 #'
 #' @return
-#' None, plots an \code{aggTrees} object.
+#' Plots an \code{aggTrees} object.
+#'
+#' @examples
+#' \donttest{
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 1000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Construct sequence of groupings. CATEs estimated internally,
+#' groupings <- build_aggtree(y, D, X, method = "aipw")
+#'
+#' ## Plot.
+#' plot(groupings)
+#' plot(groupings, leaves = 3)
+#' plot(groupings, sequence = TRUE)}
 #'
 #' @details
 #' Nodes are colored using a diverging palette. Nodes with predictions smaller than the ATE (i.e., the root
@@ -25,7 +48,7 @@
 #' }
 #'
 #' @seealso
-#' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
+#' \code{\link{build_aggtree}}, \code{\link{inference_aggtree}}
 #'
 #' @export
 plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...) {
@@ -147,10 +170,10 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...)
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @return
-#' None, prints the summary of an \code{aggTrees} object.
+#' Prints the summary of an \code{aggTrees} object.
 #'
 #' @seealso
-#' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
+#' \code{\link{build_aggtree}}, \code{\link{inference_aggtree}}
 #'
 #' @references
 #' \itemize{
@@ -174,10 +197,10 @@ summary.aggTrees <- function(object, ...) {
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @return
-#' None, prints an \code{aggTrees} object.
+#' Prints an \code{aggTrees} object.
 #'
 #' @seealso
-#' \code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
+#' \code{\link{build_aggtree}}, \code{\link{inference_aggtree}}
 #'
 #' @references
 #' \itemize{
@@ -190,4 +213,161 @@ summary.aggTrees <- function(object, ...) {
 print.aggTrees <- function(x, ...) {
   if (is.null(x$idx$honest_idx)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
   print(x$tree)
+}
+
+
+#' Print Method for aggTrees.inference Objects
+#'
+#' Prints an \code{aggTrees.inference} object.
+#'
+#' @param x \code{aggTrees.inference} object.
+#' @param table Either \code{"avg_char"} or \code{"diff"}, controls which table must be produced.
+#' @param ... Further arguments passed to or from other methods.
+#'
+#' @return
+#' Prints LATEX code.
+#'
+#' @examples
+#' \donttest{
+#' ## Generate data.
+#' set.seed(1986)
+#'
+#' n <- 1000
+#' k <- 3
+#'
+#' X <- matrix(rnorm(n * k), ncol = k)
+#' colnames(X) <- paste0("x", seq_len(k))
+#' D <- rbinom(n, size = 1, prob = 0.5)
+#' mu0 <- 0.5 * X[, 1]
+#' mu1 <- 0.5 * X[, 1] + X[, 2]
+#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#'
+#' ## Construct sequence of groupings. CATEs estimated internally,
+#' groupings <- build_aggtree(y, D, X, method = "aipw")
+#'
+#' ## Analyze results with 4 groups.
+#' results <- inference_aggtree(groupings, n_groups = 4)
+#'
+#' ## Print results.
+#' print(results, table = "diff")
+#' print(results, table = "avg_char")}
+#'
+#' @details
+#' A description of each table is provided in its caption.\cr
+#'
+#' Some covariates may feature zero variation in some leaf. This generally happens to dummy variables used to split some
+#' nodes. In this case, when \code{table == "avg_char"} a warning message is produced displaying the names of the covariates
+#' with zero variation in one or more leaves. The user should correct the table by removing the associated standard errors.\cr
+#'
+#' Compilation of the LATEX code requires the following packages: \code{booktabs}, \code{float}, \code{adjustbox},
+#' \code{multirow}.
+#'
+#' @seealso
+#' \code{\link{build_aggtree}}, \code{\link{inference_aggtree}}
+#'
+#' @references
+#' \itemize{
+#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#' }
+#'
+#' @author Riccardo Di Francesco
+#'
+#' @export
+print.aggTrees.inference <- function(x, table = "avg_char", ...) {
+  ## Check.
+  if (!(table %in% c("avg_char", "diff"))) stop("Invalid 'table'. This must be either 'avg_char' or 'diff'.", call. = FALSE)
+
+  ## Write table.
+  if (table == "avg_char") {
+    ## Extract information.
+    X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
+    leaves <- leaf_membership(x$groups, X)
+    parms <- lapply(x$avg_characteristics, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
+
+    if (x$aggTree$method == "raw") {
+      gates_idx <- which(sapply(names(x$model_gates$coefficients), function(x) grepl(":D", x)))
+    } else if (x$aggTree$method == "aipw") {
+      gates_idx <- which(sapply(names(x$model_gates$coefficients), function(x) grepl("leaf", x)))
+    }
+
+    gates_point <- round(x$model_gates$coefficients[gates_idx], 3)
+    gates_sd <- round(x$model_gates$std.error[gates_idx], 3)
+
+    gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
+    gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
+
+    ## Write table.
+    table_names <- rename_latex(colnames(X))
+
+    cat("\\begingroup
+  \\setlength{\\tabcolsep}{8pt}
+  \\renewcommand{\\arraystretch}{1.1}
+  \\begin{table}[b!]
+    \\centering
+    \\begin{adjustbox}{width = 1\\textwidth}
+    \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", length(unique(leaves))), "}
+      \\\\[-1.8ex]\\hline
+      \\hline \\\\[-1.8ex]
+      & ", c(paste("\\textit{Leaf ", 1:(length(unique(leaves))-1), "} & ", sep = ""), paste("\\textit{Leaf ", length(unique(leaves)), "}", sep = "")) ," \\\\
+      \\addlinespace[2pt]
+      \\hline \\\\[-1.8ex] \n\n", sep = "")
+
+    cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
+      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
+    cat("      \\addlinespace[2pt]
+      \\hline \\\\[-1.8ex] \n\n")
+
+    for (i in seq_len(length(table_names))) {
+      cat("      \\texttt{", table_names[i], "} & ", paste(round(parms[[i]][1:(length(unique(leaves))-1), 1], 2), " & ", sep = ""), round(parms[[i]][length(unique(leaves)), 1], 2), " \\\\ \n",
+          "      & ", paste("(", round(parms[[i]][1:(length(unique(leaves))-1), 2], 3), ")", " & ", sep = ""), paste("(", round(parms[[i]][length(unique(leaves)), 2], 3), ")", sep = ""), " \\\\ \n", sep = "")
+    }
+
+    cat("\n      \\addlinespace[3pt]
+      \\\\[-1.8ex]\\hline
+      \\hline \\\\[-1.8ex]
+    \\end{tabular}
+    \\end{adjustbox}
+    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator and reported in parenthesis under each point estimate. For each leaf, point estimates and $95\\%$ confidence intervals for GATEs are displayed.}
+    \\label{table:average.characteristics.leaves}
+    \\end{table}
+\\endgroup \n\n")
+
+    ## Warn the user for zero variation in leaves.
+    no_variation_names <- names(unlist(lapply(parms, function(x) { if (any(x[, 2] == 0)) idx <- 1})))
+
+    if (length(no_variation_names) > 1) {
+      names_string <- paste0(no_variation_names, collapse = ", ")
+      warning(paste0("Variables '", names_string, "' have no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
+    } else if (length(no_variation_names) == 1) {
+      warning(paste0("Variable '", no_variation_names, "' has no variation in one or more leaves. Please correct the table by removing the associated standard errors."))
+    }
+  } else if (table == "diff") {
+    cat("\\begingroup
+  \\setlength{\\tabcolsep}{8pt}
+  \\renewcommand{\\arraystretch}{1.1}
+  \\begin{table}[b!]
+    \\centering
+    \\begin{adjustbox}{width = 0.6\\textwidth}
+    \\begin{tabular}{@{\\extracolsep{5pt}}l c c c}
+      \\\\[-1.8ex]\\hline
+      \\hline \\\\[-1.8ex] \n
+      & Point Estimate & (S.E.) & p-value \\\\
+      \\addlinespace[2pt]
+      \\hline \\\\[-1.8ex] \n\n", sep = "")
+
+    for (i in seq_len(nrow(x$gates_diff_smallest))) {
+      cat(paste0("      \\textit{Leaf ", i+1, "} - \\textit{Leaf 1}"), " & ", round(x$gates_diff_smallest[i, 1], 3), " & ",
+          round(x$gates_diff_smallest[i, 2], 3), " & ", round(x$gates_diff_smallest[i, 3], 3), " \\\\ \n", sep = "")
+    }
+
+    cat("\n      \\addlinespace[3pt]
+      \\\\[-1.8ex]\\hline
+      \\hline \\\\[-1.8ex]
+    \\end{tabular}
+    \\end{adjustbox}
+    \\caption{Differences from smallest GATE. p-values are adjusted using Holm's procedure.}
+    \\label{table:differences.gates}
+    \\end{table}
+\\endgroup \n\n")
+  }
 }

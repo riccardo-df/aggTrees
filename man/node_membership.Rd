@@ -20,6 +20,27 @@ Logical vector denoting whether each observation in \code{X} falls into \code{no
 Constructs a binary variable that encodes whether each observation falls into a particular node of an
 \code{\link[rpart]{rpart}} object.
 }
+\examples{
+## Generate data.
+set.seed(1986)
+
+n <- 3000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+
+y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+
+## Construct tree.
+library(rpart)
+tree <- rpart(y ~ ., data = data.frame(y, X))
+
+## Extract number of leaves.
+is_in_third_node <- node_membership(tree, X, 3)
+is_in_third_node
+
+}
 \seealso{
 \code{\link{subtree}} \code{\link{leaf_membership}} \code{\link{get_leaves}}
 }

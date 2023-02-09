@@ -12,7 +12,7 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-None, prints an \code{aggTrees} object.
+Prints an \code{aggTrees} object.
 }
 \description{
 Prints an \code{aggTrees} object.
@@ -23,7 +23,7 @@ Prints an \code{aggTrees} object.
 }
 }
 \seealso{
-\code{\link{build_aggtree}}, \code{\link{analyze_aggtree}}
+\code{\link{build_aggtree}}, \code{\link{inference_aggtree}}
 }
 \author{
 Riccardo Di Francesco

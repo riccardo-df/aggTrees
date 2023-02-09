@@ -2,18 +2,18 @@
 % Please edit documentation in R/rpart-functions.R
 \name{causal_ols_rpart}
 \alias{causal_ols_rpart}
-\title{Estimating Leaf-Effects via Linear Models}
+\title{Estimation and Inference about GATEs with rpart Objects}
 \usage{
-causal_ols_rpart(tree, y, X, D, method = "aipw", scores = NULL)
+causal_ols_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
 \arguments{
 \item{tree}{An \code{\link[rpart]{rpart}} object.}
 
 \item{y}{Outcome vector.}
 
-\item{X}{Covariate matrix (no intercept).}
-
 \item{D}{Treatment assignment vector}
+
+\item{X}{Covariate matrix (no intercept).}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.}
 
@@ -21,44 +21,33 @@ causal_ols_rpart(tree, y, X, D, method = "aipw", scores = NULL)
 }
 \value{
 A list storing:
-  \item{\code{model}}{The fitted model, as an \code{\link[estimatr]{lm_robust}} object.}
-  \item{\code{gates_all_equal}}{Results of testing simultaneously whether all average effects are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
-  \item{\code{gates_diff_smallest}}{Results of testing individually whether each average effect differs from smallest effect. p-values are adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
-  \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
+\item{\code{model_gates}}{The model fitted to get point estimates and standard errors for GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
+\item{\code{model_diff}}{The model fitted to get point estimates and standard errors for differences from smallest GATE, as an \code{\link[estimatr]{lm_robust}} object.}
+\item{\code{gates_all_equal}}{Results of testing simultaneously whether all average effects are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
+\item{\code{gates_diff_smallest}}{Results of testing individually whether each average effect differs from smallest effect. p-values are adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
+\item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 }
 \description{
-Uses the leaves of a tree stored in an \code{\link[rpart]{rpart}} object to estimate a linear model via OLS. The
-estimated coefficients identify the average treatment effect in each leaf under unconfoundedness. If the data used
-in the OLS estimation have not been used to grow the tree (a condition called "honesty"), then one can use the
-standard errors for the tree's estimates to construct valid confidence intervals.
+Obtains point estimates and standard errors for group average treatment effects (GATEs), where groups correspond to the leaves
+of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
 }
 \details{
-The \code{method} argument controls how average effects in each leaf are estimated. If \code{"method" == "raw"}, we estimate via
-OLS the following linear model:
+\subsection{Point estimates and standard errors for GATEs}{
+
+GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we estimate
+via OLS the following:
 
 \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
-with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of the tree, and \code{|T|} the
-number of leaves. If the treatment is randomly assigned, one can show that the betas identify the average treatment effect in
-each group. However, in observational studies these estimates are biased due to selection into treatment. To get unbiased
-estimates, we can set \code{"method"} to \code{"aipw"} to construct doubly-robust scores \code{y_i^*} and use them as a
-pseudo-outcome in the following regression:
+with \code{L_{i, l}} a dummy variable equal to one if the i-th unit falls in the l-th leaf of \code{tree}, and |T| the number of
+groups. If the treatment is randomly assigned, one can show that the betas identify the GATE in each leaf. However, this is not true
+in observational studies due to selection into treatment. In this case, the user is expected to use \code{method == "aipw"} to run
+the following regression:
 
-\deqn{Y_i^* = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+\deqn{score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
-Honest regression forests and 5-fold cross fitting are used to estimate the propensity
-score and the conditional mean function of the outcome (unless the user specifies the argument \code{scores}).\cr
-
-Additionally, \code{causal_ols_rpart} performs two types of hypothesis testing. First, it uses standard
-errors from the above models to test whether average treatment effects in each leaf are the same by constructing a finite-sample
-F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new
-linear model by omitting the leaf with the smallest (i.e., more negative) average effect (and its interaction with the treatment
-variable if \code{method == "raw"}) and adding an intercept (and the treatment variable if \code{method == "raw"}). This way,
-coefficients give how much each average effect is larger than the smallest effect, and we can test separately the usual null
-hypotheses that these differences are zero. We correct for multiple hypothesis testing using the Holm's procedure.\cr
-
-Notice that "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
-\code{X} must not have been used to construct the \code{tree}.\cr
+where score_i are doubly-robust scores constructed via honest regression forests and 5-fold cross fitting (unless the user specifies
+the argument \code{scores}). This way, betas again identify GATEs.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
@@ -66,9 +55,75 @@ If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{
 \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
 we get an estimate of the overall average treatment effect.
 }
+
+\subsection{Hypothesis testing}{
+
+\code{\link{causal_ols_rpart}} performs two types of hypothesis testing. First, it uses standard
+errors from the above models to test whether average treatment effects in each leaf are the same by constructing a finite-sample
+F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new
+linear model to estimate and make inference about the difference between each GATE and the smallest GATE. If \code{method == "raw"},
+the following model is used:
+
+\deqn{Y_i = \delta + \lambda D_i + \sum_{l = 2}^{|T|} L_{i, l} \gamma_l + \sum_{l = 2}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
+
+where leaves 2, ..., |T| are ordered in increasing order of their GATEs. One can show that each beta_l identifies the difference
+between the l-th GATE and the smallest GATE. Similarly, if \code{method == "aipw"} we fit the following model:
+
+\deqn{score_i = \delta + \sum_{l = 2}^{|T|} L_{i, l} \beta_l + \epsilon_i}
+
+to obtain the same result. We can then test separately the usual null hypotheses that each beta is zero. We adjust p-values to
+account for multiple hypothesis testing using the Holm's procedure. As before, standard errors are always estimated via the
+Eicker-Huber-White estimator.\cr
+}
+
+\subsection{Caution on Inference}{
+
+"honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
+\code{X} must not have been used to construct the \code{tree} and the \code{scores}.\cr
+}
+}
+\examples{
+## Generate data.
+set.seed(1986)
+
+n <- 1000
+k <- 3
+
+X <- matrix(rnorm(n * k), ncol = k)
+colnames(X) <- paste0("x", seq_len(k))
+D <- rbinom(n, size = 1, prob = 0.5)
+mu0 <- 0.5 * X[, 1]
+mu1 <- 0.5 * X[, 1] + X[, 2]
+y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+
+## Split the sample.
+splits <- sample_split(length(y), training_frac = 0.5)
+training_idx <- splits$training_idx
+honest_idx <- splits$honest_idx
+
+y_tr <- y[training_idx]
+D_tr <- D[training_idx]
+X_tr <- X[training_idx, ]
+
+y_hon <- y[honest_idx]
+D_hon <- D[honest_idx]
+X_hon <- X[honest_idx, ]
+
+## Construct a tree using training sample.
+library(rpart)
+tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
+
+## Estimate GATEs in each node (internal and terminal) using honest sample.
+results <- causal_ols_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
+summary(results$model_gates) # Coefficient of leafk:D is GATE in k-th leaf.
+summary(results$model_diff) # leafk:D is difference between k-th GATE and smallest GATE.
+results$gates_all_equal # We reject the null that all GATEs are equal.
+results$gates_diff_smallest # GATEs in leaf 1 and leaf 2 are not significantly differ.
+
+}
 \references{
 \itemize{
-  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+\item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{
