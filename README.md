@@ -115,8 +115,3 @@ print(results, table = "avg_char")
 <b>Debiased Machine Learning of Conditional Average Treatment Effects and Other Causal Functions.</b>
 <i>The Econometrics Journal</i>, 24 (2).
 [<a href="https://academic.oup.com/ectj/article/24/2/264/5899048">paper</a>]
-
-- Wager, S., & Athey, S. (2018).
-<b>Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</b>
-<i>Journal of the American Statistical Association</i>, 113(523).
-[<a href="https://www.tandfonline.com/eprint/v7p66PsDhHCYiPafTJwC/full">paper</a>]
