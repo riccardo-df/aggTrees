@@ -285,13 +285,13 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
     parms <- lapply(x$avg_characteristics, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
 
     if (x$aggTree$method == "raw") {
-      gates_idx <- which(sapply(names(x$model_gates$coefficients), function(x) grepl(":D", x)))
+      gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl(":D", x)))
     } else if (x$aggTree$method == "aipw") {
-      gates_idx <- which(sapply(names(x$model_gates$coefficients), function(x) grepl("leaf", x)))
+      gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl("leaf", x)))
     }
 
-    gates_point <- round(x$model_gates$coefficients[gates_idx], 3)
-    gates_sd <- round(x$model_gates$std.error[gates_idx], 3)
+    gates_point <- round(x$model$coefficients[gates_idx], 3)
+    gates_sd <- round(x$model$std.error[gates_idx], 3)
 
     gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
     gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
@@ -348,16 +348,16 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   \\begin{table}[b!]
     \\centering
     \\begin{adjustbox}{width = 0.6\\textwidth}
-    \\begin{tabular}{@{\\extracolsep{5pt}}l c c c}
+    \\begin{tabular}{@{\\extracolsep{5pt}}l", rep(" c", times = get_leaves(x$groups)), "}
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex] \n
-      & Point Estimate & (S.E.) & p-value \\\\
+      & ", paste0("\\textit{Leaf ", seq_len(get_leaves(x$groups)-1), "} & "), paste0("\\textit{Leaf ", get_leaves(x$groups), "}") ," \\\\
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
-    for (i in seq_len(nrow(x$gates_diff_smallest))) {
-      cat(paste0("      \\textit{Leaf ", i+1, "} - \\textit{Leaf 1}"), " & ", round(x$gates_diff_smallest[i, 1], 3), " & ",
-          round(x$gates_diff_smallest[i, 2], 3), " & ", round(x$gates_diff_smallest[i, 3], 3), " \\\\ \n", sep = "")
+    for (i in seq_len(get_leaves(x$groups))) {
+      cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 3), " & "), round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 3), "
+                & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
     }
 
     cat("\n      \\addlinespace[3pt]
@@ -365,7 +365,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Differences from smallest GATE. p-values are adjusted using Holm's procedure.}
+    \\caption{Differences from smallest GATE. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")

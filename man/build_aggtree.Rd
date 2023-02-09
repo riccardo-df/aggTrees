@@ -52,9 +52,9 @@ in the call.
 Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
 The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
 feature an optimality property. For each grouping, we obtain point estimation and standard errors for group average
-treatment effects (GATEs). Additionally, we assess whether systematic heterogeneity is found by testing the hypothesis
-that GATEs are the same across groups and that each GATE is different from the smallest. Finally, we investigate the driving
-factors of effect heterogeneity by computing the average characteristics of units in each group.
+treatment effects (GATEs). Additionally, we assess whether systematic heterogeneity is found by testing the hypotheses
+that all GATEs are the same and that GATEs are different across all pairs of leaves. Finally, we investigate the
+driving mechanisms of effect heterogeneity by computing the average characteristics of units in each group.
 }
 \details{
 Aggregation trees are a three-step procedure. First, conditional average treatment effects (CATEs) are estimated using any
@@ -83,7 +83,7 @@ vector of \code{FALSE}s. If no vector of CATEs is provided, these are estimated 
 \code{\link{inference_aggtree}} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for the
 desired granularity level, chosen via the \code{n_groups} argument, it provides point estimation and standard errors for
 GATEs. Additionally, it performs some hypothesis testing to assess whether we find systematic heterogeneity and computes
-the average characteristics of the units in each group to investigate the driving mechanism.
+the average characteristics of the units in each group to investigate the driving mechanisms.
 \subsection{Point estimates and standard errors for GATEs}{
 
 GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we estimate
@@ -105,21 +105,10 @@ estimator.
 
 \subsection{Hypothesis testing}{
 
-\code{\link{inference_aggtree}} performs two types of hypothesis testing. First, it uses standard errors from the above models
-to test whether GATEs in each leaf are the same by constructing a finite-sample F statistic for carrying out a Wald-test-based
-comparison between a model and a linearly restricted model. Second, it fits a new linear model to estimate and make inference
-about the difference between each GATE and the smallest GATE. If \code{method == "raw"}, the following model is used:
-
-\deqn{Y_i = \delta + \lambda D_i + \sum_{l = 2}^{|T|} L_{i, l} \gamma_l + \sum_{l = 2}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
-
-where leaves 2, ..., |T| are ordered in increasing order of their GATEs. One can show that each beta_l identifies the difference
-between the l-th GATE and the smallest GATE. Similarly, if \code{method == "aipw"} we fit the following model:
-
-\deqn{score_i = \delta + \sum_{l = 2}^{|T|} L_{i, l} \beta_l + \epsilon_i}
-
-to obtain the same result. We can then test separately the usual null hypotheses that each beta is zero. We adjust p-values to
-account for multiple hypothesis testing using the Holm's procedure. As before, standard errors are always estimated via the
-Eicker-Huber-White estimator.\cr
+\code{\link{inference_aggtree}} performs two types of hypothesis testing using standard errors from the above models. First, it
+tests whether  whether all GATEs are the same by constructing a finite-sample F statistic for carrying out a Wald-test-based
+comparison between a model and a linearly restricted model. Second, it tests that GATEs are different across all pairs of leaves.
+Here, we adjust p-values to account for multiple hypotheses testing using Holm's procedure.
 }
 
 \subsection{Average Characteristics}{
@@ -155,10 +144,10 @@ mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2]
 y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 
-## Construct sequence of groupings. CATEs estimated internally,
+## Construct sequence of groupings. CATEs estimated internally.
 groupings <- build_aggtree(y, D, X, method = "aipw")
 
-## We can estimate CATEs and pass them.
+## Alternatively, we can estimate CATEs and pass them.
 splits <- sample_split(length(y), training_frac = 0.5)
 training_idx <- splits$training_idx
 honest_idx <- splits$honest_idx
@@ -190,11 +179,11 @@ predict(tree, data.frame(X))
 ## Inference with 4 groups.
 results <- inference_aggtree(groupings, n_groups = 4)
 
-summary(results$model_gates) # Coefficient of leafk is GATE in k-th leaf.
+summary(results$model) # Coefficient of leafk is GATE in k-th leaf.
 results$gates_all_equal # We reject the null that all GATEs are equal.
 
-summary(results$model_diff) # leafk is difference between k-th GATE and smallest GATE.
-results$gates_diff_smallest # GATEs are significantly different from GATE in leaf 1.
+results$gates_diff_pairs$gates_diff # GATEs differences.
+results$gates_diff_pairs$holm_pvalues # leaves 1-2 not statistically different.
 print(results, table = "diff")
 
 print(results, table = "avg_char")}

@@ -21,10 +21,9 @@ causal_ols_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
 \value{
 A list storing:
-\item{\code{model_gates}}{The model fitted to get point estimates and standard errors for GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
-\item{\code{model_diff}}{The model fitted to get point estimates and standard errors for differences from smallest GATE, as an \code{\link[estimatr]{lm_robust}} object.}
-\item{\code{gates_all_equal}}{Results of testing simultaneously whether all average effects are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
-\item{\code{gates_diff_smallest}}{Results of testing individually whether each average effect differs from smallest effect. p-values are adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
+\item{\code{model}}{The model fitted to get point estimates and standard errors for GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
+\item{\code{gates_all_equal}}{Results of testing whether all GATEs are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
+\item{\code{gates_diff_pairs}}{Results of testing whether GATEs differ across all pairs of leaves. This is a list storing GATEs differences and p-values adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
 \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 }
 \description{
@@ -58,22 +57,10 @@ we get an estimate of the overall average treatment effect.
 
 \subsection{Hypothesis testing}{
 
-\code{\link{causal_ols_rpart}} performs two types of hypothesis testing. First, it uses standard
-errors from the above models to test whether average treatment effects in each leaf are the same by constructing a finite-sample
-F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model. Second, it fits a new
-linear model to estimate and make inference about the difference between each GATE and the smallest GATE. If \code{method == "raw"},
-the following model is used:
-
-\deqn{Y_i = \delta + \lambda D_i + \sum_{l = 2}^{|T|} L_{i, l} \gamma_l + \sum_{l = 2}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
-
-where leaves 2, ..., |T| are ordered in increasing order of their GATEs. One can show that each beta_l identifies the difference
-between the l-th GATE and the smallest GATE. Similarly, if \code{method == "aipw"} we fit the following model:
-
-\deqn{score_i = \delta + \sum_{l = 2}^{|T|} L_{i, l} \beta_l + \epsilon_i}
-
-to obtain the same result. We can then test separately the usual null hypotheses that each beta is zero. We adjust p-values to
-account for multiple hypothesis testing using the Holm's procedure. As before, standard errors are always estimated via the
-Eicker-Huber-White estimator.\cr
+\code{\link{causal_ols_rpart}} performs two types of hypothesis testing using standard errors from the above models. First, it
+tests whether all GATEs are the same by constructing a finite-sample F statistic for carrying out a Wald-test-based comparison
+between a model and a linearly restricted model. Second, it tests that GATEs are different across all pairs of leaves. Here, we
+adjust p-values to account for multiple hypotheses testing using Holm's procedure.\cr
 }
 
 \subsection{Caution on Inference}{
@@ -115,10 +102,12 @@ tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
 
 ## Estimate GATEs in each node (internal and terminal) using honest sample.
 results <- causal_ols_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
-summary(results$model_gates) # Coefficient of leafk:D is GATE in k-th leaf.
-summary(results$model_diff) # leafk:D is difference between k-th GATE and smallest GATE.
+
+summary(results$model) # Coefficient of leafk:D is GATE in k-th leaf.
+
 results$gates_all_equal # We reject the null that all GATEs are equal.
-results$gates_diff_smallest # GATEs in leaf 1 and leaf 2 are not significantly differ.
+results$gates_diff_pair$gates_diff # GATEs differences.
+results$gates_diff_pair$holm_pvalues # leaves 1-2 and 3-4 not statistically different.
 
 }
 \references{
