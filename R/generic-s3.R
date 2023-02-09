@@ -356,7 +356,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
     for (i in seq_len(get_leaves(x$groups))) {
-      cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 3), " & "), round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 3), "
+      cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 3), " & "), round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 3), " \\\\
                 & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
     }
 
@@ -365,7 +365,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Differences from smallest GATE. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
+    \\caption{Differences in GATEs across all pairs of leaves. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")
