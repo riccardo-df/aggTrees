@@ -277,26 +277,25 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   ## Check.
   if (!(table %in% c("avg_char", "diff"))) stop("Invalid 'table'. This must be either 'avg_char' or 'diff'.", call. = FALSE)
 
+  ## Extract information.
+  X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
+  leaves <- leaf_membership(x$groups, X)
+  parms <- lapply(x$avg_characteristics, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
+
+  if (x$aggTree$method == "raw") {
+    gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl(":D", x)))
+  } else if (x$aggTree$method == "aipw") {
+    gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl("leaf", x)))
+  }
+
+  gates_point <- round(x$model$coefficients[gates_idx], 3)
+  gates_sd <- round(x$model$std.error[gates_idx], 3)
+
+  gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
+  gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
+
   ## Write table.
   if (table == "avg_char") {
-    ## Extract information.
-    X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
-    leaves <- leaf_membership(x$groups, X)
-    parms <- lapply(x$avg_characteristics, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
-
-    if (x$aggTree$method == "raw") {
-      gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl(":D", x)))
-    } else if (x$aggTree$method == "aipw") {
-      gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl("leaf", x)))
-    }
-
-    gates_point <- round(x$model$coefficients[gates_idx], 3)
-    gates_sd <- round(x$model$std.error[gates_idx], 3)
-
-    gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
-    gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
-
-    ## Write table.
     table_names <- rename_latex(colnames(X))
 
     cat("\\begingroup
@@ -355,9 +354,14 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
+    cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
+      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
+    cat("      \\addlinespace[2pt]
+      \\hline \\\\[-1.8ex] \n\n")
+
     for (i in seq_len(get_leaves(x$groups))) {
       cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 3), " & "), round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 3), " \\\\
-                & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
+                                      & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
     }
 
     cat("\n      \\addlinespace[3pt]
