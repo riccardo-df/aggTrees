@@ -343,10 +343,10 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   } else if (table == "diff") {
     cat("\\begingroup
   \\setlength{\\tabcolsep}{8pt}
-  \\renewcommand{\\arraystretch}{1.1}
+  \\renewcommand{\\arraystretch}{1.2}
   \\begin{table}[b!]
     \\centering
-    \\begin{adjustbox}{width = 0.6\\textwidth}
+    \\begin{adjustbox}{width = 0.85\\textwidth}
     \\begin{tabular}{@{\\extracolsep{5pt}}l", rep(" c", times = get_leaves(x$groups)), "}
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex] \n
@@ -369,7 +369,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Differences in GATEs across all pairs of leaves. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
+    \\caption{Differences in GATEs across all pairs of leaves. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate. For each leaf, point estimates and $95\\%$ confidence intervals for GATEs are displayed.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")
