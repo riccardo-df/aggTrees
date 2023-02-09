@@ -28,7 +28,7 @@ This section demonstrates how to use the package. Let us generate some data:
 ## Generate data.
 set.seed(1986)
 
-n <- 3000
+n <- 1000
 k <- 3
 
 X <- matrix(rnorm(n * k), ncol = k)
@@ -42,7 +42,10 @@ y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 As a first step, we need to estimate CATEs. We can do this with any estimator we like. Then, in the second step we construct a tree using the CATEs as an outcome. Given the tree, we can compute node predictions (i.e., GATEs) as we like. In the following chunk of code, I split the data into a training sample and an honest sample (required to conduct valid inference). We use the training sample to estimate CATEs and construct/prune the tree. Then, we use the honest sample to compute node predictions by constructing and averaging doubly-robust scores.
 
 ```
-## Sample splitting.
+## Construct sequence of groupings. CATEs estimated internally,
+groupings <- build_aggtree(y, D, X, method = "aipw")
+
+## Alternatively, we can estimate CATEs and pass them.
 splits <- sample_split(length(y), training_frac = 0.5)
 training_idx <- splits$training_idx
 honest_idx <- splits$honest_idx
@@ -55,18 +58,17 @@ y_hon <- y[honest_idx]
 D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
-## Estimate CATEs. Use training sample. 
 library(grf)
-forest <- causal_forest(X_tr, y_tr, D_tr) 
+forest <- causal_forest(X_tr, y_tr, D_tr) # Use training sample.
 cates <- predict(forest, X)$predictions
 
-## Construct and prune the tree using training sample. Also, compute node predictions (GATEs) using honest sample.
-groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates, is_honest = 1:length(y) %in% honest_idx)
+groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates,
+                           is_honest = 1:length(y) %in% honest_idx)
 
-## We have compatibility with generic S3-methods. 
+## We have compatibility with generic S3-methods.
 summary(groupings)
 print(groupings)
-plot(groupings) # Beware of interpretation here. See below.
+plot(groupings) # Try also setting 'sequence = TRUE'.
 
 ## To predict, do the following.
 tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
@@ -78,9 +80,17 @@ By default, `build_aggtree` estimate CATEs internally via a [causal forest](http
 Now we have a whole sequence of optimal groupings. We can pick the grouping associated with our preferred granularity level and run some analysis. First, we would like to get standard errors for the GATEs. This is achieved by estimating via OLS appropriate linear models using the honest sample. Then, we would like to assess the driving factors of treatment effects by relating heterogeneity to observed covariates. Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form groups, and if two covariates are highly correlated, trees generally split on only one of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across groups. All of this is done in the following chunk of code:
 
 ```
-## Analyze grouping with 5 groups.
-results <- analyze_aggtree(groupings, n_groups = 5, method = "aipw", scores = groupings$scores)
-summary(results$model)
+## Inference with 4 groups.
+results <- inference_aggtree(groupings, n_groups = 4)
+
+summary(results$model_gates) # Coefficient of leafk is GATE in k-th leaf.
+results$gates_all_equal # We reject the null that all GATEs are equal.
+
+summary(results$model_diff) # leafk is difference between k-th GATE and smallest GATE.
+results$gates_diff_smallest # GATEs are significantly different from GATE in leaf 1.
+print(results, table = "diff")
+
+print(results, table = "avg_char")
 ```
 
 `analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and average characteristics of units in each leaf. This way, we obtain a nice and easy-to-read output that we can plug in papers/reports.
