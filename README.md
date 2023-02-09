@@ -39,7 +39,7 @@ mu1 <- 0.5 * X[, 1] + X[, 2]
 y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 ```
 
-As a first step, we need to estimate CATEs. We can do this with any estimator we like. Then, in the second step we construct a tree using the CATEs as an outcome. Given the tree, we can compute node predictions (i.e., GATEs) as we like. In the following chunk of code, I split the data into a training sample and an honest sample (required to conduct valid inference). We use the training sample to estimate CATEs and construct/prune the tree. Then, we use the honest sample to compute node predictions by constructing and averaging doubly-robust scores.
+As a first step, we need to estimate CATEs. We can do this with any estimator we like. Then, in the second step we construct a tree using the CATEs as an outcome. Given the tree, we can compute node predictions (i.e., GATEs) as we like. All of this is done automatically by the `build_aggtree` function. By default, `build_aggtree` estimate CATEs internally via a [causal forest](https://github.com/grf-labs/grf/blob/master/r-package/grf/R/causal_forest.R). Alternatively, we can override this by using the `cates` argument to input estimated CATEs. When this is the case, we also need to specify `is_honest`, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions. In the following chunk of code, I illustrate a typical usage of `build_aggtree`. I set `method == "aipw"` to compute node predictions by constructing and averaging doubly-robust scores.
 
 ```
 ## Construct sequence of groupings. CATEs estimated internally,
@@ -75,9 +75,7 @@ tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
 predict(tree, data.frame(X))
 ```
 
-By default, `build_aggtree` estimate CATEs internally via a [causal forest](https://github.com/grf-labs/grf/blob/master/r-package/grf/R/causal_forest.R). Alternatively, we can override this by using the `cates` argument to input estimated CATEs, as I did above. When this is the case, we also need to specify `is_honest`, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions.
-
-Now we have a whole sequence of optimal groupings. We can pick the grouping associated with our preferred granularity level and run some analysis. First, we would like to get standard errors for the GATEs. This is achieved by estimating via OLS appropriate linear models using the honest sample. Then, we would like to assess the driving factors of treatment effects by relating heterogeneity to observed covariates. Keep in mind that one should not conclude that covariates not used for splitting are not related to heterogeneity. There may exist several ways to form groups, and if two covariates are highly correlated, trees generally split on only one of those covariates. A more systematic way to assess how treatment effects relate to the covariates consists of investigating how the average characteristics of the units vary across groups. All of this is done in the following chunk of code:
+Now we have a whole sequence of optimal groupings. We can pick the grouping associated with our preferred granularity level and run some analysis. First, we would like to get standard errors for the GATEs. This is achieved by estimating via OLS appropriate linear models using the honest sample. Then, we can assess whether we find systematic heterogeneity by testing a bunch of hypotheses. First, we can use the standard errors to construct a finite-sample F statistic for carrying out a Wald-test-based comparison between a model and a linearly restricted model to test whether GATEs in each leaf are the same. Second, we can fit a new linear model to estimate and make inference about the difference between each GATE and the smallest GATE (check `help(inference_aggtree)` to see the new model). Additionally, we can investigate the driving mechanisms by computing the average characteristics of the units in each group. All of this is done by the `inference_aggtree` function.
 
 ```
 ## Inference with 4 groups.
@@ -92,8 +90,6 @@ print(results, table = "diff")
 
 print(results, table = "avg_char")
 ```
-
-`analyze_aggtree` prints LATEX code in the console. To avoid this, set `verbose = FALSE`. The code provides a table with GATEs and confidence intervals, and average characteristics of units in each leaf. This way, we obtain a nice and easy-to-read output that we can plug in papers/reports.
 
 ## References
 
