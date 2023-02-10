@@ -304,21 +304,27 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   \\begin{table}[b!]
     \\centering
     \\begin{adjustbox}{width = 1\\textwidth}
-    \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", length(unique(leaves))), "}
+    \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", (length(unique(leaves)) * 2)), "}
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex]
-      & ", c(paste("\\textit{Leaf ", 1:(length(unique(leaves))-1), "} & ", sep = ""), paste("\\textit{Leaf ", length(unique(leaves)), "}", sep = "")) ," \\\\
+      & ", c(paste("\\multicolumn{2}{c}{\\textit{Leaf ", 1:(length(unique(leaves))-1), "} & ", sep = ""), paste("\\multicolumn{2}{c}{\\textit{Leaf ", length(unique(leaves)), "}", sep = "")) ," \\\\",  paste0("\\cmidrule{", seq(2, length(unique(leaves)) * 2, by = 2), "-", seq(3, (length(unique(leaves)) * 2)+1, by = 2), "} "), "
+     ", rep(" & Mean & (S.D.)", length(unique(leaves))), " \\\\
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
-    cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
-      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
-    cat("      \\addlinespace[2pt]
-      \\hline \\\\[-1.8ex] \n\n")
-
     for (i in seq_len(length(table_names))) {
-      cat("      \\texttt{", table_names[i], "} & ", paste(round(parms[[i]][1:(length(unique(leaves))-1), 1], 2), " & ", sep = ""), round(parms[[i]][length(unique(leaves)), 1], 2), " \\\\ \n",
-          "      & ", paste("(", round(parms[[i]][1:(length(unique(leaves))-1), 2], 3), ")", " & ", sep = ""), paste("(", round(parms[[i]][length(unique(leaves)), 2], 3), ")", sep = ""), " \\\\ \n", sep = "")
+      temp_means <- round(parms[[i]][, 1], 3)
+      temp_sds <- round(parms[[i]][, 2], 3)
+
+      temp_line <- paste0("      \\texttt{", table_names[i], "} & " )
+
+      for (j in seq_len(length(unique(leaves)))) {
+        temp_line <- paste0(temp_line, temp_means[j], " & (", temp_sds[j], ") & ")
+      }
+
+      temp_line <- stringr::str_sub(temp_line, end = -4)
+
+      cat(temp_line, " \\\\ \n", sep = "")
     }
 
     cat("\n      \\addlinespace[3pt]
@@ -326,7 +332,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator and reported in parenthesis under each point estimate. For each leaf, point estimates and $95\\%$ confidence intervals for GATEs are displayed.}
+    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator and reported in parenthesis under each point estimate. Leaves are sorted in increasing order of GATEs.}
     \\label{table:average.characteristics.leaves}
     \\end{table}
 \\endgroup \n\n")
@@ -361,7 +367,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
 
     for (i in seq_len(get_leaves(x$groups))) {
       cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 3), " & "), round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 3), " \\\\
-                                      & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
+            & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
     }
 
     cat("\n      \\addlinespace[3pt]
@@ -369,7 +375,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Differences in GATEs across all pairs of leaves. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate. For each leaf, point estimates and $95\\%$ confidence intervals for GATEs are displayed.}
+    \\caption{Point estimates and $95\\%$ confidence intervals for GATEs. Leaves are sorted in increasing order of GATEs. Additionally, differences in GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")
