@@ -332,7 +332,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of GATEs.}
+    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of the GATEs.}
     \\label{table:average.characteristics.leaves}
     \\end{table}
 \\endgroup \n\n")
@@ -375,7 +375,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Point estimates and $95\\%$ confidence intervals for GATEs. Leaves are sorted in increasing order of GATEs. Additionally, differences in GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
+    \\caption{Point estimates and $95\\%$ confidence intervals for the GATEs. Leaves are sorted in increasing order of the GATEs. Additionally, differences in the GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")
