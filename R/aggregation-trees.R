@@ -261,7 +261,6 @@ inference_aggtree <- function(object, n_groups) {
   results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores)
 
   model <- results$model
-  gates_all_equal <- results$gates_all_equal
   gates_diff_pairs <- results$gates_diff_pairs
 
   ## Compute average characteristics of units in each leaf.
@@ -271,7 +270,6 @@ inference_aggtree <- function(object, n_groups) {
   output <- list("aggTree" = object,
                  "groups" = groups,
                  "model" = model,
-                 "gates_all_equal" = gates_all_equal,
                  "gates_diff_pairs" = gates_diff_pairs,
                  "avg_characteristics" = avg_characteristics)
   class(output) <- "aggTrees.inference"
