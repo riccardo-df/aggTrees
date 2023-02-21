@@ -89,7 +89,6 @@ Now we have a whole sequence of optimal groupings. We can pick the grouping asso
 results <- inference_aggtree(groupings, n_groups = 4)
 
 summary(results$model) # Coefficient of leafk is GATE in k-th leaf.
-results$gates_all_equal # We reject the null that all GATEs are equal.
 
 results$gates_diff_pairs$gates_diff # GATEs differences.
 results$gates_diff_pairs$holm_pvalues # leaves 1-2 not statistically different.
