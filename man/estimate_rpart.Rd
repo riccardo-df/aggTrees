@@ -2,7 +2,7 @@
 % Please edit documentation in R/rpart-functions.R
 \name{estimate_rpart}
 \alias{estimate_rpart}
-\title{GATEs Estimation with rpart Objects}
+\title{GATE Estimation with rpart Objects}
 \usage{
 estimate_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
@@ -24,16 +24,16 @@ A tree with node predictions replaced, as an \code{\link[rpart]{rpart}} object, 
 this is \code{NULL}).
 }
 \description{
-Replaces node predictions of an \code{\link[rpart]{rpart}} object using external data to estimate group average treatment
+Replaces node predictions of an \code{\link[rpart]{rpart}} object using external data to estimate the group average treatment
 effects (GATEs).
 }
 \details{
 If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
 of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each node,
-which is an unbiased estimator of GATEs if the assignment to treatment is randomized.\cr
+which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
 
 If \code{method == "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
-scores in each node. This is a valid estimator of GATEs in observational studies. Honest regression forests
+scores in each node. This is a valid estimator of the GATEs in observational studies. Honest regression forests
 and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome
 (unless the user specifies the argument \code{scores}).\cr
 

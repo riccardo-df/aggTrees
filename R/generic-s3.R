@@ -307,7 +307,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
     \\begin{tabular}{@{\\extracolsep{5pt}}l ", rep("c ", (length(unique(leaves)) * 2)), "}
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex]
-      & ", c(paste("\\multicolumn{2}{c}{\\textit{Leaf ", 1:(length(unique(leaves))-1), "} & ", sep = ""), paste("\\multicolumn{2}{c}{\\textit{Leaf ", length(unique(leaves)), "}", sep = "")) ," \\\\",  paste0("\\cmidrule{", seq(2, length(unique(leaves)) * 2, by = 2), "-", seq(3, (length(unique(leaves)) * 2)+1, by = 2), "} "), "
+      & ", c(paste("\\multicolumn{2}{c}{\\textit{Leaf ", 1:(length(unique(leaves))-1), "}} & ", sep = ""), paste("\\multicolumn{2}{c}{\\textit{Leaf ", length(unique(leaves)), "}}", sep = "")) ," \\\\",  paste0("\\cmidrule{", seq(2, length(unique(leaves)) * 2, by = 2), "-", seq(3, (length(unique(leaves)) * 2)+1, by = 2), "} "), "
      ", rep(" & Mean & (S.D.)", length(unique(leaves))), " \\\\
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
@@ -332,7 +332,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator and reported in parenthesis under each point estimate. Leaves are sorted in increasing order of GATEs.}
+    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of GATEs.}
     \\label{table:average.characteristics.leaves}
     \\end{table}
 \\endgroup \n\n")

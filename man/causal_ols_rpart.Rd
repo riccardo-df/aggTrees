@@ -2,7 +2,7 @@
 % Please edit documentation in R/rpart-functions.R
 \name{causal_ols_rpart}
 \alias{causal_ols_rpart}
-\title{Estimation and Inference about GATEs with rpart Objects}
+\title{Estimation and Inference about the GATEs with rpart Objects}
 \usage{
 causal_ols_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
@@ -21,20 +21,19 @@ causal_ols_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 }
 \value{
 A list storing:
-\item{\code{model}}{The model fitted to get point estimates and standard errors for GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
-\item{\code{gates_all_equal}}{Results of testing whether all GATEs are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
+\item{\code{model}}{The model fitted to get point estimates and standard errors for the GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
 \item{\code{gates_diff_pairs}}{Results of testing whether GATEs differ across all pairs of leaves. This is a list storing GATEs differences and p-values adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
 \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 }
 \description{
-Obtains point estimates and standard errors for group average treatment effects (GATEs), where groups correspond to the leaves
-of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
+Obtains point estimates and standard errors for the group average treatment effects (GATEs), where groups correspond to the
+leaves of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
 }
 \details{
-\subsection{Point estimates and standard errors for GATEs}{
+\subsection{Point estimates and standard errors for the GATEs}{
 
-GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we estimate
-via OLS the following:
+The GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we
+estimate via OLS the following:
 
 \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 
@@ -46,7 +45,7 @@ the following regression:
 \deqn{score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 
 where score_i are doubly-robust scores constructed via honest regression forests and 5-fold cross fitting (unless the user specifies
-the argument \code{scores}). This way, betas again identify GATEs.\cr
+the argument \code{scores}). This way, betas again identify the GATEs.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
@@ -57,10 +56,9 @@ we get an estimate of the overall average treatment effect.
 
 \subsection{Hypothesis testing}{
 
-\code{\link{causal_ols_rpart}} performs two types of hypothesis testing using standard errors from the above models. First, it
-tests whether all GATEs are the same by constructing a finite-sample F statistic for carrying out a Wald-test-based comparison
-between a model and a linearly restricted model. Second, it tests that GATEs are different across all pairs of leaves. Here, we
-adjust p-values to account for multiple hypotheses testing using Holm's procedure.\cr
+\code{\link{causal_ols_rpart}} uses the standard errors obtained by fitting the linear models above to test the hypotheses
+that the GATEs are different across all pairs of leaves. Here, we adjust p-values to account for multiple hypotheses testing
+using Holm's procedure.
 }
 
 \subsection{Caution on Inference}{
@@ -105,7 +103,6 @@ results <- causal_ols_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
 
 summary(results$model) # Coefficient of leafk:D is GATE in k-th leaf.
 
-results$gates_all_equal # We reject the null that all GATEs are equal.
 results$gates_diff_pair$gates_diff # GATEs differences.
 results$gates_diff_pair$holm_pvalues # leaves 1-2 and 3-4 not statistically different.
 

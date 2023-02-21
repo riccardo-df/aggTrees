@@ -188,9 +188,9 @@ leaf_membership <- function(tree, X) {
 }
 
 
-#' GATEs Estimation with rpart Objects
+#' GATE Estimation with rpart Objects
 #'
-#' Replaces node predictions of an \code{\link[rpart]{rpart}} object using external data to estimate group average treatment
+#' Replaces node predictions of an \code{\link[rpart]{rpart}} object using external data to estimate the group average treatment
 #' effects (GATEs).
 #'
 #' @param tree An \code{\link[rpart]{rpart}} object.
@@ -242,10 +242,10 @@ leaf_membership <- function(tree, X) {
 #' @details
 #' If \code{method == "raw"}, \code{estimate_rpart} replaces node predictions with the differences between the sample average
 #' of the observed outcomes of treated units and the sample average of the observed outcomes of control units in each node,
-#' which is an unbiased estimator of GATEs if the assignment to treatment is randomized.\cr
+#' which is an unbiased estimator of the GATEs if the assignment to treatment is randomized.\cr
 #'
 #' If \code{method == "aipw"}, \code{estimate_rpart} replaces node predictions with sample averages of doubly-robust
-#' scores in each node. This is a valid estimator of GATEs in observational studies. Honest regression forests
+#' scores in each node. This is a valid estimator of the GATEs in observational studies. Honest regression forests
 #' and 5-fold cross fitting are used to estimate the propensity score and the conditional mean function of the outcome
 #' (unless the user specifies the argument \code{scores}).\cr
 #'
@@ -301,10 +301,10 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 }
 
 
-#' Estimation and Inference about GATEs with rpart Objects
+#' Estimation and Inference about the GATEs with rpart Objects
 #'
-#' Obtains point estimates and standard errors for group average treatment effects (GATEs), where groups correspond to the leaves
-#' of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
+#' Obtains point estimates and standard errors for the group average treatment effects (GATEs), where groups correspond to the
+#' leaves of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
 #'
 #' @param tree An \code{\link[rpart]{rpart}} object.
 #' @param y Outcome vector.
@@ -315,8 +315,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #'
 #' @return
 #' A list storing:
-#'   \item{\code{model}}{The model fitted to get point estimates and standard errors for GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
-#'   \item{\code{gates_all_equal}}{Results of testing whether all GATEs are the same, as an \code{anova} object (check \code{\link[car]{linearHypothesis}}).}
+#'   \item{\code{model}}{The model fitted to get point estimates and standard errors for the GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
 #'   \item{\code{gates_diff_pairs}}{Results of testing whether GATEs differ across all pairs of leaves. This is a list storing GATEs differences and p-values adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
 #'   \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 #'
@@ -356,15 +355,14 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #'
 #' summary(results$model) # Coefficient of leafk:D is GATE in k-th leaf.
 #'
-#' results$gates_all_equal # We reject the null that all GATEs are equal.
 #' results$gates_diff_pair$gates_diff # GATEs differences.
 #' results$gates_diff_pair$holm_pvalues # leaves 1-2 and 3-4 not statistically different.
 #'
 #' @md
 #' @details
-#' ## Point estimates and standard errors for GATEs
-#' GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we estimate
-#' via OLS the following:
+#' ## Point estimates and standard errors for the GATEs
+#' The GATEs and their standard errors are obtained by fitting an appropriate linear model. If \code{method == "raw"}, we
+#' estimate via OLS the following:
 #'
 #' \deqn{Y_i = \sum_{l = 1}^{|T|} L_{i, l} \gamma_l + \sum_{l = 1}^{|T|} L_{i, l} D_i \beta_l + \epsilon_i}
 #'
@@ -376,7 +374,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' \deqn{score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 #'
 #' where score_i are doubly-robust scores constructed via honest regression forests and 5-fold cross fitting (unless the user specifies
-#' the argument \code{scores}). This way, betas again identify GATEs.\cr
+#' the argument \code{scores}). This way, betas again identify the GATEs.\cr
 #'
 #' Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 #'
@@ -385,10 +383,9 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' we get an estimate of the overall average treatment effect.
 #'
 #' ## Hypothesis testing
-#' \code{\link{causal_ols_rpart}} performs two types of hypothesis testing using standard errors from the above models. First, it
-#' tests whether all GATEs are the same by constructing a finite-sample F statistic for carrying out a Wald-test-based comparison
-#' between a model and a linearly restricted model. Second, it tests that GATEs are different across all pairs of leaves. Here, we
-#' adjust p-values to account for multiple hypotheses testing using Holm's procedure.\cr
+#' \code{\link{causal_ols_rpart}} uses the standard errors obtained by fitting the linear models above to test the hypotheses
+#' that the GATEs are different across all pairs of leaves. Here, we adjust p-values to account for multiple hypotheses testing
+#' using Holm's procedure.
 #'
 #' ## Caution on Inference
 #' "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
@@ -432,15 +429,6 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
     } else {
       model <- estimatr::lm_robust(scores ~ 0 + leaf, data = data.frame("scores" = scores, "leaf" = leaves), se_type = "HC1")
     }
-  }
-
-  ## Test whether GATEs are the same across leaves. Use standard errors from model above.
-  if (method == "raw") {
-    null <- paste0("leaf1:D = leaf", seq(2, get_leaves(tree)), ":D")
-    gates_all_equal <- car::linearHypothesis(model, null, test = "F")
-  } else if (method == "aipw") {
-    null <- paste0("leaf1 = leaf", seq(2, get_leaves(tree)))
-    gates_all_equal <- car::linearHypothesis(model, null, test = "F")
   }
 
   ## Test if GATEs are different across all pairs of leaves. Adjust p-values by Holm's procedure.
@@ -488,7 +476,6 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 
   ## Output.
   return(list("model" = model,
-              "gates_all_equal" = gates_all_equal,
               "gates_diff_pairs" = gates_diff_pairs,
               "scores" = scores))
 }
