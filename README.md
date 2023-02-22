@@ -106,7 +106,8 @@ print(results, table = "avg_char")
 [<a href="https://www.pnas.org/doi/abs/10.1073/pnas.1510489113">paper</a>]
 
 - Athey, S., Tibshirani, J., & Wager, S. (2019).
-<b>Generalized Random Forests.</b> <i>Annals of Statistics</i>, 47(2).
+<b>Generalized Random Forests.</b> 
+<i>Annals of Statistics</i>, 47(2).
 [<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
 
 - Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2017).
@@ -115,10 +116,16 @@ print(results, table = "avg_char")
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
 - Di Francesco, R. (2022).
-<b>Aggregation Trees.</b> <i>CEIS Research Paper, 546.</i>
+<b>Aggregation Trees.</b> 
+<i>CEIS Research Paper, 546.</i>
 [<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]
+
+- Holm, S. (1979).
+<b>A Simple Sequentially Rejective Multiple Test Procedure.</b> 
+<i>Scandinavian Journal of Statistics</i>, 6(2).
+[<a href="https://www.jstor.org/stable/4615733">paper</a>] 
 
 - Semenova, V., & Chernozhukov, V. (2021).
 <b>Debiased Machine Learning of Conditional Average Treatment Effects and Other Causal Functions.</b>
-<i>The Econometrics Journal</i>, 24 (2).
+<i>The Econometrics Journal</i>, 24(2).
 [<a href="https://academic.oup.com/ectj/article/24/2/264/5899048">paper</a>]
