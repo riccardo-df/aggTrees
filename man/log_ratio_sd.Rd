@@ -2,7 +2,7 @@
 % Please edit documentation in R/balance-measures.R
 \name{log_ratio_sd}
 \alias{log_ratio_sd}
-\title{Log Ratio of Standard Deviations (Internal Use)}
+\title{Log Ratio of Standard Deviations}
 \usage{
 log_ratio_sd(X, D)
 }
@@ -21,3 +21,4 @@ covariate distributions across treatment arms.
 \details{
 Log ratio of standard deviations are computed as the logarithm of the ratio of the within-arm standard deviations.
 }
+\keyword{internal}

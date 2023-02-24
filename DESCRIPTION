@@ -22,3 +22,7 @@ Imports:
     rpart.plot,
     stats,
     stringr
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

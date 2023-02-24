@@ -1,4 +1,4 @@
-#' Descriptive Statistics by Treatment Arm (Internal Use)
+#' Descriptive Statistics by Treatment Arm
 #'
 #' Computes sample averages and standard deviations of the covariates across treatment arms.
 #'
@@ -7,6 +7,8 @@
 #'
 #' @return
 #' 4xp array, storing the desired statistics.
+#'
+#' @keywords internal
 #'
 #' @details
 #' Sample means and standard deviations across treatment arms are a first, useful insight to assess covariate balance.
@@ -24,7 +26,7 @@ descriptive_arm <- function(X, D) {
 }
 
 
-#' Normalized Differences (Internal Use)
+#' Normalized Differences
 #'
 #' Computes a measure of the difference between locations of the covariate distributions
 #' across treatment arms.
@@ -34,6 +36,8 @@ descriptive_arm <- function(X, D) {
 #'
 #' @return
 #' 1xp data frame storing the normalized difference of each covariate.
+#'
+#' @keywords internal
 #'
 #' @details
 #' Normalized differences are computed as the difference in the means of each covariate across treatment arms, normalized
@@ -55,7 +59,7 @@ normalized_diff <- function(X, D) {
 }
 
 
-#' Log Ratio of Standard Deviations (Internal Use)
+#' Log Ratio of Standard Deviations
 #'
 #' Computes a measure of the difference in the dispersion of the
 #' covariate distributions across treatment arms.
@@ -65,6 +69,8 @@ normalized_diff <- function(X, D) {
 #'
 #' @return
 #' 1xp data frame storing logarithm of the ratio of standard deviations of each covariate.
+#'
+#' @keywords internal
 #'
 #' @details
 #' Log ratio of standard deviations are computed as the logarithm of the ratio of the within-arm standard deviations.

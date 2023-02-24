@@ -2,7 +2,7 @@
 % Please edit documentation in R/balance-measures.R
 \name{normalized_diff}
 \alias{normalized_diff}
-\title{Normalized Differences (Internal Use)}
+\title{Normalized Differences}
 \usage{
 normalized_diff(X, D)
 }
@@ -22,3 +22,4 @@ across treatment arms.
 Normalized differences are computed as the difference in the means of each covariate across treatment arms, normalized
 by the sum of the within-arm variances.
 }
+\keyword{internal}
