@@ -113,6 +113,11 @@ print(results, table = "avg_char")
 <i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
 
+- Cotterman, R., & Peracchi, F. (1992).
+<b>Classification and aggregation: An application to industrial classification in cps data.</b> 
+<i>Journal of Applied Econometrics</i>, 7(1).
+[<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/jae.3950070105">paper</a>]
+
 - Di Francesco, R. (2022).
 <b>Aggregation Trees.</b> 
 <i>CEIS Research Paper, 546.</i>
