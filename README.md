@@ -18,14 +18,12 @@ The package can be downloaded from CRAN:
 
 ```
 install.packages("aggTrees")
-library(aggTrees)
 ```
 
 Alternatively, the current development version of the package can be installed using the `devtools` package:
 
 ```
 devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtools") if needed.
-library(aggTrees)
 ```
 
 ## Usage Examples
