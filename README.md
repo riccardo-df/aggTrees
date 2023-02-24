@@ -1,5 +1,5 @@
 # Aggregation Trees
-R package to implement aggregation trees, a nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework. Additionally, the package provides useful functions to work with `rpart` objects.
+R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework. Additionally, the package provides useful functions to work with `rpart` objects.
 
 The approach consists of three steps:
 
