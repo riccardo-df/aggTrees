@@ -100,7 +100,7 @@ print(results, table = "avg_char")
 ```
 
 ### Appendix
-The point of estimating the linear models is to get standard errors for the GATEs. Under an honesty condition, we can use the estimated standard errors to conduct valid inference as usual, e.g., by constructing valid confidence intervals. Honesty is a subsample-splitting technique that requires that different observations are used to form the subgroups and estimate the GATEs. `inference_aggtree` always uses the honest sample to estimate the linear models below (unless we called `build_aggtree` without using the honesty settings).
+The point of estimating the linear models is to get standard errors for the GATEs. Under an honesty condition, we can use the estimated standard errors to conduct valid inference as usual, e.g., by constructing conventional confidence intervals. Honesty is a subsample-splitting technique that requires that different observations are used to form the subgroups and estimate the GATEs. `inference_aggtree` always uses the honest sample to estimate the linear models below (unless we called `build_aggtree` without using the honesty settings).
 
 If we set `method = "raw"`, `inference_aggtree` estimates via OLS the following linear model:
 
