@@ -38,7 +38,7 @@ tree <- rpart(y ~ ., data = data.frame(y, X))
 
 ## Extract number of leaves.
 is_in_third_node <- node_membership(tree, X, 3)
-is_in_third_node
+head(is_in_third_node)
 
 }
 \seealso{

@@ -36,7 +36,7 @@ tree <- rpart(y ~ ., data = data.frame(y, X))
 
 ## Extract number of leaves.
 leaves_factor <- leaf_membership(tree, X)
-leaves_factor
+head(leaves_factor)
 
 }
 \seealso{

@@ -173,7 +173,7 @@ plot(groupings) # Try also setting 'sequence = TRUE'.
 
 ## To predict, do the following.
 tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
-predict(tree, data.frame(X))
+head(predict(tree, data.frame(X)))
 
 ## Inference with 4 groups.
 results <- inference_aggtree(groupings, n_groups = 4)

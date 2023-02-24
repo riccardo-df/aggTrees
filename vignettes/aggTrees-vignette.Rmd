@@ -1,6 +1,5 @@
 ---
-title: "Aggregation Trees"
-author: "Riccardo Di Francesco"
+title: "Short Tutorial"
 output: rmarkdown::html_vignette
 header-includes:
   - \usepackage{booktabs}
@@ -20,29 +19,6 @@ knitr::opts_chunk$set(
 )
 
 library(aggTrees)
-```
-
-R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework.
-
-The approach consists of three steps:
-
-1. Estimate the conditional average treatment effects (CATEs);
-2. Approximate the CATEs by a decision tree;
-3. Prune the tree.
-
-This way, we generate a sequence of groupings, one for each granularity level. The resulting sequence is nested in the sense that subgroups formed at a given level of granularity are never broken at coarser levels. This guarantees consistency of the results across the different granularity levels, generally considered a basic requirement that every classification system should satisfy. Moreover, each grouping features an optimality property in that it ensures that the loss in explained heterogeneity resulting from aggregation is minimized.
-
-## Installation  
-The package can be downloaded from CRAN:
-
-```{r install-cran, eval = FALSE}
-install.packages("aggTrees")
-```
-
-Alternatively, the current development version of the package can be installed using the `devtools` package:
-
-```{r install-github, eval = FALSE}
-devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtools") if needed.
 ```
 
 ## Usage Examples

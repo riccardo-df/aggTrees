@@ -122,7 +122,7 @@ get_leaves <- function(tree) {
 #'
 #' ## Extract number of leaves.
 #' is_in_third_node <- node_membership(tree, X, 3)
-#' is_in_third_node
+#' head(is_in_third_node)
 #'
 #' @importFrom utils capture.output
 #'
@@ -168,7 +168,7 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #'
 #' ## Extract number of leaves.
 #' leaves_factor <- leaf_membership(tree, X)
-#' leaves_factor
+#' head(leaves_factor)
 #'
 #' @author Riccardo Di Francesco
 #'
