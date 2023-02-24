@@ -21,8 +21,7 @@ knitr::opts_chunk$set(
 library(aggTrees)
 ```
 
-## Usage Examples
-This section demonstrates how to use the package. Let us generate some data:
+Let us generate some data:
 
 ```{r data-generation}
 ## Generate data.
