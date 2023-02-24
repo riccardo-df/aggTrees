@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 library(aggTrees)
 ```
 
-Let us generate some data:
+In this tutorial, we show a typical usage of the package. For illustration purposes, let us generate some data:
 
 ```{r data-generation}
 ## Generate data.
@@ -99,7 +99,7 @@ print(results, table = "diff")
 print(results, table = "avg_char")
 ```
 
-## Appendix
+### Appendix
 The point of estimating the linear models is to get standard errors for the GATEs. Under an honesty condition, we can use the estimated standard errors to conduct valid inference as usual, e.g., by constructing valid confidence intervals. Honesty is a subsample-splitting technique that requires that different observations are used to form the subgroups and estimate the GATEs. `inference_aggtree` always uses the honest sample to estimate the linear models below (unless we called `build_aggtree` without using the honesty settings).
 
 If we set `method = "raw"`, `inference_aggtree` estimates via OLS the following linear model:
