@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Riccardo Di Francesco" />
+
+
+<title>Aggregation Trees</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Aggregation Trees</h1>
+<h4 class="author">Riccardo Di Francesco</h4>
+
+
+
+<p>R package to implement aggregation trees, a nonparametric approach to
+discovering heterogeneous subgroups in a selection-on-observables
+framework.</p>
+<p>The approach consists of three steps:</p>
+<ol style="list-style-type: decimal">
+<li>Estimate the conditional average treatment effects (CATEs);</li>
+<li>Approximate the CATEs by a decision tree;</li>
+<li>Prune the tree.</li>
+</ol>
+<p>This way, we generate a sequence of groupings, one for each
+granularity level. The resulting sequence is nested in the sense that
+subgroups formed at a given level of granularity are never broken at
+coarser levels. This guarantees consistency of the results across the
+different granularity levels, generally considered a basic requirement
+that every classification system should satisfy. Moreover, each grouping
+features an optimality property in that it ensures that the loss in
+explained heterogeneity resulting from aggregation is minimized.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>The package can be downloaded from CRAN:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;aggTrees&quot;</span>)</span></code></pre></div>
+<p>Alternatively, the current development version of the package can be
+installed using the <code>devtools</code> package:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;riccardo-df/aggTrees&quot;</span>) <span class="co"># run install.packages(&quot;devtools&quot;) if needed.</span></span></code></pre></div>
+</div>
+<div id="usage-examples" class="section level2">
+<h2>Usage Examples</h2>
+<p>This section demonstrates how to use the package. Let us generate
+some data:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Generate data.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1986</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n <span class="sc">*</span> k), <span class="at">ncol =</span> k)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(X) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="fu">seq_len</span>(k))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> X[, <span class="dv">1</span>]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> X[, <span class="dv">1</span>] <span class="sc">+</span> X[, <span class="dv">2</span>]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> mu0 <span class="sc">+</span> D <span class="sc">*</span> (mu1 <span class="sc">-</span> mu0) <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span></code></pre></div>
+<div id="constructing-the-sequence-of-groupings" class="section level3">
+<h3>Constructing the Sequence of Groupings</h3>
+<p>To construct the sequence of optimal groupings, we first need to
+estimate the CATEs. Here we use the causal forest estimator. To achieve
+valid inference about the GATEs, we split the sample into a training
+sample and an honest sample of equal sizes. The forest is built using
+only the training sample.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Sample split.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">&lt;-</span> <span class="fu">sample_split</span>(<span class="fu">length</span>(y), <span class="at">training_frac =</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>training_idx <span class="ot">&lt;-</span> splits<span class="sc">$</span>training_idx</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>honest_idx <span class="ot">&lt;-</span> splits<span class="sc">$</span>honest_idx</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>y_tr <span class="ot">&lt;-</span> y[training_idx]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>D_tr <span class="ot">&lt;-</span> D[training_idx]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>X_tr <span class="ot">&lt;-</span> X[training_idx, ]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>y_hon <span class="ot">&lt;-</span> y[honest_idx]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>D_hon <span class="ot">&lt;-</span> D[honest_idx]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>X_hon <span class="ot">&lt;-</span> X[honest_idx, ]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Estimate the CATEs. Use training sample.</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grf)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>forest <span class="ot">&lt;-</span> <span class="fu">causal_forest</span>(X_tr, y_tr, D_tr) </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>cates <span class="ot">&lt;-</span> <span class="fu">predict</span>(forest, X)<span class="sc">$</span>predictions</span></code></pre></div>
+<p>Now we use the <code>build_aggtree</code> function to construct the
+sequence of groupings. This function approximates the estimated CATEs by
+a decision tree using only the training sample and computes node
+predictions (i.e., the GATEs) using only the honest sample.
+<code>build_aggtree</code> allows the user to choose between two GATE
+estimators:</p>
+<ol style="list-style-type: decimal">
+<li>If we set <code>method = &quot;raw&quot;</code>, the GATEs are estimated by
+taking the differences between the mean outcomes of treated and control
+units in each node. This is an unbiased estimator (only) in randomized
+experiments;</li>
+<li>If we set <code>method = &quot;aipw&quot;</code>, the GATEs are estimated by
+averaging doubly-robust scores (see Appendix below) in each node. This
+is an unbiased estimator also in observational studies under particular
+conditions on the construction of the scores.</li>
+</ol>
+<p>The doubly-robust scores can be estimated separately and passed in by
+the <code>scores</code> argument. Otherwise, they are estimated
+internally. Notice the use of the <code>is_honest</code> argument, a
+logical vector denoting which observations we allocated to the honest
+sample. This way, <code>build_aggtree</code> knows which observations
+must be used to construct the tree and compute node predictions.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Construct the sequence. Use doubly-robust scores.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>groupings <span class="ot">&lt;-</span> <span class="fu">build_aggtree</span>(y, D, X, <span class="at">method =</span> <span class="st">&quot;aipw&quot;</span>, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">cates =</span> cates, <span class="at">is_honest =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y) <span class="sc">%in%</span> honest_idx)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Print.</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(groupings)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Honest estimates: TRUE </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; n= 2500 </span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; node), split, n, deviance, yval</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       * denotes terminal node</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1) root 2500 2391.010000  0.04501899  </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2) x2&lt; 0.3551754 1606  621.963500 -0.55297980  </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      4) x2&lt; -0.7479499 594   65.667200 -1.31369600  </span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        8) x2&lt; -1.404661 225    6.321165 -1.90733900 *</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        9) x2&gt;=-1.404661 369   13.841740 -1.00708900 *</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      5) x2&gt;=-0.7479499 1012   85.408150 -0.14129790  </span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       10) x2&lt; -0.3224095 345   11.622320 -0.38094340 *</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       11) x2&gt;=-0.3224095 667   19.201350 -0.02041482 *</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3) x2&gt;=0.3551754 894  226.981100  1.05800800  </span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      6) x2&lt; 1.510563 723   59.451560  0.92191950  </span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       12) x2&lt; 0.7534031 310    8.823502  0.55191770 *</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       13) x2&gt;=0.7534031 413    7.446873  1.22014300 *</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      7) x2&gt;=1.510563 171   10.676340  1.78692300 *</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="do">## Plot.</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(groupings) <span class="co"># Try also setting &#39;sequence = TRUE&#39;.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="further-analysis" class="section level3">
+<h3>Further Analysis</h3>
+<p>Now that we have a whole sequence of optimal groupings, we can pick
+the grouping associated with our preferred granularity level and call
+the <code>inference_aggtree</code> function. This function does the
+following:</p>
+<ol style="list-style-type: decimal">
+<li>It gets standard errors for the GATEs by estimating via OLS
+appropriate linear models using the honest sample. The choice of the
+linear model depends on the <code>method</code> we used when we called
+<code>build_aggtree</code> (see Appendix below);</li>
+<li>It tests the null hypotheses that the differences in the GATEs
+across all pairs of groups equal zero. Here, we account for multiple
+hypotheses testing by adjusting the <span class="math inline">\(p\)</span>-values using Holm’s procedure;</li>
+<li>It computes the average characteristics of the units in each
+group.</li>
+</ol>
+<p>To report the results, we can print nice LATEX tables.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Inference with 4 groups.</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">inference_aggtree</span>(groupings, <span class="at">n_groups =</span> <span class="dv">4</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">## LATEX.</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results, <span class="at">table =</span> <span class="st">&quot;diff&quot;</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; \begingroup</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   \setlength{\tabcolsep}{8pt}</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   \renewcommand{\arraystretch}{1.2}</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   \begin{table}[b!]</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \centering</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \begin{adjustbox}{width = 0.85\textwidth}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \begin{tabular}{@{\extracolsep{5pt}}l c c c c}</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \\[-1.8ex]\hline</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex] </span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &amp; \textit{Leaf 1} &amp; \textit{Leaf 2} &amp; \textit{Leaf 3} &amp; \textit{Leaf 4} \\</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \addlinespace[2pt]</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex] </span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \multirow{2}{*}{GATEs} &amp; -1.314 &amp; -0.141 &amp; 0.922 &amp; 1.787 \\</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &amp; [-1.49, -1.138] &amp; [-0.263, -0.019] &amp; [0.775, 1.069] &amp; [1.493, 2.081] \\ </span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \addlinespace[2pt]</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex] </span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \textit{Leaf 1} &amp; NA &amp; NA &amp; NA &amp; NA \\</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             &amp; (NA) &amp; (NA) &amp; (NA) &amp; (NA) \\ </span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \textit{Leaf 2} &amp; 1.172 &amp; NA &amp; NA &amp; NA \\</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             &amp; (0) &amp; (NA) &amp; (NA) &amp; (NA) \\ </span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \textit{Leaf 3} &amp; 2.236 &amp; 1.063 &amp; NA &amp; NA \\</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             &amp; (0) &amp; (0) &amp; (NA) &amp; (NA) \\ </span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \textit{Leaf 4} &amp; 3.101 &amp; 1.928 &amp; 0.865 &amp; NA \\</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             &amp; (0) &amp; (0) &amp; (0) &amp; (NA) \\ </span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \addlinespace[3pt]</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \\[-1.8ex]\hline</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex]</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \end{tabular}</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \end{adjustbox}</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \caption{Point estimates and $95\%$ confidence intervals for the GATEs. Leaves are sorted in increasing order of the GATEs. Additionally, differences in the GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm&#39;s procedure and reported in parenthesis under each point estimate.}</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \label{table:differences.gates}</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \end{table}</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; \endgroup</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results, <span class="at">table =</span> <span class="st">&quot;avg_char&quot;</span>)</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; \begingroup</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   \setlength{\tabcolsep}{8pt}</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   \renewcommand{\arraystretch}{1.1}</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   \begin{table}[b!]</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \centering</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \begin{adjustbox}{width = 1\textwidth}</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \begin{tabular}{@{\extracolsep{5pt}}l c c c c c c c c }</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \\[-1.8ex]\hline</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex]</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &amp; \multicolumn{2}{c}{\textit{Leaf 1}} &amp; \multicolumn{2}{c}{\textit{Leaf 2}} &amp; \multicolumn{2}{c}{\textit{Leaf 3}} &amp; \multicolumn{2}{c}{\textit{Leaf 4}} \\\cmidrule{2-3} \cmidrule{4-5} \cmidrule{6-7} \cmidrule{8-9} </span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &amp; Mean &amp; (S.D.) &amp; Mean &amp; (S.D.) &amp; Mean &amp; (S.D.) &amp; Mean &amp; (S.D.) \\</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \addlinespace[2pt]</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex] </span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \texttt{x1} &amp; 0.047 &amp; (0.04) &amp; -0.019 &amp; (0.03) &amp; 0.006 &amp; (0.036) &amp; -0.024 &amp; (0.087) \\ </span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \texttt{x2} &amp; -1.309 &amp; (0.021) &amp; -0.164 &amp; (0.01) &amp; 0.85 &amp; (0.012) &amp; 1.933 &amp; (0.033) \\ </span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \texttt{x3} &amp; 0.053 &amp; (0.042) &amp; -0.014 &amp; (0.03) &amp; 0.03 &amp; (0.037) &amp; 0.041 &amp; (0.079) \\ </span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \addlinespace[3pt]</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \\[-1.8ex]\hline</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       \hline \\[-1.8ex]</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \end{tabular}</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \end{adjustbox}</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of the GATEs.}</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \label{table:average.characteristics.leaves}</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     \end{table}</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; \endgroup</span></span></code></pre></div>
+</div>
+</div>
+<div id="appendix" class="section level2">
+<h2>Appendix</h2>
+<p>The point of estimating the linear models is to get standard errors
+for the GATEs. Under an honesty condition, we can use the estimated
+standard errors to conduct valid inference as usual, e.g., by
+constructing valid confidence intervals. Honesty is a
+subsample-splitting technique that requires that different observations
+are used to form the subgroups and estimate the GATEs.
+<code>inference_aggtree</code> always uses the honest sample to estimate
+the linear models below (unless we called <code>build_aggtree</code>
+without using the honesty settings).</p>
+<p>If we set <code>method = &quot;raw&quot;</code>, <code>inference_aggtree</code>
+estimates via OLS the following linear model:</p>
+<p><span class="math display">\[\begin{equation}
+    Y_i = \sum_{l = 1}^{|\mathcal{T_{\alpha}}|} L_{i, l} \, \gamma_l +
+\sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l} \, D_i \, \beta_l +
+\epsilon_i
+\end{equation}\]</span></p>
+<p>with <span class="math inline">\(|\mathcal{T}_{\alpha}|\)</span> the
+number of leaves of a particular tree <span class="math inline">\(\mathcal{T}_{\alpha}\)</span>, and <span class="math inline">\(L_{i, l}\)</span> a dummy variable equal to one if
+the <span class="math inline">\(i\)</span>-th unit falls in the <span class="math inline">\(l\)</span>-th leaf of <span class="math inline">\(\mathcal{T}_{\alpha}\)</span>. Exploiting the
+random assignment to treatment, we can show that each <span class="math inline">\(\beta_l\)</span> identifies the GATE in the <span class="math inline">\(l\)</span>-th leaf. Under honesty, the OLS
+estimator <span class="math inline">\(\hat{\beta}_l\)</span> of <span class="math inline">\(\beta_l\)</span> is root-<span class="math inline">\(n\)</span> consistent and asymptotically
+normal.</p>
+<p>If we set <code>method = &quot;aipw&quot;</code>,
+<code>inference_aggtree</code> estimates the following linear model:</p>
+<p><span class="math display">\[\begin{equation}
+    \widehat{\Gamma}_i = \sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l}
+\, \beta_l + \epsilon_i
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(\Gamma_i\)</span> are the following
+doubly-robust scores:</p>
+<p><span class="math display">\[\begin{equation*}
+    \Gamma_i = \mu \left( 1, X_i \right) - \mu \left( 0, X_i \right) +
+\frac{D_i \left[ Y_i - \mu \left( 1, X_i \right) \right]}{p \left( X_i
+\right)}  - \frac{ \left( 1 - D_i \right) \left[ Y_i - \mu \left( 0, X_i
+\right) \right]}{1 - p \left( X_i \right)}
+\end{equation*}\]</span></p>
+<p>with <span class="math inline">\(\mu \left(D_i, X_i \right) =
+\mathbb{E} \left[ Y_i | D_i, Z_i \right]\)</span> the conditional mean
+of <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(p \left( X_i \right) = \mathbb{P} \left( D_i = 1 |
+X_i \right)\)</span> the propensity score. These scores are inherited by
+the scores used in the <code>build_aggtree</code> call. As before, we
+can show that each <span class="math inline">\(\beta_l\)</span>
+identifies the GATE in the <span class="math inline">\(l\)</span>-th
+leaf, this time even in observational studies. Under honesty, the OLS
+estimator <span class="math inline">\(\hat{\beta}_l\)</span> of <span class="math inline">\(\beta_l\)</span> is root-<span class="math inline">\(n\)</span> consistent and asymptotically normal,
+provided that the <span class="math inline">\(\Gamma_i\)</span> are
+cross-fitted and that the product of the convergence rates of the
+estimators of the nuisance functions <span class="math inline">\(\mu
+\left( \cdot, \cdot \right)\)</span> and <span class="math inline">\(p
+\left( \cdot \right)\)</span> is faster than <span class="math inline">\(n^{1/2}\)</span>.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><p>Athey, S., &amp; Imbens, G. W. (2016). <b>Recursive Partitioning
+for Heterogeneous Causal Effects.</b> <i>Proceedings of the National
+Academy of Sciences</i>, 113(27).
+[<a href="https://www.pnas.org/doi/abs/10.1073/pnas.1510489113">paper</a>]</p></li>
+<li><p>Athey, S., Tibshirani, J., &amp; Wager, S. (2019). <b>Generalized
+Random Forests.</b> <i>Annals of Statistics</i>, 47(2).
+[<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]</p></li>
+<li><p>Chernozhukov, V., Demirer, M., Duflo, E., &amp; Fernandez-Val, I.
+(2017). <b>Generic Machine Learning Inference on Heterogeneous Treatment
+Effects in Randomized Experiments.</b> <i>National Bureau of Economic
+Research</i>.
+[<a href="https://www.nber.org/papers/w24678">paper</a>]</p></li>
+<li><p>Cotterman, R., &amp; Peracchi, F. (1992). <b>Classification and
+aggregation: An application to industrial classification in cps
+data.</b> <i>Journal of Applied Econometrics</i>, 7(1).
+[<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/jae.3950070105">paper</a>]</p></li>
+<li><p>Di Francesco, R. (2022). <b>Aggregation Trees.</b> <i>CEIS
+Research Paper, 546.</i>
+[<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]</p></li>
+<li><p>Holm, S. (1979). <b>A Simple Sequentially Rejective Multiple Test
+Procedure.</b> <i>Scandinavian Journal of Statistics</i>, 6(2).
+[<a href="https://www.jstor.org/stable/4615733">paper</a>]</p></li>
+<li><p>Semenova, V., &amp; Chernozhukov, V. (2021). <b>Debiased Machine
+Learning of Conditional Average Treatment Effects and Other Causal
+Functions.</b> <i>The Econometrics Journal</i>, 24(2).
+[<a href="https://academic.oup.com/ectj/article/24/2/264/5899048">paper</a>]</p></li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
