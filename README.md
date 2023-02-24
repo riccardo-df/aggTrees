@@ -1,5 +1,5 @@
 # Aggregation Trees
-R package to implement aggregation trees, a nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework. Additionally, the package provides useful functions to work with `rpart` objects.
+R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework. Additionally, the package provides useful functions to work with `rpart` objects.
 
 The approach consists of three steps:
 
@@ -18,14 +18,12 @@ The package can be downloaded from CRAN:
 
 ```
 install.packages("aggTrees")
-library(aggTrees)
 ```
 
 Alternatively, the current development version of the package can be installed using the `devtools` package:
 
 ```
 devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtools") if needed.
-library(aggTrees)
 ```
 
 ## Usage Examples
@@ -114,6 +112,11 @@ print(results, table = "avg_char")
 <b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments.</b>
 <i>National Bureau of Economic Research</i>.
 [<a href="https://www.nber.org/papers/w24678">paper</a>]
+
+- Cotterman, R., & Peracchi, F. (1992).
+<b>Classification and aggregation: An application to industrial classification in cps data.</b> 
+<i>Journal of Applied Econometrics</i>, 7(1).
+[<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/jae.3950070105">paper</a>]
 
 - Di Francesco, R. (2022).
 <b>Aggregation Trees.</b> 
