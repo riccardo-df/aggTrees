@@ -1,11 +1,6 @@
 ---
 title: "Short Tutorial"
 output: rmarkdown::html_vignette
-header-includes:
-  - \usepackage{booktabs}
-  - \usepackage{float}
-  - \usepackage{adjustbox}
-  - \usepackage{multirow}
 vignette: >
   %\VignetteIndexEntry{Aggregation Trees}
   %\VignetteEngine{knitr::rmarkdown}
