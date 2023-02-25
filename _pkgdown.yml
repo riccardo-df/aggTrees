@@ -1,4 +1,45 @@
 url: https://riccardo-df.github.io/aggTrees/
-template:
-  bootstrap: 5
 
+template:
+  bootswatch: spacelab
+
+navbar:
+  type: default
+  left:
+  - text: "Get started"
+    href: articles/aggTrees-vignette.html
+  - text: "Reference"
+    href: reference/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/riccardo-df/aggTrees
+
+reference:
+  - title: Core functions
+    contents:
+      - build_aggtree
+      - inference_aggtree
+
+  - title: Generic S3
+    contents:
+      - plot.aggTrees
+      - summary.aggTrees
+      - print.aggTrees
+      - print.aggTrees.inference
+
+  - title: rpart
+    contents:
+      - avg_characteristics_rpart
+      - causal_ols_rpart
+      - estimate_rpart
+      - get_leaves
+      - leaf_membership
+      - node_membership
+      - subtree
+
+  - title: Utils
+    contents:
+    - balance_measures
+    - dr_scores
+    - expand_df
+    - sample_split
