@@ -111,7 +111,7 @@ If we set `method = "raw"`, `inference_aggtree` estimates via OLS the following 
 
 with $|\mathcal{T}_{\alpha}|$ the number of leaves of a particular tree $\mathcal{T}_{\alpha}$, and $L_{i, l}$ a dummy variable equal to one if the $i$-th unit falls in the $l$-th leaf of $\mathcal{T}_{\alpha}$. Exploiting the random assignment to treatment, we can show that each $\beta_l$ identifies the GATE in the $l$-th leaf. Under honesty, the OLS estimator $\hat{\beta}_l$ of $\beta_l$ is root-$n$ consistent and asymptotically normal.
 
-If we set `method = "aipw"`, `inference_aggtree` estimates the following linear model:
+If we set `method = "aipw"`, `inference_aggtree` estimates via OLS the following linear model:
 
 \begin{equation}
     \widehat{\Gamma}_i = \sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l} \, \beta_l + \epsilon_i
