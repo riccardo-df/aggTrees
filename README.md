@@ -1,4 +1,4 @@
-# Aggregation Trees <a href="https://riccardo-df.github.io/aggTrees/"><img src="man/figures/logo.svg" align="right" height="200" /></a>
+# Aggregation Trees <a href="https://riccardo-df.github.io/aggTrees/"><img src="man/figures/logo.svg" align="right" height="130" /></a>
 R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework. 
 
 The approach consists of three steps:
