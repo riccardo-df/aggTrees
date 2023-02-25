@@ -11,7 +11,7 @@ This way, we generate a sequence of groupings, one for each granularity level. T
 level of granularity are never broken at coarser levels. This guarantees consistency of the results across the different granularity levels, generally considered a basic requirement that every classification system should satisfy. Moreover, each grouping features an optimality property in that it ensures that the loss in
 explained heterogeneity resulting from aggregation is minimized.
 
-Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. An honesty condition is required to conduct valid inference. Thus, different subsamples must be used to construct the tree and estimate the linear models. 
+Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. Under an "honesty"" condition, we can use the estimated standard errors to conduct valid inference about the GATEs as usual, e.g., by constructing conventional confidence intervals
 
 ## Installation  
 The package can be downloaded from CRAN:
@@ -27,7 +27,7 @@ devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtool
 ```
 
 ## Usage 
-Please chek the package vignette for a short tutorial.
+Please check the package vignette for a short tutorial.
 
 ## References
 
