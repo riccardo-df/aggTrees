@@ -13,7 +13,7 @@ explained heterogeneity resulting from aggregation is minimized.
 
 Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. Under an "honesty"" condition, we can use the estimated standard errors to conduct valid inference about the GATEs as usual, e.g., by constructing conventional confidence intervals.
 
-Please check the online [vignette](https://riccardo-df.github.io/aggTrees/articles/aggTrees-vignette.html) for a short tutorial.
+To get started, please check the online [vignette](https://riccardo-df.github.io/aggTrees/articles/aggTrees-vignette.html) for a short tutorial.
 
 ## Installation  
 The package can be downloaded from CRAN:
