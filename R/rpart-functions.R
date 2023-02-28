@@ -267,7 +267,6 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if (!(method %in% c("raw", "aipw"))) stop("You must provide a valid method.", call. = FALSE)
 
-  new_tree <- tree
   leaves <- leaf_membership(tree, X)
   n_leaves <- get_leaves(tree)
 
@@ -278,6 +277,8 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   }
 
   ## Replace node predictions.
+  new_tree <- tree
+
   if (method == "raw") {
     new_tree$frame$yval[1] <- mean(y[D == 1]) - mean(y[D == 0])
 
@@ -412,16 +413,17 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #'
 #' @export
 causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
+  ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. It must be either 'raw' or 'aipw'.", call. = FALSE)
 
-  ## Generate leaves indicators.
   leaves <- leaf_membership(tree, X)
   n_leaves <- get_leaves(tree)
+
   if (length(unique(leaves)) < n_leaves) warning("One or more leaves are empty: No observations in 'X' falls there.")
 
   for (leaf in seq_len(n_leaves)) {
-    if (sum(leaves == leaf) == 1) stop("One or more leaves contain only one observation of 'X'. Try with a lower number of groups or a bigger 'X'.", call. = FALSE)
+    if (sum(leaves == leaf) == 1) stop("One or more leaves contain only one observation of 'X', thus we cannot get standard errors there. \nTry with a lower number of groups or a bigger 'X'.", call. = FALSE)
     if (method == "raw" & length(unique(D[leaves == leaf])) == 1) stop("One or more leaves contain only treated or control observations. This is incompatible with 'method = raw'.", call. = FALSE)
   }
 
