@@ -268,6 +268,14 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   if (!(method %in% c("raw", "aipw"))) stop("You must provide a valid method.", call. = FALSE)
 
   new_tree <- tree
+  leaves <- leaf_membership(tree, X)
+  n_leaves <- get_leaves(tree)
+
+  if (length(unique(leaves)) < n_leaves) warning("One or more leaves are empty: No observations in 'X' falls there.")
+
+  for (leaf in seq_len(n_leaves)) {
+    if (method == "raw" & length(unique(D[leaves == leaf])) == 1) stop("One or more leaves contain only treated or control observations. This is incompatible with 'method = raw'.", call. = FALSE)
+  }
 
   ## Replace node predictions.
   if (method == "raw") {
@@ -414,7 +422,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 
   for (leaf in seq_len(n_leaves)) {
     if (sum(leaves == leaf) == 1) stop("One or more leaves contain only one observation of 'X'. Try with a lower number of groups or a bigger 'X'.", call. = FALSE)
-    if (method == "raw" & length(unique(D[leaves == leaf])) != 2) stop("One or more leaves contain only treated or control observations. This is incompatible with 'method = raw'.", call. = FALSE)
+    if (method == "raw" & length(unique(D[leaves == leaf])) == 1) stop("One or more leaves contain only treated or control observations. This is incompatible with 'method = raw'.", call. = FALSE)
   }
 
   ## GATEs point estimates and standard errors.
