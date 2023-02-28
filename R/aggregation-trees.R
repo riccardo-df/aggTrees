@@ -234,7 +234,7 @@ inference_aggtree <- function(object, n_groups) {
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
-  if (n_groups <= 0) stop("Invalid 'n_groups'. This must be greater than or equal to 1.", call. = FALSE)
+  if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
 
   tree <- object$tree
 
