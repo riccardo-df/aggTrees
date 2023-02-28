@@ -412,6 +412,10 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   n_leaves <- get_leaves(tree)
   if (length(unique(leaves)) < n_leaves) warning("One or more leaves are empty: No observations in X fall there.")
 
+  for (leaf in seq_len(n_leaves)) {
+    if (sum(leaves == leaf) == 1) stop("One or more leaves contain only one observation. Try with a lower number of groups.", call. = FALSE)
+  }
+
   ## GATEs point estimates and standard errors.
   if (method == "raw") {
     if (length(unique(leaves)) == 1) {
