@@ -1,4 +1,10 @@
 # Aggregation Trees <a href="https://riccardo-df.github.io/aggTrees/"><img src="man/figures/logo.svg" align="right" height="200" /></a>
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/riccardo-df/morf/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/riccardo-df/morf/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/aggTrees)](https://CRAN.R-project.org/package=aggTrees)
+<!-- badges: end -->
+
 R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework. 
 
 The approach consists of three steps:
