@@ -308,7 +308,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex]
       & ", c(paste("\\multicolumn{2}{c}{\\textit{Leaf ", 1:(length(unique(leaves))-1), "}} & ", sep = ""), paste("\\multicolumn{2}{c}{\\textit{Leaf ", length(unique(leaves)), "}}", sep = "")) ," \\\\",  paste0("\\cmidrule{", seq(2, length(unique(leaves)) * 2, by = 2), "-", seq(3, (length(unique(leaves)) * 2)+1, by = 2), "} "), "
-     ", rep(" & Mean & (S.D.)", length(unique(leaves))), " \\\\
+     ", rep(" & Mean & (S.E.)", length(unique(leaves))), " \\\\
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
