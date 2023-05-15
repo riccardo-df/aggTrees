@@ -294,6 +294,9 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
   gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
 
+  gates_ci_lower_boot <- round(x$boot_ci$lower, 3)
+  gates_ci_upper_boot <- round(x$boot_ci$upper, 3)
+
   ## Write table.
   if (table == "avg_char") {
     table_names <- rename_latex(colnames(X))
@@ -361,7 +364,8 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
     cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
-      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
+      & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\
+      & ", paste("[", gates_ci_lower_boot[1:(length(unique(leaves))-1)], ", ", gates_ci_upper_boot[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower_boot[length(unique(leaves))], ", ", gates_ci_upper_boot[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
     cat("      \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n")
 
@@ -375,7 +379,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Point estimates and $95\\%$ confidence intervals for the GATEs. Leaves are sorted in increasing order of the GATEs. Additionally, differences in the GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
+    \\caption{Point estimates and $95\\%$ confidence intervals for the GATEs based on asymptotic normality and on the percentiles of the bootstrap distribution. Leaves are sorted in increasing order of the GATEs. Additionally, differences in the GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")

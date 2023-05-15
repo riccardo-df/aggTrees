@@ -14,6 +14,8 @@ Depends:
     R (>= 2.10)
 RoxygenNote: 7.2.3
 Imports: 
+    boot,
+    broom,
     car,
     caret,
     estimatr,

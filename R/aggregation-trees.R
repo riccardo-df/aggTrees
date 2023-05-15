@@ -124,8 +124,12 @@
 #'
 #' \deqn{score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i}
 #'
-#' This way, betas again identify the GATEs. Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White
-#' estimator.
+#' This way, betas again identify the GATEs.\cr
+#'
+#' Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
+#'
+#' If \code{boot_ci == TRUE}, the routine also computes asymmetric bias-corrected and accelerated confidence intervals using
+#' 2000 bootstrap samples. Particularly useful when the honest sample is small-ish.
 #'
 #' ### Hypothesis testing
 #' \code{\link{inference_aggtree}} uses the standard errors obtained by fitting the linear models above to test the hypotheses
@@ -223,18 +227,21 @@ build_aggtree <- function(y, D, X,
 #'
 #' @param object An \code{aggTrees} object.
 #' @param n_groups Number of desired groups.
+#' @param boot_ci Logical, whether to compute bootstrap confidence intervals.
 #'
 #' @rdname build_aggtree
 #'
-#' @import car
+#' @importFrom broom tidy
+#' @importFrom boot boot
 #'
 #' @export
-inference_aggtree <- function(object, n_groups) {
+inference_aggtree <- function(object, n_groups, boot_ci = FALSE) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
+  if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
 
   tree <- object$tree
 
@@ -257,11 +264,36 @@ inference_aggtree <- function(object, n_groups) {
   ## Select granularity level.
   groups <- subtree(tree, leaves = n_groups)
 
-  ## GATEs point estimates and standard errors, and hypotheses testing.
+  ## GATEs point estimates and standard errors, hypotheses testing, and boostrap CI if required.
   results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores)
 
   model <- results$model
   gates_diff_pairs <- results$gates_diff_pairs
+
+  if (boot_ci) {
+    # Extract GATEs indexes according to estimation strategy.
+    if (method == "raw") {
+      gates_idx <- which(sapply(names(model$coefficients), function(x) grepl(":D", x)))
+    } else if (method == "aipw") {
+      gates_idx <- which(sapply(names(model$coefficients), function(x) grepl("leaf", x)))
+    }
+
+    # Define function input for boot.
+    boot_fun <- function(data, idx) {
+      data_star <- data[idx, ]
+      results_star <- causal_ols_rpart(groups, data_star$y, data_star$D, data_star[, -c(1:2)], method = method, scores = scores)
+      return(coef(results_star$model)[gates_idx])
+    }
+
+    # Run bootstrap and compute confidence intervals.
+    boot_out <- boot::boot(data.frame(y, D, X), boot_fun, R = 2000)
+
+    boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "perc")$conf.low
+    boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "perc")$conf.high
+
+    names(boot_ci_lower) <- names(gates_idx)
+    names(boot_ci_upper) <- names(gates_idx)
+  }
 
   ## Compute average characteristics of units in each leaf.
   avg_characteristics <- avg_characteristics_rpart(groups, X)
@@ -270,6 +302,7 @@ inference_aggtree <- function(object, n_groups) {
   output <- list("aggTree" = object,
                  "groups" = groups,
                  "model" = model,
+                 "boot_ci" = if (boot_ci) list("lower" = boot_ci_lower, "upper" = boot_ci_upper) else list(),
                  "gates_diff_pairs" = gates_diff_pairs,
                  "avg_characteristics" = avg_characteristics)
   class(output) <- "aggTrees.inference"
