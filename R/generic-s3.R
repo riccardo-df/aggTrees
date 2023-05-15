@@ -277,8 +277,14 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   ## Check.
   if (!(table %in% c("avg_char", "diff"))) stop("Invalid 'table'. This must be either 'avg_char' or 'diff'.", call. = FALSE)
 
+  ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
+  if (is.null(x$idx$honest_idx)) {
+    X <- x$aggTree$dta[, -c(1,2 )]
+  } else {
+    X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
+  }
+
   ## Extract information.
-  X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
   leaves <- leaf_membership(x$groups, X)
   parms <- lapply(x$avg_characteristics, function(x) {stats::coef(summary(x))[, c("Estimate", "Std. Error")]})
 
@@ -294,8 +300,8 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
   gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
 
-  gates_ci_lower_boot <- round(x$boot_ci$lower, 3)
-  gates_ci_upper_boot <- round(x$boot_ci$upper, 3)
+  if (length(x$boot_ci) != 0) gates_ci_lower_boot <- round(x$boot_ci$lower, 3) else gates_ci_lower_boot <- NA
+  if (length(x$boot_ci) != 0) gates_ci_upper_boot <- round(x$boot_ci$upper, 3) else gates_ci_upper_boot <- NA
 
   ## Write table.
   if (table == "avg_char") {
