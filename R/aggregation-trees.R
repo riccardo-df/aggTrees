@@ -127,8 +127,8 @@
 #'
 #' Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 #'
-#' If \code{boot_ci == TRUE}, the routine also computes asymmetric confidence intervals based on the percentiles of the bootstrap
-#' distribution of each GATE using 2000 bootstrap samples. Particularly useful when the honest sample is small-ish.
+#' If \code{boot_ci == TRUE}, the routine also computes asymmetric bias-corrected and accelerated 95% confidence intervals using 2000 bootstrap
+#' samples. Particularly useful when the honest sample is small-ish.
 #'
 #' ### Hypothesis testing
 #' \code{\link{inference_aggtree}} uses the standard errors obtained by fitting the linear models above to test the hypotheses
@@ -277,18 +277,18 @@ inference_aggtree <- function(object, n_groups, boot_ci = FALSE) {
       gates_idx <- which(sapply(names(model$coefficients), function(x) grepl("leaf", x)))
     }
 
-    # Define function input for boot.
+    # Define function input for boot::boot().
     boot_fun <- function(data, idx) {
       data_star <- data[idx, ]
-      results_star <- causal_ols_rpart(groups, data_star$y, data_star$D, data_star[, -c(1:2)], method = method, scores = scores)
+      results_star <- causal_ols_rpart(groups, data_star$y, data_star$D, data_star[, -c(1:2)], method = method, scores = scores[idx])
       return(coef(results_star$model)[gates_idx])
     }
 
     # Run bootstrap and compute confidence intervals.
     boot_out <- boot::boot(data.frame(y, D, X), boot_fun, R = 2000)
 
-    boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "perc")$conf.low
-    boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "perc")$conf.high
+    boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.low
+    boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.high
 
     names(boot_ci_lower) <- names(gates_idx)
     names(boot_ci_upper) <- names(gates_idx)

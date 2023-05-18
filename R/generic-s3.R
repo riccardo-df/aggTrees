@@ -369,7 +369,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
-    cat("      \\multirow{2}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
+    cat("      \\multirow{3}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
       & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\
       & ", paste("[", gates_ci_lower_boot[1:(length(unique(leaves))-1)], ", ", gates_ci_upper_boot[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower_boot[length(unique(leaves))], ", ", gates_ci_upper_boot[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
     cat("      \\addlinespace[2pt]
