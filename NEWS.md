@@ -1,5 +1,6 @@
 ## version 2.1.0
-Now the inference_aggtree function can estimate confidence intervals for the GATEs based on their bootstrap distributions.
+
+Now the inference_aggtree function can estimate asymmetric bias-corrected and accelerated 95% confidence intervals for the GATEs based on their bootstrap distributions.
 
 ## version 2.0.1
 

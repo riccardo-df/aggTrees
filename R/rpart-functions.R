@@ -523,9 +523,9 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot
         }
       } else if (method == "aipw") {
         if (length(unique(leaves)) == 1) {
-          model <- estimatr::lm_robust(scores ~ 1, data = data.frame("scores" = data_star$scores), se_type = "HC1")
+          model <- estimatr::lm_robust(scores ~ 1, data = data.frame("scores" = scores[idx]), se_type = "HC1")
         } else {
-          model <- estimatr::lm_robust(scores ~ 0 + leaf, data = data.frame("scores" = data_star$scores, "leaf" = data_star$leaves), se_type = "HC1")
+          model <- estimatr::lm_robust(scores ~ 0 + leaf, data = data.frame("scores" = scores[idx], "leaf" = data_star$leaves), se_type = "HC1")
         }
       }
 
@@ -533,7 +533,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot
     }
 
     # Run bootstrap and compute confidence intervals.
-    boot_out <- boot::boot(data.frame(y, D, X, leaves, scores), boot_fun, R = 2000)
+    boot_out <- boot::boot(data.frame(y, D, X, leaves), boot_fun, R = 2000)
 
     boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.low
     boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.high
