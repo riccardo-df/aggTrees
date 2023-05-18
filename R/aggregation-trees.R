@@ -264,35 +264,11 @@ inference_aggtree <- function(object, n_groups, boot_ci = FALSE) {
   groups <- subtree(tree, leaves = n_groups)
 
   ## GATEs point estimates and standard errors, hypotheses testing, and boostrap CI if required.
-  results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores)
+  results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores, boot_ci = boot_ci)
 
   model <- results$model
   gates_diff_pairs <- results$gates_diff_pairs
-
-  if (boot_ci) {
-    # Extract GATEs indexes according to estimation strategy.
-    if (method == "raw") {
-      gates_idx <- which(sapply(names(model$coefficients), function(x) grepl(":D", x)))
-    } else if (method == "aipw") {
-      gates_idx <- which(sapply(names(model$coefficients), function(x) grepl("leaf", x)))
-    }
-
-    # Define function input for boot::boot().
-    boot_fun <- function(data, idx) {
-      data_star <- data[idx, ]
-      results_star <- causal_ols_rpart(groups, data_star$y, data_star$D, data_star[, -c(1:2)], method = method, scores = scores[idx])
-      return(coef(results_star$model)[gates_idx])
-    }
-
-    # Run bootstrap and compute confidence intervals.
-    boot_out <- boot::boot(data.frame(y, D, X), boot_fun, R = 2000)
-
-    boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.low
-    boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.high
-
-    names(boot_ci_lower) <- names(gates_idx)
-    names(boot_ci_upper) <- names(gates_idx)
-  }
+  boot_ci <- results$boot_ci
 
   ## Compute average characteristics of units in each leaf.
   avg_characteristics <- avg_characteristics_rpart(groups, X)
@@ -301,7 +277,7 @@ inference_aggtree <- function(object, n_groups, boot_ci = FALSE) {
   output <- list("aggTree" = object,
                  "groups" = groups,
                  "model" = model,
-                 "boot_ci" = if (boot_ci) list("lower" = boot_ci_lower, "upper" = boot_ci_upper) else list(),
+                 "boot_ci" = boot_ci,
                  "gates_diff_pairs" = gates_diff_pairs,
                  "avg_characteristics" = avg_characteristics)
   class(output) <- "aggTrees.inference"

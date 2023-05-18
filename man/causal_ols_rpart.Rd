@@ -4,7 +4,15 @@
 \alias{causal_ols_rpart}
 \title{Estimation and Inference about the GATEs with rpart Objects}
 \usage{
-causal_ols_rpart(tree, y, D, X, method = "aipw", scores = NULL)
+causal_ols_rpart(
+  tree,
+  y,
+  D,
+  X,
+  method = "aipw",
+  scores = NULL,
+  boot_ci = FALSE
+)
 }
 \arguments{
 \item{tree}{An \code{\link[rpart]{rpart}} object.}
@@ -18,11 +26,14 @@ causal_ols_rpart(tree, y, D, X, method = "aipw", scores = NULL)
 \item{method}{Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.}
 
 \item{scores}{Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
+
+\item{boot_ci}{Logical, whether to compute bootstrap confidence intervals.}
 }
 \value{
 A list storing:
 \item{\code{model}}{The model fitted to get point estimates and standard errors for the GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
 \item{\code{gates_diff_pairs}}{Results of testing whether GATEs differ across all pairs of leaves. This is a list storing GATEs differences and p-values adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
+\item{\code{boot_ci}}{Bootstrap confidence intervals (this is an empty list if \code{boot_ci == FALSE}.}
 \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 }
 \description{
@@ -48,6 +59,9 @@ where score_i are doubly-robust scores constructed via honest regression forests
 the argument \code{scores}). This way, betas again identify the GATEs.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
+
+If \code{boot_ci == TRUE}, the routine also computes asymmetric bias-corrected and accelerated 95\% confidence intervals using 2000 bootstrap
+samples.\cr
 
 If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D} if
 \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,

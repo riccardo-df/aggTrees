@@ -321,11 +321,13 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' @param X Covariate matrix (no intercept).
 #' @param method Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.
 #' @param scores Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
+#' @param boot_ci Logical, whether to compute bootstrap confidence intervals.
 #'
 #' @return
 #' A list storing:
 #'   \item{\code{model}}{The model fitted to get point estimates and standard errors for the GATEs, as an \code{\link[estimatr]{lm_robust}} object.}
 #'   \item{\code{gates_diff_pairs}}{Results of testing whether GATEs differ across all pairs of leaves. This is a list storing GATEs differences and p-values adjusted using Holm's procedure (check \code{\link[stats]{p.adjust}}). \code{NULL} if the tree consists of a root only.}
+#'   \item{\code{boot_ci}}{Bootstrap confidence intervals (this is an empty list if \code{boot_ci == FALSE}.}
 #'   \item{\code{scores}}{Vector of doubly robust scores. \code{NULL} if \code{method == 'raw'}.}
 #'
 #' @examples
@@ -387,6 +389,9 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #'
 #' Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 #'
+#' If \code{boot_ci == TRUE}, the routine also computes asymmetric bias-corrected and accelerated 95% confidence intervals using 2000 bootstrap
+#' samples.\cr
+#'
 #' If \code{tree} consists of a root only, \code{causal_ols_rpart} regresses \code{y} on a constant and \code{D} if
 #' \code{method == "raw"}, or regresses the doubly-robust scores on a constant if \code{method == "aipw"}. This way,
 #' we get an estimate of the overall average treatment effect.
@@ -412,10 +417,11 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' @seealso \code{\link{estimate_rpart}} \code{\link{avg_characteristics_rpart}}
 #'
 #' @export
-causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
+causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot_ci = FALSE) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
   if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. It must be either 'raw' or 'aipw'.", call. = FALSE)
+  if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
 
   leaves <- leaf_membership(tree, X)
   n_leaves <- get_leaves(tree)
@@ -489,9 +495,57 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
     gates_diff_pairs <- NULL
   }
 
+  ## Bootstrap confidence intervals, if required.
+  if (boot_ci) {
+    # Extract GATEs indexes according to estimation strategy.
+    if (method == "raw") {
+      if (length(unique(leaves)) == 1) {
+        gates_idx <- 2
+      } else {
+        gates_idx <- which(sapply(names(model$coefficients), function(x) grepl(":D", x)))
+      }
+    } else if (method == "aipw") {
+      if (length(unique(leaves)) == 1) {
+        gates_idx <- 1
+      } else {
+        gates_idx <- which(sapply(names(model$coefficients), function(x) grepl("leaf", x)))
+      }
+    }
+
+    # Define function input for boot::boot().
+    boot_fun <- function(data, idx) {
+      data_star <- data[idx, ] # It must contain y, D, scores, and leaves.
+      if (method == "raw") {
+        if (length(unique(leaves)) == 1) {
+          model <- estimatr::lm_robust(y ~ D, data = data.frame("y" = data_star$y, "D" = data_star$D), se_type = "HC1")
+        } else {
+          model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = data_star$y, "leaf" = data_star$leaves, "D" = data_star$D), se_type = "HC1")
+        }
+      } else if (method == "aipw") {
+        if (length(unique(leaves)) == 1) {
+          model <- estimatr::lm_robust(scores ~ 1, data = data.frame("scores" = data_star$scores), se_type = "HC1")
+        } else {
+          model <- estimatr::lm_robust(scores ~ 0 + leaf, data = data.frame("scores" = data_star$scores, "leaf" = data_star$leaves), se_type = "HC1")
+        }
+      }
+
+      return(coef(model)[gates_idx])
+    }
+
+    # Run bootstrap and compute confidence intervals.
+    boot_out <- boot::boot(data.frame(y, D, X, leaves, scores), boot_fun, R = 2000)
+
+    boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.low
+    boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.high
+
+    names(boot_ci_lower) <- names(gates_idx)
+    names(boot_ci_upper) <- names(gates_idx)
+  }
+
   ## Output.
   return(list("model" = model,
               "gates_diff_pairs" = gates_diff_pairs,
+              "boot_ci" = if (boot_ci) list("lower" = boot_ci_lower, "upper" = boot_ci_upper) else list(),
               "scores" = scores))
 }
 

@@ -105,8 +105,8 @@ This way, betas again identify the GATEs.\cr
 
 Regardless of \code{method}, standard errors are estimated via the Eicker-Huber-White estimator.\cr
 
-If \code{boot_ci == TRUE}, the routine also computes asymmetric bias-corrected and accelerated confidence intervals using
-2000 bootstrap samples. Particularly useful when the honest sample is small-ish.
+If \code{boot_ci == TRUE}, the routine also computes asymmetric bias-corrected and accelerated 95\% confidence intervals using 2000 bootstrap
+samples. Particularly useful when the honest sample is small-ish.
 }
 
 \subsection{Hypothesis testing}{
@@ -135,8 +135,7 @@ fine for prediction but invalidates inference.
 }
 }
 \examples{
-\donttest{
-## Generate data.
+\donttest{## Generate data.
 set.seed(1986)
 
 n <- 1000

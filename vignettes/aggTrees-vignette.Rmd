@@ -91,7 +91,6 @@ results <- inference_aggtree(groupings, n_groups = 4)
 
 ## LATEX.
 print(results, table = "diff")
-
 print(results, table = "avg_char")
 ```
 
