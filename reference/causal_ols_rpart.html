@@ -55,7 +55,15 @@ leaves of an <code><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="ext
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">causal_ols_rpart</span><span class="op">(</span><span class="va">tree</span>, <span class="va">y</span>, <span class="va">D</span>, <span class="va">X</span>, method <span class="op">=</span> <span class="st">"aipw"</span>, scores <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">causal_ols_rpart</span><span class="op">(</span></span>
+<span>  <span class="va">tree</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">D</span>,</span>
+<span>  <span class="va">X</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"aipw"</span>,</span>
+<span>  scores <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  boot_ci <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -83,6 +91,10 @@ leaves of an <code><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="ext
 <dt>scores</dt>
 <dd><p>Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if <code>method == "raw"</code>.</p></dd>
 
+
+<dt>boot_ci</dt>
+<dd><p>Logical, whether to compute bootstrap confidence intervals.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -94,6 +106,9 @@ leaves of an <code><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="ext
 
 <dt><code>gates_diff_pairs</code></dt>
 <dd><p>Results of testing whether GATEs differ across all pairs of leaves. This is a list storing GATEs differences and p-values adjusted using Holm's procedure (check <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></code>). <code>NULL</code> if the tree consists of a root only.</p></dd>
+
+<dt><code>boot_ci</code></dt>
+<dd><p>Bootstrap confidence intervals (this is an empty list if <code>boot_ci == FALSE</code>.</p></dd>
 
 <dt><code>scores</code></dt>
 <dd><p>Vector of doubly robust scores. <code>NULL</code> if <code>method == 'raw'</code>.</p></dd>
@@ -117,6 +132,8 @@ the following regression:</p>
 <p>where score_i are doubly-robust scores constructed via honest regression forests and 5-fold cross fitting (unless the user specifies
 the argument <code>scores</code>). This way, betas again identify the GATEs.<br></p>
 <p>Regardless of <code>method</code>, standard errors are estimated via the Eicker-Huber-White estimator.<br></p>
+<p>If <code>boot_ci == TRUE</code>, the routine also computes asymmetric bias-corrected and accelerated 95% confidence intervals using 2000 bootstrap
+samples.<br></p>
 <p>If <code>tree</code> consists of a root only, <code>causal_ols_rpart</code> regresses <code>y</code> on a constant and <code>D</code> if
 <code>method == "raw"</code>, or regresses the doubly-robust scores on a constant if <code>method == "aipw"</code>. This way,
 we get an estimate of the overall average treatment effect.</p>

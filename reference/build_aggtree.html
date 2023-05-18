@@ -183,8 +183,8 @@ expected to use <code>method == "aipw"</code> when calling <code>build_aggtree</
 <p>$$score_i = \sum_{l = 1}^{|T|} L_{i, l} \beta_l + \epsilon_i$$</p>
 <p>This way, betas again identify the GATEs.<br></p>
 <p>Regardless of <code>method</code>, standard errors are estimated via the Eicker-Huber-White estimator.<br></p>
-<p>If <code>boot_ci == TRUE</code>, the routine also computes asymmetric bias-corrected and accelerated confidence intervals using
-2000 bootstrap samples. Particularly useful when the honest sample is small-ish.</p>
+<p>If <code>boot_ci == TRUE</code>, the routine also computes asymmetric bias-corrected and accelerated 95% confidence intervals using 2000 bootstrap
+samples. Particularly useful when the honest sample is small-ish.</p>
 </div>
 
 <div class="section">
@@ -237,8 +237,7 @@ fine for prediction but invalidates inference.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co">## Generate data.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Generate data.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1986</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
@@ -436,7 +435,7 @@ fine for prediction but invalidates inference.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     \end{table}</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> \endgroup </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span>, table <span class="op">=</span> <span class="st">"avg_char"</span><span class="op">)</span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span>, table <span class="op">=</span> <span class="st">"avg_char"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> \begingroup</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   \setlength{\tabcolsep}{8pt}</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   \renewcommand{\arraystretch}{1.1}</span>
