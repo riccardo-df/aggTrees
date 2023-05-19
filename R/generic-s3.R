@@ -53,7 +53,6 @@
 #' @export
 plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...) {
   ## Handling inputs and checks.
-  if (!(inherits(x, "aggTrees"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
   if (!(sequence %in% c(TRUE, FALSE))) stop("Invalid 'sequence'. This must be either TRUE or FALSE.", call. = FALSE)
 
   tree <- x$tree

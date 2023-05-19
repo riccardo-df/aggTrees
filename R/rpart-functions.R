@@ -38,11 +38,11 @@
 #' @export
 subtree <- function(tree, leaves = NULL, cv = FALSE) {
   ## Handling inputs and checks.
-  if(!(inherits(tree, "rpart"))) stop("You must provide a valid aggTrees object.", call. = FALSE)
-  if (!(cv %in% c(TRUE, FALSE))) stop("'cv' must be either TRUE or FALSE.", call. = FALSE)
+  if(!(inherits(tree, "rpart"))) stop("Invalid 'tree'. This must be an aggTrees object.", call. = FALSE)
+  if (!(cv %in% c(TRUE, FALSE))) stop("Invalid 'cv'. must be either TRUE or FALSE.", call. = FALSE)
   if (is.null(leaves) & cv == FALSE) stop("Invalid combination of 'leaves' and 'cv'. Please specify a number of leaves or select the cross-validation option.", call. = FALSE)
   if (!is.null(leaves)) {
-    if (leaves < 1) stop("'leaves' must be a positive number.", call. = FALSE)
+    if (leaves < 1) stop("Invalid 'leaves'. This must be a positive number.", call. = FALSE)
     if (leaves > get_leaves(tree)) stop("'leaves' is greater than the number of leaves of 'tree'. Please provide a deeper 'tree'.", call. = FALSE)
   }
 
@@ -86,7 +86,7 @@ subtree <- function(tree, leaves = NULL, cv = FALSE) {
 #'
 #' @export
 get_leaves <- function(tree) {
-  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
+  if (!inherits(tree, "rpart")) stop("Invalid 'tree'. This must be an rpart object.")
 
   return(dim(tree$frame[tree$frame$var == "<leaf>", ])[1])
 }
@@ -176,7 +176,7 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #'
 #' @export
 leaf_membership <- function(tree, X) {
-  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.")
+  if (!inherits(tree, "rpart")) stop("Invalid 'tree'. This must be an rpart object.")
   if (!is.matrix(X) & !is.data.frame(X)) stop("'X' must be either a matrix or a data frame.", call. = FALSE)
 
   ## Inspired by https://bookdown.org/halflearned/tutorial/hte1.html.
@@ -264,8 +264,8 @@ leaf_membership <- function(tree, X) {
 #' @export
 estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   ## Handling inputs and checks.
-  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
-  if (!(method %in% c("raw", "aipw"))) stop("You must provide a valid method.", call. = FALSE)
+  if (!inherits(tree, "rpart")) stop("'Invalid 'tree'. This must be an rpart object.", call. = FALSE)
+  if (!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. This must be either 'raw' or 'aipw'.", call. = FALSE)
 
   leaves <- leaf_membership(tree, X)
   n_leaves <- get_leaves(tree)
@@ -419,8 +419,8 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' @export
 causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot_ci = FALSE) {
   ## Handling inputs and checks.
-  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
-  if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. It must be either 'raw' or 'aipw'.", call. = FALSE)
+  if (!inherits(tree, "rpart")) stop("Invalid 'tree'. This must be an rpart object.", call. = FALSE)
+  if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. This must be either 'raw' or 'aipw'.", call. = FALSE)
   if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
 
   leaves <- leaf_membership(tree, X)
@@ -604,7 +604,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot
 #' @export
 avg_characteristics_rpart <- function(tree, X) {
   ## Handling inputs and checks.
-  if (!inherits(tree, "rpart")) stop("'tree' must be a rpart object.", call. = FALSE)
+  if (!inherits(tree, "rpart")) stop("Invalid 'tree'. This must be an rpart object.", call. = FALSE)
 
   ## Generate leaves indicators.
   leaves <- leaf_membership(tree, X)
