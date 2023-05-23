@@ -11,7 +11,8 @@ causal_ols_rpart(
   X,
   method = "aipw",
   scores = NULL,
-  boot_ci = FALSE
+  boot_ci = FALSE,
+  boot_R = 2000
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ causal_ols_rpart(
 \item{scores}{Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
 
 \item{boot_ci}{Logical, whether to compute bootstrap confidence intervals.}
+
+\item{boot_R}{Number of bootstrap replications. Ignored if \code{boot_ci == FALSE}.}
 }
 \value{
 A list storing:

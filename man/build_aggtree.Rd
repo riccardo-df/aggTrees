@@ -17,7 +17,7 @@ build_aggtree(
   ...
 )
 
-inference_aggtree(object, n_groups, boot_ci = FALSE)
+inference_aggtree(object, n_groups, boot_ci = FALSE, boot_R = 2000)
 }
 \arguments{
 \item{y}{Outcome vector.}
@@ -43,6 +43,8 @@ inference_aggtree(object, n_groups, boot_ci = FALSE)
 \item{n_groups}{Number of desired groups.}
 
 \item{boot_ci}{Logical, whether to compute bootstrap confidence intervals.}
+
+\item{boot_R}{Number of bootstrap replications. Ignored if \code{boot_ci == FALSE}.}
 }
 \value{
 \code{\link{build_aggtree}} returns an \code{aggTrees} object.\cr

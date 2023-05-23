@@ -322,6 +322,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' @param method Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.
 #' @param scores Optional, vector of scores to be used in the regression. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #' @param boot_ci Logical, whether to compute bootstrap confidence intervals.
+#' @param boot_R Number of bootstrap replications. Ignored if \code{boot_ci == FALSE}.
 #'
 #' @return
 #' A list storing:
@@ -417,11 +418,13 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' @seealso \code{\link{estimate_rpart}} \code{\link{avg_characteristics_rpart}}
 #'
 #' @export
-causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot_ci = FALSE) {
+causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
+                             boot_ci = FALSE, boot_R = 2000) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("Invalid 'tree'. This must be an rpart object.", call. = FALSE)
   if(!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. This must be either 'raw' or 'aipw'.", call. = FALSE)
   if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
+  if (boot_R < 0) stop("Invalid 'boot_R'. This must be a positive integer.", call. = FALSE)
 
   leaves <- leaf_membership(tree, X)
   n_leaves <- get_leaves(tree)
@@ -533,7 +536,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL, boot
     }
 
     # Run bootstrap and compute confidence intervals.
-    boot_out <- boot::boot(data.frame(y, D, X, leaves), boot_fun, R = 2000)
+    boot_out <- boot::boot(data.frame(y, D, X, leaves), boot_fun, R = boot_R)
 
     boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.low
     boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.high

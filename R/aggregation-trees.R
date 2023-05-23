@@ -227,6 +227,7 @@ build_aggtree <- function(y, D, X,
 #' @param object An \code{aggTrees} object.
 #' @param n_groups Number of desired groups.
 #' @param boot_ci Logical, whether to compute bootstrap confidence intervals.
+#' @param boot_R Number of bootstrap replications. Ignored if \code{boot_ci == FALSE}.
 #'
 #' @rdname build_aggtree
 #'
@@ -234,13 +235,15 @@ build_aggtree <- function(y, D, X,
 #' @importFrom boot boot
 #'
 #' @export
-inference_aggtree <- function(object, n_groups, boot_ci = FALSE) {
+inference_aggtree <- function(object, n_groups,
+                              boot_ci = FALSE, boot_R = 2000) {
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("Invalid 'object'. This must be an aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("Invalid 'object'. This must be a valid aggTrees object.", call. = FALSE)
   if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
   if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
+  if (boot_R < 0) stop("Invalid 'boot_R'. This must be a positive integer.", call. = FALSE)
 
   tree <- object$tree
 
@@ -264,7 +267,7 @@ inference_aggtree <- function(object, n_groups, boot_ci = FALSE) {
   groups <- subtree(tree, leaves = n_groups)
 
   ## GATEs point estimates and standard errors, hypotheses testing, and boostrap CI if required.
-  results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores, boot_ci = boot_ci)
+  results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores, boot_ci = boot_ci, boot_R = boot_R)
 
   model <- results$model
   gates_diff_pairs <- results$gates_diff_pairs
