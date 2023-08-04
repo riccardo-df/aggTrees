@@ -94,6 +94,8 @@ dr_scores <- function(y, D, X, k = 5) {
 #' @details
 #' \code{expand_df} assumes that categorical variables are coded as \code{factors}. Also, no missing values are allowed.
 #'
+#' @author Riccardo Di Francesco
+#'
 #' @export
 expand_df <- function(X, int_order = 2, poly_order = 4, threshold = 0) {
   ## Handling inputs and checks.
