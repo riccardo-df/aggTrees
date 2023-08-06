@@ -92,7 +92,13 @@ dr_scores <- function(y, D, X, k = 5) {
 #' The expanded covariate matrix, as a data frame.
 #'
 #' @details
-#' \code{expand_df} assumes that categorical variables are coded as \code{factors}. Also, no missing values are allowed.
+#' \code{expand_df} assumes that categorical variables are coded as \code{factors}. Also, no missing values are allowed.\cr
+#'
+#' \code{expand_df} uses \code{\link[stats]{model.matrix}} to expand factors to a set of dummy variables. Then, it identifies continuous covariates as those
+#' not having 0 and 1 as unique values.\cr
+#'
+#' \code{expand_df} first introduces all the \code{int_order}-way interactions between the variables (using the expanded set of dummies), and then adds
+#' \code{poly_order}-order polynomials for continuous covariates.
 #'
 #' @author Riccardo Di Francesco
 #'
@@ -107,7 +113,8 @@ expand_df <- function(X, int_order = 2, poly_order = 4, threshold = 0) {
   X <- as.data.frame(X)
   X <- stats::model.matrix(~., data = data.frame(X))[, -1]
 
-  X_continuous <- X[, !apply(X, MARGIN = 2, function(x) all(x %in% 0:1))]
+  idx_continuous <- !apply(X, MARGIN = 2, function(x) all(x %in% 0:1))
+  X_continuous <- X[, idx_continuous]
 
   ## Adding int_order-way interactions.
   if (int_order == 1) {
@@ -122,15 +129,19 @@ expand_df <- function(X, int_order = 2, poly_order = 4, threshold = 0) {
 
   ## Adding polynomials for continuous variables (works on original continuous covariates).
   if (poly_order > 1) {
-    for (i in seq_len(dim(X_continuous)[2]))
-    {
-      temp.poly <- stats::poly(X_continuous[, i], degree = poly_order, raw = TRUE)[, -1]
-      expanded_X <- data.frame(expanded_X, temp.poly)
+    if (sum(idx_continuous) > 1) {
+      for (i in seq_len(dim(X_continuous)[2])) {
+        temp.poly <- stats::poly(X_continuous[, i], degree = poly_order, raw = TRUE)[, -1]
+        expanded_X <- data.frame(expanded_X, temp.poly)
 
-      for (j in 2:poly_order)
-      {
-        colnames(expanded_X)[(dim(expanded_X)[2]) - poly_order + j] <- paste(paste(colnames(X_continuous)[i], "..", sep = ""), j, sep = "")
+        for (j in 2:poly_order) {
+          colnames(expanded_X)[(dim(expanded_X)[2]) - poly_order + j] <- paste(paste(colnames(X_continuous)[i], "..", sep = ""), j, sep = "")
+        }
       }
+    } else  if (sum(idx_continuous) == 1) {
+      temp.poly <- stats::poly(X_continuous, degree = poly_order, raw = TRUE)[, -1]
+      colnames(temp.poly) <- paste0(colnames(X)[idx_continuous], "..", 2:poly_order)
+      expanded_X <- data.frame(expanded_X, temp.poly)
     }
   }
 
@@ -149,7 +160,7 @@ expand_df <- function(X, int_order = 2, poly_order = 4, threshold = 0) {
 
 #' Renaming Variables for LATEX Usage
 #'
-#' Renames variables where the character "_" is used, which causes clashes in LATEX. Useful for the \code{phased} print method.
+#' Renames variables where the character "_" is used, which causes clashes in LATEX.
 #'
 #' @param names string vector.
 #'

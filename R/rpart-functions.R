@@ -489,7 +489,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
       }
     }
 
-    p_values_vec <- c(p_values) # First column, then second columns, then third columns ...
+    p_values_vec <- c(p_values) # First column, then second column, then third column ...
     p_values_holm_vec <- stats::p.adjust(p_values_vec, method = "holm")
     p_values_holm <- matrix(p_values_holm_vec, nrow = n_leaves, ncol = n_leaves)
 
