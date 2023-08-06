@@ -82,7 +82,15 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p><code>expand_df</code> assumes that categorical variables are coded as <code>factors</code>. Also, no missing values are allowed.</p>
+    <p><code>expand_df</code> assumes that categorical variables are coded as <code>factors</code>. Also, no missing values are allowed.<br></p>
+<p><code>expand_df</code> uses <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></code> to expand factors to a set of dummy variables. Then, it identifies continuous covariates as those
+not having 0 and 1 as unique values.<br></p>
+<p><code>expand_df</code> first introduces all the <code>int_order</code>-way interactions between the variables (using the expanded set of dummies), and then adds
+<code>poly_order</code>-order polynomials for continuous covariates.</p>
+    </div>
+    <div id="author">
+    <h2>Author</h2>
+    <p>Riccardo Di Francesco</p>
     </div>
 
   </div>
