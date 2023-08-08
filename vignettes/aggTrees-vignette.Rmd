@@ -2,7 +2,7 @@
 title: "Short Tutorial"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Aggregation Trees}
+  %\VignetteIndexEntry{Short Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,7 +23,7 @@ In this tutorial, we show a typical usage of the package. For illustration purpo
 ## Generate data.
 set.seed(1986)
 
-n <- 5000
+n <- 1000
 k <- 3
 
 X <- matrix(rnorm(n * k), ncol = k)
@@ -51,7 +51,7 @@ y_hon <- y[honest_idx]
 D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
-## Estimate the CATEs. Use training sample.
+## Estimate the CATEs. Use only training sample.
 library(grf)
 forest <- causal_forest(X_tr, y_tr, D_tr) 
 cates <- predict(forest, X)$predictions
