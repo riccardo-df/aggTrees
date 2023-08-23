@@ -19,7 +19,7 @@ library(aggTrees)
 ### Introduction
 In this tutorial, we show a typical usage of the package. For illustration purposes, let us generate some data:
 
-```{r data-generation}
+```{r data-generation, eval = FALSE}
 ## Generate data.
 set.seed(1986)
 
@@ -37,7 +37,7 @@ y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 ### Constructing the Sequence of Groupings
 To construct the sequence of optimal groupings, we first need to estimate the CATEs. Here we use the causal forest estimator. To achieve valid inference about the GATEs, we split the sample into a training sample and an honest sample of equal sizes. The forest is built using only the training sample.
 
-```{r estimate-cates}
+```{r estimate-cates, eval = FALSE}
 ## Sample split.
 splits <- sample_split(length(y), training_frac = 0.5)
 training_idx <- splits$training_idx
@@ -64,7 +64,7 @@ Now we use the `build_aggtree` function to construct the sequence of groupings. 
 
 The doubly-robust scores can be estimated separately and passed in by the `scores` argument. Otherwise, they are estimated internally. Notice the use of the `is_honest` argument, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions. 
 
-```{r construct-sequence}
+```{r construct-sequence, eval = FALSE}
 ## Construct the sequence. Use doubly-robust scores.
 groupings <- build_aggtree(y, D, X, method = "aipw", 
                            cates = cates, is_honest = 1:length(y) %in% honest_idx)
@@ -85,7 +85,7 @@ Now that we have a whole sequence of optimal groupings, we can pick the grouping
 
 To report the results, we can print nice LATEX tables.
 
-```{r inference}
+```{r inference, eval = FALSE}
 ## Inference with 4 groups.
 results <- inference_aggtree(groupings, n_groups = 4)
 
