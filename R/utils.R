@@ -67,7 +67,7 @@ dr_scores <- function(y, D, X, k = 5) {
     ## Predict on left-out fold.
     nuisances_mat[left_out_idx, "mu_0"] <- predict(cond_mean_forest, data.frame("D" = rep(0, length(left_out_idx)), X[left_out_idx, ]))$predictions
     nuisances_mat[left_out_idx, "mu_1"] <- predict(cond_mean_forest, data.frame("D" = rep(1, length(left_out_idx)), X[left_out_idx, ]))$predictions
-    nuisances_mat[left_out_idx, "pscore"] <- predict(pscore_forest, X[left_out_idx, ])$predictions
+    nuisances_mat[left_out_idx, "pscore"] <- predict(pscore_forest, matrix(X[left_out_idx, ]))$predictions
   }
 
   ## Construct doubly-robust scores.
