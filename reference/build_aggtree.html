@@ -256,7 +256,6 @@ fine for prediction but invalidates inference.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Construct sequence of groupings. CATEs estimated internally.</span></span></span>
 <span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu">build_aggtree</span><span class="op">(</span><span class="va">y</span>, <span class="va">D</span>, <span class="va">X</span>, method <span class="op">=</span> <span class="st">"aipw"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in validate_observations(Y, X):</span> length of observation (W, Y, Z or D) does not equal nrow(X).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Alternatively, we can estimate the CATEs and pass them.</span></span></span>
 <span class="r-in"><span><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="sample_split.html">sample_split</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, training_frac <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
@@ -277,39 +276,198 @@ fine for prediction but invalidates inference.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu">build_aggtree</span><span class="op">(</span><span class="va">y</span>, <span class="va">D</span>, <span class="va">X</span>, method <span class="op">=</span> <span class="st">"aipw"</span>, cates <span class="op">=</span> <span class="va">cates</span>,</span></span>
 <span class="r-in"><span>                           is_honest <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">honest_idx</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in validate_observations(Y, X):</span> length of observation (W, Y, Z or D) does not equal nrow(X).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## We have compatibility with generic S3-methods.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'groupings' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honest estimates: TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpart::rpart(formula = cates ~ ., data = data.frame(cates = cates[training_idx], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     X_tr), method = "anova", model = TRUE, control = rpart::rpart.control(...))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n= 500 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           CP nsplit  rel error     xerror        xstd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.83058853      0 1.00000000 1.00771257 0.030825922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.09344721      1 0.16941147 0.17190900 0.007887736</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.04000645      2 0.07596426 0.07819024 0.006270086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.01000000      3 0.03595781 0.03824223 0.002039752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variable importance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x2 x3 x1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  4  4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 1: 500 observations,    complexity param=0.8305885</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.06414735, MSE=1.060902 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   left son=2 (230 obs) right son=3 (270 obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Primary splits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; -0.07518198 to the left,  improve=0.83058850, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.207075   to the left,  improve=0.01980168, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -0.9775529  to the left,  improve=0.01388725, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Surrogate splits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -0.983981   to the left,  agree=0.560, adj=0.043, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.207075   to the left,  agree=0.558, adj=0.039, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 2: 230 observations,    complexity param=0.04000645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.789146, MSE=0.1300297 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   left son=4 (169 obs) right son=5 (61 obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Primary splits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; -0.4126471  to the left,  improve=0.70958610, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; 0.1943697   to the left,  improve=0.09276113, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -0.61261    to the left,  improve=0.01080878, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Surrogate splits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -1.889246   to the right, agree=0.743, adj=0.033, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 2.095613    to the left,  agree=0.739, adj=0.016, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 3: 270 observations,    complexity param=0.09344721</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=0.5839575, MSE=0.2220655 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   left son=6 (122 obs) right son=7 (148 obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Primary splits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; 0.5478927   to the left,  improve=0.82673610, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 0.4544582   to the left,  improve=0.03798430, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; 1.302729    to the left,  improve=0.01857262, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Surrogate splits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -1.130523   to the left,  agree=0.593, adj=0.098, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; 0.09411584  to the left,  agree=0.570, adj=0.049, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 4: 169 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-1.055781, MSE=0.02613966 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 5: 61 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=0.1095144, MSE=0.06996318 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 6: 122 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.08652797, MSE=0.03845698 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 7: 148 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=1.19614, MSE=0.03849155 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'groupings' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Honest estimates: TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n= 500 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> node), split, n, deviance, yval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       * denotes terminal node</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1) root 500 530.451100 -0.06414735  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2) x2&lt; -0.07518198 230  29.906820 -0.78914600  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     4) x2&lt; -0.4126471 169   4.417603 -1.05578100 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     5) x2&gt;=-0.4126471 61   4.267754  0.10951440 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3) x2&gt;=-0.07518198 270  59.957670  0.58395750  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     6) x2&lt; 0.5478927 122   4.691751 -0.08652797 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     7) x2&gt;=0.5478927 148   5.696749  1.19614000 *</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span> <span class="co"># Try also setting 'sequence = TRUE'.</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'groupings' not found</span>
+<span class="r-plt img"><img src="build_aggtree-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## To predict, do the following.</span></span></span>
 <span class="r-in"><span><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu"><a href="subtree.html">subtree</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">$</span><span class="va">tree</span>, cv <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Select by cross-validation.</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'groupings' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">tree</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'tree' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1          2          3          4          5          6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1095144 -1.0557814  1.1961398  1.1961398 -1.0557814 -1.0557814 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Inference with 4 groups.</span></span></span>
 <span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">inference_aggtree</span><span class="op">(</span><span class="va">groupings</span>, n_groups <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'groupings' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">model</span><span class="op">)</span> <span class="co"># Coefficient of leafk is GATE in k-th leaf.</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'results' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> estimatr::lm_robust(formula = scores ~ 0 + leaf, data = data.frame(scores = scores, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     leaf = leaves), se_type = "HC1")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Standard error type:  HC1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate Std. Error t value  Pr(&gt;|t|) CI Lower CI Upper  DF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf1 -1.05578     0.1551 -6.8089 2.851e-11  -1.3604  -0.7511 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf2 -0.08653     0.1873 -0.4619 6.444e-01  -0.4546   0.2815 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf3  0.10951     0.2805  0.3904 6.964e-01  -0.4416   0.6606 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf4  1.19614     0.1994  5.9984 3.846e-09   0.8043   1.5879 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiple R-squared:  0.1476 ,	Adjusted R-squared:  0.1407 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F-statistic: 20.68 on 4 and 496 DF,  p-value: 8.936e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">results</span><span class="op">$</span><span class="va">gates_diff_pairs</span><span class="op">$</span><span class="va">gates_diff</span> <span class="co"># GATEs differences.</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'results' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           leaf1     leaf2    leaf3 leaf4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf1        NA        NA       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf2 0.9692535        NA       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf3 1.1652958 0.1960423       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf4 2.2519213 1.2826678 1.086625    NA</span>
 <span class="r-in"><span><span class="va">results</span><span class="op">$</span><span class="va">gates_diff_pairs</span><span class="op">$</span><span class="va">holm_pvalues</span> <span class="co"># leaves 1-2 not statistically different.</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'results' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]         [,2]        [,3] [,4]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]           NA           NA          NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 3.094972e-04           NA          NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 9.180598e-04 5.613635e-01          NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 5.617761e-17 1.784486e-05 0.003377922   NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## LATEX.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span>, table <span class="op">=</span> <span class="st">"diff"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'results' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> \begingroup</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   \setlength{\tabcolsep}{8pt}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   \renewcommand{\arraystretch}{1.2}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   \begin{table}[b!]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \centering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \begin{adjustbox}{width = 0.85\textwidth}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \begin{tabular}{@{\extracolsep{5pt}}l c c c c}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \\[-1.8ex]\hline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; \textit{Leaf 1} &amp; \textit{Leaf 2} &amp; \textit{Leaf 3} &amp; \textit{Leaf 4} \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[2pt]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \multirow{3}{*}{GATEs} &amp; -1.056 &amp; -0.087 &amp; 0.11 &amp; 1.196 \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; [-1.36, -0.752] &amp; [-0.454, 0.28] &amp; [-0.439, 0.659] &amp; [0.806, 1.586] \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; [NA, NA] &amp; [NA, NA] &amp; [NA, NA] &amp; [NA, NA] \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[2pt]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 1} &amp; NA &amp; NA &amp; NA &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (NA) &amp; (NA) &amp; (NA) &amp; (NA) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 2} &amp; 0.969 &amp; NA &amp; NA &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0) &amp; (NA) &amp; (NA) &amp; (NA) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 3} &amp; 1.165 &amp; 0.196 &amp; NA &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0.001) &amp; (0.561) &amp; (NA) &amp; (NA) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 4} &amp; 2.252 &amp; 1.283 &amp; 1.087 &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0) &amp; (0) &amp; (0.003) &amp; (NA) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[3pt]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \\[-1.8ex]\hline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \end{tabular}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \end{adjustbox}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \caption{Point estimates and $95\%$ confidence intervals for the GATEs based on asymptotic normality and on the percentiles of the bootstrap distribution. Leaves are sorted in increasing order of the GATEs. Additionally, differences in the GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \label{table:differences.gates}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \end{table}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> \endgroup </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span>, table <span class="op">=</span> <span class="st">"avg_char"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'results' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> \begingroup</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   \setlength{\tabcolsep}{8pt}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   \renewcommand{\arraystretch}{1.1}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   \begin{table}[b!]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \centering</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \begin{adjustbox}{width = 1\textwidth}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \begin{tabular}{@{\extracolsep{5pt}}l c c c c c c c c }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \\[-1.8ex]\hline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; \multicolumn{2}{c}{\textit{Leaf 1}} &amp; \multicolumn{2}{c}{\textit{Leaf 2}} &amp; \multicolumn{2}{c}{\textit{Leaf 3}} &amp; \multicolumn{2}{c}{\textit{Leaf 4}} \\\cmidrule{2-3} \cmidrule{4-5} \cmidrule{6-7} \cmidrule{8-9} </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; Mean &amp; (S.E.) &amp; Mean &amp; (S.E.) &amp; Mean &amp; (S.E.) &amp; Mean &amp; (S.E.) \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[2pt]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x1} &amp; 0.025 &amp; (0.072) &amp; 0.035 &amp; (0.096) &amp; -0.179 &amp; (0.133) &amp; 0.086 &amp; (0.082) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x2} &amp; -1.131 &amp; (0.042) &amp; 0.209 &amp; (0.016) &amp; -0.237 &amp; (0.014) &amp; 1.101 &amp; (0.04) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x3} &amp; -0.009 &amp; (0.071) &amp; 0.088 &amp; (0.092) &amp; -0.066 &amp; (0.13) &amp; -0.047 &amp; (0.092) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[3pt]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \\[-1.8ex]\hline</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \end{tabular}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \end{adjustbox}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of the GATEs.}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \label{table:average.characteristics.leaves}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     \end{table}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> \endgroup </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
