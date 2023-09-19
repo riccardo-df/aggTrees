@@ -49,6 +49,7 @@ sample_split <- function(n, training_frac = 0.5) {
 dr_scores <- function(y, D, X, k = 5) {
   ## Handling inputs and checks.
   if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
+  if (k %% 1 != 0 | k < 2) stop("Invalid 'k'. This must be an integer greater than or equal to 2.", call. = FALSE)
 
   ## Generate folds.
   folds <- caret::createFolds(y, k = k)
@@ -62,7 +63,7 @@ dr_scores <- function(y, D, X, k = 5) {
     left_out_idx <- folds[[fold]]
 
     cond_mean_forest <- grf::regression_forest(data.frame("D" = D[-left_out_idx], X[-left_out_idx, ]), y[-left_out_idx])
-    pscore_forest <- grf::regression_forest(X[-left_out_idx, ], D[-left_out_idx])
+    pscore_forest <- grf::regression_forest(matrix(X[-left_out_idx, ]), D[-left_out_idx])
 
     ## Predict on left-out fold.
     nuisances_mat[left_out_idx, "mu_0"] <- predict(cond_mean_forest, data.frame("D" = rep(0, length(left_out_idx)), X[left_out_idx, ]))$predictions
