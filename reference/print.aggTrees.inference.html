@@ -119,7 +119,7 @@ with zero variation in one or more leaves. The user should correct the table by 
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Construct sequence of groupings. CATEs estimated internally,</span></span></span>
 <span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_aggtree.html">build_aggtree</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">D</span>, <span class="va">X</span>, method <span class="op">=</span> <span class="st">"aipw"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in validate_newdata(newdata, X, allow.na = allow.na):</span> newdata must have the same number of columns as the training matrix.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in validate_observations(Y, X):</span> length of observation (W, Y, Z or D) does not equal nrow(X).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Analyze results with 4 groups.</span></span></span>
 <span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_aggtree.html">inference_aggtree</a></span><span class="op">(</span><span class="va">groupings</span>, n_groups <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>

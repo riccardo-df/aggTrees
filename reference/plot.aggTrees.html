@@ -121,7 +121,7 @@ This way, we have an immediate understanding of the groups with extreme GATEs.</
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Construct sequence of groupings. CATEs estimated internally,</span></span></span>
 <span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_aggtree.html">build_aggtree</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">D</span>, <span class="va">X</span>, method <span class="op">=</span> <span class="st">"aipw"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in validate_newdata(newdata, X, allow.na = allow.na):</span> newdata must have the same number of columns as the training matrix.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in validate_observations(Y, X):</span> length of observation (W, Y, Z or D) does not equal nrow(X).</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span></span></span>
