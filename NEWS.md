@@ -1,3 +1,7 @@
+## version 2.0.2
+
+Fixed a bug that occurred when using only one covariate.
+
 ## version 2.0.1
 
 Now the inference_aggtree function can estimate asymmetric bias-corrected and accelerated 95% confidence intervals for the GATEs based on their bootstrap distributions.
