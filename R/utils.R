@@ -29,7 +29,7 @@ sample_split <- function(n, training_frac = 0.5) {
 #'
 #' Constructs doubly-robust scores via K-fold cross-fitting.
 #'
-#' @param y Outcome vector.
+#' @param Y Outcome vector.
 #' @param D Treatment assignment vector.
 #' @param X Covariate matrix (no intercept).
 #' @param k Number of folds.
@@ -46,23 +46,23 @@ sample_split <- function(n, training_frac = 0.5) {
 #' @author Riccardo Di Francesco
 #'
 #' @export
-dr_scores <- function(y, D, X, k = 5) {
+dr_scores <- function(Y, D, X, k = 5) {
   ## Handling inputs and checks.
   if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
   if (k %% 1 != 0 | k < 2) stop("Invalid 'k'. This must be an integer greater than or equal to 2.", call. = FALSE)
 
   ## Generate folds.
-  folds <- caret::createFolds(y, k = k)
+  folds <- caret::createFolds(Y, k = k)
 
   ## Cross-fitting nuisances.
-  nuisances_mat <- matrix(NA, nrow = length(y), ncol = 3)
+  nuisances_mat <- matrix(NA, nrow = length(Y), ncol = 3)
   colnames(nuisances_mat) <- c("pscore", "mu_0", "mu_1")
 
   for (fold in seq_len(length(folds))) {
     ## Leave one fold out and build forests on other folds.
     left_out_idx <- folds[[fold]]
 
-    cond_mean_forest <- grf::regression_forest(data.frame("D" = D[-left_out_idx], X[-left_out_idx, ]), y[-left_out_idx])
+    cond_mean_forest <- grf::regression_forest(data.frame("D" = D[-left_out_idx], X[-left_out_idx, ]), Y[-left_out_idx])
     pscore_forest <- grf::regression_forest(matrix(X[-left_out_idx, ], ncol = dim(X)[2]), D[-left_out_idx])
 
     ## Predict on left-out fold.
@@ -72,8 +72,8 @@ dr_scores <- function(y, D, X, k = 5) {
   }
 
   ## Construct doubly-robust scores.
-  scores <- nuisances_mat[, "mu_1"] - nuisances_mat[, "mu_0"] + (D * (y - nuisances_mat[, "mu_1"])) / (nuisances_mat[, "pscore"]) -
-    ((1 - D) * (y - nuisances_mat[, "mu_0"])) / (1 - nuisances_mat[, "pscore"])
+  scores <- nuisances_mat[, "mu_1"] - nuisances_mat[, "mu_0"] + (D * (Y - nuisances_mat[, "mu_1"])) / (nuisances_mat[, "pscore"]) -
+    ((1 - D) * (Y - nuisances_mat[, "mu_0"])) / (1 - nuisances_mat[, "pscore"])
 
   ## Output.
   return(scores)

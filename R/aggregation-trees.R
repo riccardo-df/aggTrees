@@ -7,7 +7,7 @@
 #' that the differences in the GATEs across all pairs of groups are zero. Finally, we investigate the driving mechanisms of
 #' effect heterogeneity by computing the average characteristics of units in each group.
 #'
-#' @param y Outcome vector.
+#' @param Y Outcome vector.
 #' @param D Treatment vector.
 #' @param X Covariate matrix (no intercept).
 #' @param honest_frac Fraction of observations to be allocated to honest sample.
@@ -35,30 +35,30 @@
 #' D <- rbinom(n, size = 1, prob = 0.5)
 #' mu0 <- 0.5 * X[, 1]
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
-#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
 #' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(y, D, X, method = "aipw")
+#' groupings <- build_aggtree(Y, D, X, method = "aipw")
 #'
 #' ## Alternatively, we can estimate the CATEs and pass them.
-#' splits <- sample_split(length(y), training_frac = 0.5)
+#' splits <- sample_split(length(Y), training_frac = 0.5)
 #' training_idx <- splits$training_idx
 #' honest_idx <- splits$honest_idx
 #'
-#' y_tr <- y[training_idx]
+#' Y_tr <- Y[training_idx]
 #' D_tr <- D[training_idx]
 #' X_tr <- X[training_idx, ]
 #'
-#' y_hon <- y[honest_idx]
+#' Y_hon <- Y[honest_idx]
 #' D_hon <- D[honest_idx]
 #' X_hon <- X[honest_idx, ]
 #'
 #' library(grf)
-#' forest <- causal_forest(X_tr, y_tr, D_tr) # Use training sample.
+#' forest <- causal_forest(X_tr, Y_tr, D_tr) # Use training sample.
 #' cates <- predict(forest, X)$predictions
 #'
-#' groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates,
-#'                            is_honest = 1:length(y) %in% honest_idx)
+#' groupings <- build_aggtree(Y, D, X, method = "aipw", cates = cates,
+#'                            is_honest = 1:length(Y) %in% honest_idx)
 #'
 #' ## We have compatibility with generic S3-methods.
 #' summary(groupings)
@@ -149,18 +149,17 @@
 #'
 #' @import rpart grf
 #'
-#' @references
-#' \itemize{
-#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
-#' }
-#'
 #' @author Riccardo Di Francesco
 #'
-#' @seealso
-#' \code{\link{plot.aggTrees}} \code{\link{print.aggTrees.inference}}
+#' @references
+#' \itemize{
+#'   \item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#' }
+#'
+#' @seealso \code{\link{plot.aggTrees}} \code{\link{print.aggTrees.inference}}
 #'
 #' @export
-build_aggtree <- function(y, D, X,
+build_aggtree <- function(Y, D, X,
                           honest_frac = 0.5, method = "aipw", scores = NULL,
                           cates = NULL, is_honest = NULL, ...) {
   ## Handling inputs and checks.
@@ -171,7 +170,7 @@ build_aggtree <- function(y, D, X,
 
   ## If necessary, perform training-honest split.
   if (is.null(cates)) {
-    idx <- sample_split(length(y), training_frac = (1 - honest_frac))
+    idx <- sample_split(length(Y), training_frac = (1 - honest_frac))
     training_idx <- idx$training_idx
     honest_idx <- idx$honest_idx
   } else {
@@ -180,17 +179,17 @@ build_aggtree <- function(y, D, X,
   }
 
   ## Define variables.
-  y_tr <- y[training_idx]
+  Y_tr <- Y[training_idx]
   D_tr <- D[training_idx]
   X_tr <- X[training_idx, ]
 
-  y_hon <- y[honest_idx]
+  Y_hon <- Y[honest_idx]
   D_hon <- D[honest_idx]
   X_hon <- X[honest_idx, ]
 
   ## If necessary, estimate the CATEs using training sample (estimation step).
   if (is.null(cates)) {
-    forest <- grf::causal_forest(X_tr, y_tr, D_tr, num.trees = 4000, tune.parameters = "all")
+    forest <- grf::causal_forest(X_tr, Y_tr, D_tr, num.trees = 4000, tune.parameters = "all")
     forest_predictions <- stats::predict(forest, X) # Predict on whole sample.
     cates <- forest_predictions$predictions
   }
@@ -200,9 +199,9 @@ build_aggtree <- function(y, D, X,
 
   ## If adaptive, replace each node with predictions computed in training sample. Otherwise, honest trees.
   if (honest_frac == 0 | (!is.null(is_honest) & sum(is_honest) == 0)) {
-    results <- estimate_rpart(tree, y_tr, D_tr, X_tr, method, scores = scores)
+    results <- estimate_rpart(tree, Y_tr, D_tr, X_tr, method, scores = scores)
   } else {
-    results <- estimate_rpart(tree, y_hon, D_hon, X_hon, method, scores = scores)
+    results <- estimate_rpart(tree, Y_hon, D_hon, X_hon, method, scores = scores)
   }
 
   new_tree <- results$tree
@@ -215,7 +214,7 @@ build_aggtree <- function(y, D, X,
               "forest" = forest,
               "scores" = scores,
               "method" = method,
-              "dta" = data.frame(y, D, X),
+              "dta" = data.frame(Y, D, X),
               "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx))
   class(out) <- "aggTrees"
   return(out)
@@ -254,11 +253,11 @@ inference_aggtree <- function(object, n_groups,
 
   ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
   if (is.null(object$idx$honest_idx)) {
-    y <- object$dta$y
+    Y <- object$dta$Y
     D <- object$dta$D
     X <- object$dta[, -c(1:2)]
   } else {
-    y <- object$dta$y[object$idx$honest_idx]
+    Y <- object$dta$Y[object$idx$honest_idx]
     D <- object$dta$D[object$idx$honest_idx]
     X <- object$dta[object$idx$honest_idx, -c(1:2)]
   }
@@ -267,7 +266,7 @@ inference_aggtree <- function(object, n_groups,
   groups <- subtree(tree, leaves = n_groups)
 
   ## GATEs point estimates and standard errors, hypotheses testing, and boostrap CI if required.
-  results <- causal_ols_rpart(groups, y, D, X, method = method, scores = scores, boot_ci = boot_ci, boot_R = boot_R)
+  results <- causal_ols_rpart(groups, Y, D, X, method = method, scores = scores, boot_ci = boot_ci, boot_R = boot_R)
 
   model <- results$model
   gates_diff_pairs <- results$gates_diff_pairs

@@ -1,3 +1,7 @@
+## version 2.0.3
+
+Updated vignette.
+
 ## version 2.0.2
 
 Fixed a bug that occurred when using only one covariate.

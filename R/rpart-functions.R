@@ -19,11 +19,11 @@
 #' X <- matrix(rnorm(n * k), ncol = k)
 #' colnames(X) <- paste0("x", seq_len(k))
 #'
-#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#' Y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
 #'
 #' ## Construct tree.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame(y, X), cp = 0)
+#' tree <- rpart(Y ~ ., data = data.frame(Y, X), cp = 0)
 #'
 #' ## Extract subtree.
 #' sub_tree <- subtree(tree, leaves = 4)
@@ -70,11 +70,11 @@ subtree <- function(tree, leaves = NULL, cv = FALSE) {
 #' X <- matrix(rnorm(n * k), ncol = k)
 #' colnames(X) <- paste0("x", seq_len(k))
 #'
-#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#' Y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
 #'
 #' ## Construct tree.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame(y, X))
+#' tree <- rpart(Y ~ ., data = data.frame(Y, X))
 #'
 #' ## Extract number of leaves.
 #' n_leaves <- get_leaves(tree)
@@ -114,11 +114,11 @@ get_leaves <- function(tree) {
 #' X <- matrix(rnorm(n * k), ncol = k)
 #' colnames(X) <- paste0("x", seq_len(k))
 #'
-#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#' Y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
 #'
 #' ## Construct tree.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame(y, X))
+#' tree <- rpart(Y ~ ., data = data.frame(Y, X))
 #'
 #' ## Extract number of leaves.
 #' is_in_third_node <- node_membership(tree, X, 3)
@@ -160,11 +160,11 @@ node_membership <- function(tree, X, node) {                 # Taken from https:
 #' X <- matrix(rnorm(n * k), ncol = k)
 #' colnames(X) <- paste0("x", seq_len(k))
 #'
-#' y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+#' Y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
 #'
 #' ## Construct tree.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame(y, X))
+#' tree <- rpart(Y ~ ., data = data.frame(Y, X))
 #'
 #' ## Extract number of leaves.
 #' leaves_factor <- leaf_membership(tree, X)
@@ -194,7 +194,7 @@ leaf_membership <- function(tree, X) {
 #' effects (GATEs).
 #'
 #' @param tree An \code{\link[rpart]{rpart}} object.
-#' @param y Outcome vector.
+#' @param Y Outcome vector.
 #' @param D Treatment assignment vector.
 #' @param X Covariate matrix (no intercept).
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how node predictions are replaced.
@@ -216,27 +216,27 @@ leaf_membership <- function(tree, X) {
 #' D <- rbinom(n, size = 1, prob = 0.5)
 #' mu0 <- 0.5 * X[, 1]
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
-#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
 #' ## Split the sample.
-#' splits <- sample_split(length(y), training_frac = 0.5)
+#' splits <- sample_split(length(Y), training_frac = 0.5)
 #' training_idx <- splits$training_idx
 #' honest_idx <- splits$honest_idx
 #'
-#' y_tr <- y[training_idx]
+#' Y_tr <- Y[training_idx]
 #' D_tr <- D[training_idx]
 #' X_tr <- X[training_idx, ]
 #'
-#' y_hon <- y[honest_idx]
+#' Y_hon <- Y[honest_idx]
 #' D_hon <- D[honest_idx]
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct a tree using training sample.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
+#' tree <- rpart(Y ~ ., data = data.frame("Y" = Y_tr, X_tr), maxdepth = 2)
 #'
 #' ## Estimate GATEs in each node (internal and terminal) using honest sample.
-#' new_tree <- estimate_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
+#' new_tree <- estimate_rpart(tree, Y_hon, D_hon, X_hon, method = "raw")
 #' new_tree$tree
 #'
 #' @details
@@ -257,12 +257,12 @@ leaf_membership <- function(tree, X) {
 #'
 #' @references
 #' \itemize{
-#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#'   \item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 #' }
 #'
 #' @seealso \code{\link{causal_ols_rpart}} \code{\link{avg_characteristics_rpart}}
 #' @export
-estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
+estimate_rpart <- function(tree, Y, D, X, method = "aipw", scores = NULL) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("'Invalid 'tree'. This must be an rpart object.", call. = FALSE)
   if (!(method %in% c("raw", "aipw"))) stop("Invalid 'method'. This must be either 'raw' or 'aipw'.", call. = FALSE)
@@ -280,18 +280,18 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
   new_tree <- tree
 
   if (method == "raw") {
-    new_tree$frame$yval[1] <- mean(y[D == 1]) - mean(y[D == 0])
+    new_tree$frame$yval[1] <- mean(Y[D == 1]) - mean(Y[D == 0])
 
     nodes <- as.numeric(rownames(new_tree$frame))[-1]
     counter <- 2
     for (node in nodes) {
       idx <- node_membership(new_tree, X, node)
-      new_tree$frame$yval[counter] <- mean(y[idx][D[idx] == 1]) - mean(y[idx][D[idx] == 0])
+      new_tree$frame$yval[counter] <- mean(Y[idx][D[idx] == 1]) - mean(Y[idx][D[idx] == 0])
       counter <- counter + 1
     }
   } else if (method == "aipw") {
     if (is.null(scores)) {
-      scores <- dr_scores(y, D, X)
+      scores <- dr_scores(Y, D, X)
     }
 
     new_tree$frame$yval[1] <- mean(scores)
@@ -316,7 +316,7 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' leaves of an \code{\link[rpart]{rpart}} object. Additionally, performs some hypothesis testing.
 #'
 #' @param tree An \code{\link[rpart]{rpart}} object.
-#' @param y Outcome vector.
+#' @param Y Outcome vector.
 #' @param D Treatment assignment vector
 #' @param X Covariate matrix (no intercept).
 #' @param method Either \code{"raw"} or \code{"aipw"}, defines the outcome used in the regression.
@@ -343,27 +343,27 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #' D <- rbinom(n, size = 1, prob = 0.5)
 #' mu0 <- 0.5 * X[, 1]
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
-#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
 #' ## Split the sample.
-#' splits <- sample_split(length(y), training_frac = 0.5)
+#' splits <- sample_split(length(Y), training_frac = 0.5)
 #' training_idx <- splits$training_idx
 #' honest_idx <- splits$honest_idx
 #'
-#' y_tr <- y[training_idx]
+#' Y_tr <- Y[training_idx]
 #' D_tr <- D[training_idx]
 #' X_tr <- X[training_idx, ]
 #'
-#' y_hon <- y[honest_idx]
+#' Y_hon <- Y[honest_idx]
 #' D_hon <- D[honest_idx]
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct a tree using training sample.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame("y" = y_tr, X_tr), maxdepth = 2)
+#' tree <- rpart(Y ~ ., data = data.frame("Y" = Y_tr, X_tr), maxdepth = 2)
 #'
 #' ## Estimate GATEs in each node (internal and terminal) using honest sample.
-#' results <- causal_ols_rpart(tree, y_hon, D_hon, X_hon, method = "raw")
+#' results <- causal_ols_rpart(tree, Y_hon, D_hon, X_hon, method = "raw")
 #'
 #' summary(results$model) # Coefficient of leafk:D is GATE in k-th leaf.
 #'
@@ -412,13 +412,13 @@ estimate_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL) {
 #'
 #' @references
 #' \itemize{
-#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#'   \item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 #' }
 #'
 #' @seealso \code{\link{estimate_rpart}} \code{\link{avg_characteristics_rpart}}
 #'
 #' @export
-causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
+causal_ols_rpart <- function(tree, Y, D, X, method = "aipw", scores = NULL,
                              boot_ci = FALSE, boot_R = 2000) {
   ## Handling inputs and checks.
   if (!inherits(tree, "rpart")) stop("Invalid 'tree'. This must be an rpart object.", call. = FALSE)
@@ -439,13 +439,13 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
   ## GATEs point estimates and standard errors.
   if (method == "raw") {
     if (length(unique(leaves)) == 1) {
-      model <- estimatr::lm_robust(y ~ D, data = data.frame("y" = y, "D" = D), se_type = "HC1")
+      model <- estimatr::lm_robust(Y ~ D, data = data.frame("Y" = Y, "D" = D), se_type = "HC1")
     } else {
-      model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = y, "leaf" = leaves, "D" = D), se_type = "HC1")
+      model <- estimatr::lm_robust(Y ~ 0 + leaf + D:leaf, data = data.frame("Y" = Y, "leaf" = leaves, "D" = D), se_type = "HC1")
     }
   } else if (method == "aipw") {
     if (is.null(scores)) {
-      scores <- dr_scores(y, D, X)
+      scores <- dr_scores(Y, D, X)
     }
 
     if (length(unique(leaves)) == 1) {
@@ -517,12 +517,12 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
 
     # Define function input for boot::boot().
     boot_fun <- function(data, idx) {
-      data_star <- data[idx, ] # It must contain y, D, scores, and leaves.
+      data_star <- data[idx, ] # It must contain Y, D, scores, and leaves.
       if (method == "raw") {
         if (length(unique(leaves)) == 1) {
-          model <- estimatr::lm_robust(y ~ D, data = data.frame("y" = data_star$y, "D" = data_star$D), se_type = "HC1")
+          model <- estimatr::lm_robust(Y ~ D, data = data.frame("Y" = data_star$Y, "D" = data_star$D), se_type = "HC1")
         } else {
-          model <- estimatr::lm_robust(y ~ 0 + leaf + D:leaf, data = data.frame("y" = data_star$y, "leaf" = data_star$leaves, "D" = data_star$D), se_type = "HC1")
+          model <- estimatr::lm_robust(Y ~ 0 + leaf + D:leaf, data = data.frame("Y" = data_star$Y, "leaf" = data_star$leaves, "D" = data_star$D), se_type = "HC1")
         }
       } else if (method == "aipw") {
         if (length(unique(leaves)) == 1) {
@@ -536,7 +536,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
     }
 
     # Run bootstrap and compute confidence intervals.
-    boot_out <- boot::boot(data.frame(y, D, X, leaves), boot_fun, R = boot_R)
+    boot_out <- boot::boot(data.frame(Y, D, X, leaves), boot_fun, R = boot_R)
 
     boot_ci_lower <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.low
     boot_ci_upper <- broom::tidy(boot_out, conf.int = TRUE, conf.method = "bca")$conf.high
@@ -575,11 +575,11 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
 #' D <- rbinom(n, size = 1, prob = 0.5)
 #' mu0 <- 0.5 * X[, 1]
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
-#' y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+#' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
 #' ## Construct a tree.
 #' library(rpart)
-#' tree <- rpart(y ~ ., data = data.frame("y" = y, X), maxdepth = 2)
+#' tree <- rpart(Y ~ ., data = data.frame("Y" = Y, X), maxdepth = 2)
 #'
 #' ## Compute average characteristics in each leaf.
 #' results <- avg_characteristics_rpart(tree, X)
@@ -599,7 +599,7 @@ causal_ols_rpart <- function(tree, y, D, X, method = "aipw", scores = NULL,
 #'
 #' @references
 #' \itemize{
-#'   \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+#'   \item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 #' }
 #'
 #' @seealso \code{\link{causal_ols_rpart}}, \code{\link{estimate_rpart}}

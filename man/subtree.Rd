@@ -29,11 +29,11 @@ k <- 3
 X <- matrix(rnorm(n * k), ncol = k)
 colnames(X) <- paste0("x", seq_len(k))
 
-y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+Y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
 
 ## Construct tree.
 library(rpart)
-tree <- rpart(y ~ ., data = data.frame(y, X), cp = 0)
+tree <- rpart(Y ~ ., data = data.frame(Y, X), cp = 0)
 
 ## Extract subtree.
 sub_tree <- subtree(tree, leaves = 4)

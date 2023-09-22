@@ -6,7 +6,7 @@
 \title{Aggregation Trees}
 \usage{
 build_aggtree(
-  y,
+  Y,
   D,
   X,
   honest_frac = 0.5,
@@ -20,7 +20,7 @@ build_aggtree(
 inference_aggtree(object, n_groups, boot_ci = FALSE, boot_R = 2000)
 }
 \arguments{
-\item{y}{Outcome vector.}
+\item{Y}{Outcome vector.}
 
 \item{D}{Treatment vector.}
 
@@ -148,30 +148,30 @@ colnames(X) <- paste0("x", seq_len(k))
 D <- rbinom(n, size = 1, prob = 0.5)
 mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2]
-y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 
 ## Construct sequence of groupings. CATEs estimated internally.
-groupings <- build_aggtree(y, D, X, method = "aipw")
+groupings <- build_aggtree(Y, D, X, method = "aipw")
 
 ## Alternatively, we can estimate the CATEs and pass them.
-splits <- sample_split(length(y), training_frac = 0.5)
+splits <- sample_split(length(Y), training_frac = 0.5)
 training_idx <- splits$training_idx
 honest_idx <- splits$honest_idx
 
-y_tr <- y[training_idx]
+Y_tr <- Y[training_idx]
 D_tr <- D[training_idx]
 X_tr <- X[training_idx, ]
 
-y_hon <- y[honest_idx]
+Y_hon <- Y[honest_idx]
 D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
 library(grf)
-forest <- causal_forest(X_tr, y_tr, D_tr) # Use training sample.
+forest <- causal_forest(X_tr, Y_tr, D_tr) # Use training sample.
 cates <- predict(forest, X)$predictions
 
-groupings <- build_aggtree(y, D, X, method = "aipw", cates = cates,
-                           is_honest = 1:length(y) \%in\% honest_idx)
+groupings <- build_aggtree(Y, D, X, method = "aipw", cates = cates,
+                           is_honest = 1:length(Y) \%in\% honest_idx)
 
 ## We have compatibility with generic S3-methods.
 summary(groupings)
@@ -197,7 +197,7 @@ print(results, table = "avg_char")}
 }
 \references{
 \itemize{
-\item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+\item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{

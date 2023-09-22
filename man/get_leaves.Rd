@@ -25,11 +25,11 @@ k <- 3
 X <- matrix(rnorm(n * k), ncol = k)
 colnames(X) <- paste0("x", seq_len(k))
 
-y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
+Y <- exp(X[, 1]) + 2 * X[, 2] * X[, 2] > 0 + rnorm(n)
 
 ## Construct tree.
 library(rpart)
-tree <- rpart(y ~ ., data = data.frame(y, X))
+tree <- rpart(Y ~ ., data = data.frame(Y, X))
 
 ## Extract number of leaves.
 n_leaves <- get_leaves(tree)

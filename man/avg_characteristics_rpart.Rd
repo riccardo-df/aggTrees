@@ -37,11 +37,11 @@ colnames(X) <- paste0("x", seq_len(k))
 D <- rbinom(n, size = 1, prob = 0.5)
 mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2]
-y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 
 ## Construct a tree.
 library(rpart)
-tree <- rpart(y ~ ., data = data.frame("y" = y, X), maxdepth = 2)
+tree <- rpart(Y ~ ., data = data.frame("Y" = Y, X), maxdepth = 2)
 
 ## Compute average characteristics in each leaf.
 results <- avg_characteristics_rpart(tree, X)
@@ -50,7 +50,7 @@ results
 }
 \references{
 \itemize{
-  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+  \item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{

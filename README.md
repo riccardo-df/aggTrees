@@ -8,17 +8,7 @@
 
 R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework. 
 
-The approach consists of three steps:
-
-1. Estimate the conditional average treatment effects (CATEs);
-2. Approximate the CATEs by a decision tree;
-3. Prune the tree.
-
-This way, we generate a sequence of groupings, one for each granularity level. The resulting sequence is nested in the sense that subgroups formed at a given
-level of granularity are never broken at coarser levels. This guarantees consistency of the results across the different granularity levels, generally considered a basic requirement that every classification system should satisfy. Moreover, each grouping features an optimality property in that it ensures that the loss in
-explained heterogeneity resulting from aggregation is minimized.
-
-Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. Under an "honesty"" condition, we can use the estimated standard errors to conduct valid inference about the GATEs as usual, e.g., by constructing conventional confidence intervals.
+`aggTrees` allows researchers to assess whether there exists relevant heterogeneity in treatment effects by generating a sequence of optimal groupings, one for each level of granularity. For each grouping, we obtain point estimation and inference about the Group Average Treatment Effects. Please reference the use as [Di Francesco (2022)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256).
 
 To get started, please check the online [vignette](https://riccardo-df.github.io/aggTrees/articles/aggTrees-vignette.html) for a short tutorial.
 

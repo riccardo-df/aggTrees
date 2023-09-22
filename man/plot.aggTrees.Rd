@@ -40,10 +40,10 @@ colnames(X) <- paste0("x", seq_len(k))
 D <- rbinom(n, size = 1, prob = 0.5)
 mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2]
-y <- mu0 + D * (mu1 - mu0) + rnorm(n)
+Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 
 ## Construct sequence of groupings. CATEs estimated internally,
-groupings <- build_aggtree(y, D, X, method = "aipw")
+groupings <- build_aggtree(Y, D, X, method = "aipw")
 
 ## Plot.
 plot(groupings)
@@ -53,7 +53,7 @@ plot(groupings, sequence = TRUE)}
 }
 \references{
 \itemize{
-  \item R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
+  \item Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. \doi{10.2139/ssrn.4304256}.
 }
 }
 \seealso{

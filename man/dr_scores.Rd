@@ -4,10 +4,10 @@
 \alias{dr_scores}
 \title{Doubly-Robust Scores}
 \usage{
-dr_scores(y, D, X, k = 5)
+dr_scores(Y, D, X, k = 5)
 }
 \arguments{
-\item{y}{Outcome vector.}
+\item{Y}{Outcome vector.}
 
 \item{D}{Treatment assignment vector.}
 
