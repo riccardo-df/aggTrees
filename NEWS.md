@@ -1,6 +1,6 @@
 ## version 2.0.3
 
-Updated vignette.
+Updated vignettes.
 
 ## version 2.0.2
 
