@@ -111,10 +111,10 @@ control units (unbiased only in randomized experiments) and on sample
 averages of doubly-robust scores (unbiased also in observational
 studies).</p>
 <p>The package also allows to get standard errors for the GATEs by
-estimating via OLS appropriate linear models.</p>
-<p>Under an “honesty”” condition, we can use the estimated standard
-errors to conduct valid inference about the GATEs as usual, e.g., by
-constructing conventional confidence intervals.</p>
+estimating via OLS appropriate linear models. Then, under an “honesty”
+condition, we can use the estimated standard errors to conduct valid
+inference about the GATEs as usual, e.g., by constructing conventional
+confidence intervals.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 </div>
 <div class="section level2">
 <h2 id="code">Code<a class="anchor" aria-label="anchor" href="#code"></a>
@@ -174,16 +174,16 @@ taking the differences between the mean outcomes of treated and control
 units in each node. This is an unbiased estimator (only) in randomized
 experiments;</li>
 <li>If we set <code>method = "aipw"</code>, the GATEs are estimated by
-averaging doubly-robust scores (see Appendix below) in each node. This
-is an unbiased estimator also in observational studies under particular
-conditions on the construction of the scores.</li>
+averaging doubly-robust scores in each node. This is an unbiased
+estimator also in observational studies under particular conditions on
+the construction of the scores.</li>
 </ol>
-<p>The doubly-robust scores can be estimated separately and passed in by
-the <code>scores</code> argument. Otherwise, they are estimated
-internally. Notice the use of the <code>is_honest</code> argument, a
-logical vector denoting which observations we allocated to the honest
-sample. This way, <code>build_aggtree</code> knows which observations
-must be used to construct the tree and compute node predictions.</p>
+<p>The doubly-robust scores are estimated internally using 5-fold
+cross-fitting and only observations from the honest sample. Notice the
+use of the <code>is_honest</code> argument, a logical vector denoting
+which observations we allocated to the honest sample. This way,
+<code>build_aggtree</code> knows which observations must be used to
+construct the tree and compute node predictions.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Construct the sequence. Use doubly-robust scores.</span></span>
 <span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_aggtree.html">build_aggtree</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">D</span>, <span class="va">X</span>, method <span class="op">=</span> <span class="st">"aipw"</span>, </span>
@@ -220,7 +220,8 @@ following:</p>
 <li>It gets standard errors for the GATEs by estimating via OLS
 appropriate linear models using the honest sample. The choice of the
 linear model depends on the <code>method</code> we used when we called
-<code>build_aggtree</code> (see Appendix below);</li>
+<code>build_aggtree</code>;<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+</li>
 <li>It tests the null hypotheses that the differences in the GATEs
 across all pairs of groups equal zero. Here, we account for multiple
 hypotheses testing by adjusting the <span class="math inline">\(p\)</span>-values using Holm’s procedure;</li>
@@ -303,61 +304,14 @@ group.</li>
 <span><span class="co">#&gt;     \end{table}</span></span>
 <span><span class="co">#&gt; \endgroup</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="appendix">Appendix<a class="anchor" aria-label="anchor" href="#appendix"></a>
-</h3>
-<p>The point of estimating the linear models is to get standard errors
-for the GATEs. Under an honesty condition, we can use the estimated
-standard errors to conduct valid inference as usual, e.g., by
-constructing conventional confidence intervals. Honesty is a
-subsample-splitting technique that requires that different observations
-are used to form the subgroups and estimate the GATEs.
-<code>inference_aggtree</code> always uses the honest sample to estimate
-the linear models below (unless we called <code>build_aggtree</code>
-without using the honesty settings).</p>
-<p>If we set <code>method = "raw"</code>, <code>inference_aggtree</code>
-estimates via OLS the following linear model:</p>
-<p><span class="math display">\[\begin{equation}
-    Y_i = \sum_{l = 1}^{|\mathcal{T_{\alpha}}|} L_{i, l} \, \gamma_l +
-\sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l} \, D_i \, \beta_l +
-\epsilon_i
-\end{equation}\]</span></p>
-<p>with <span class="math inline">\(|\mathcal{T}_{\alpha}|\)</span> the
-number of leaves of a particular tree <span class="math inline">\(\mathcal{T}_{\alpha}\)</span>, and <span class="math inline">\(L_{i, l}\)</span> a dummy variable equal to one if
-the <span class="math inline">\(i\)</span>-th unit falls in the <span class="math inline">\(l\)</span>-th leaf of <span class="math inline">\(\mathcal{T}_{\alpha}\)</span>. Exploiting the
-random assignment to treatment, we can show that each <span class="math inline">\(\beta_l\)</span> identifies the GATE in the <span class="math inline">\(l\)</span>-th leaf. Under honesty, the OLS
-estimator <span class="math inline">\(\hat{\beta}_l\)</span> of <span class="math inline">\(\beta_l\)</span> is root-<span class="math inline">\(n\)</span> consistent and asymptotically
-normal.</p>
-<p>If we set <code>method = "aipw"</code>,
-<code>inference_aggtree</code> estimates via OLS the following linear
-model:</p>
-<p><span class="math display">\[\begin{equation}
-    \widehat{\Gamma}_i = \sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l}
-\, \beta_l + \epsilon_i
-\end{equation}\]</span></p>
-<p>where <span class="math inline">\(\Gamma_i\)</span> are the following
-doubly-robust scores:</p>
-<p><span class="math display">\[\begin{equation*}
-    \Gamma_i = \mu \left( 1, X_i \right) - \mu \left( 0, X_i \right) +
-\frac{D_i \left[ Y_i - \mu \left( 1, X_i \right) \right]}{p \left( X_i
-\right)}  - \frac{ \left( 1 - D_i \right) \left[ Y_i - \mu \left( 0, X_i
-\right) \right]}{1 - p \left( X_i \right)}
-\end{equation*}\]</span></p>
-<p>with <span class="math inline">\(\mu \left(D_i, X_i \right) =
-\mathbb{E} \left[ Y_i | D_i, Z_i \right]\)</span> the conditional mean
-of <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(p \left( X_i \right) = \mathbb{P} \left( D_i = 1 |
-X_i \right)\)</span> the propensity score. These scores are inherited by
-the scores used in the <code>build_aggtree</code> call. As before, we
-can show that each <span class="math inline">\(\beta_l\)</span>
-identifies the GATE in the <span class="math inline">\(l\)</span>-th
-leaf, this time even in observational studies. Under honesty, the OLS
-estimator <span class="math inline">\(\hat{\beta}_l\)</span> of <span class="math inline">\(\beta_l\)</span> is root-<span class="math inline">\(n\)</span> consistent and asymptotically normal,
-provided that the <span class="math inline">\(\Gamma_i\)</span> are
-cross-fitted and that the product of the convergence rates of the
-estimators of the nuisance functions <span class="math inline">\(\mu
-\left( \cdot, \cdot \right)\)</span> and <span class="math inline">\(p
-\left( \cdot \right)\)</span> is faster than <span class="math inline">\(n^{1/2}\)</span>.</p>
 </div>
+<div class="footnotes footnotes-end-of-document">
+<hr>
+<ol>
+<li id="fn1"><p>Check the <a href="https://riccardo-df.github.io/aggTrees/articles/inference.html">inference
+vignette</a> for more details.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>See footnote 1.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
   </div>
 
