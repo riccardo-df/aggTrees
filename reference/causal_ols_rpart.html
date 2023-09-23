@@ -18,7 +18,7 @@ leaves of an rpart object. Additionally, performs some hypothesis testing."><met
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aggTrees</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.3</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@ leaves of an <code><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="ext
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">causal_ols_rpart</span><span class="op">(</span></span>
 <span>  <span class="va">tree</span>,</span>
-<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">Y</span>,</span>
 <span>  <span class="va">D</span>,</span>
 <span>  <span class="va">X</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"aipw"</span>,</span>
@@ -73,7 +73,7 @@ leaves of an <code><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="ext
 <dd><p>An <code><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="external-link">rpart</a></code> object.</p></dd>
 
 
-<dt>y</dt>
+<dt>Y</dt>
 <dd><p>Outcome vector.</p></dd>
 
 
@@ -165,7 +165,7 @@ using Holm's procedure.</p>
     <div id="references">
     <h2>References</h2>
     
-<ul><li><p>R Di Francesco (2022). Aggregation Trees. CEIS Research Paper, 546. <a href="https://doi.org/10.2139/ssrn.4304256" class="external-link">doi:10.2139/ssrn.4304256</a>
+<ul><li><p>Di Francesco, R. (2022). Aggregation Trees. CEIS Research Paper, 546. <a href="https://doi.org/10.2139/ssrn.4304256" class="external-link">doi:10.2139/ssrn.4304256</a>
 .</p></li>
 </ul></div>
     <div id="see-also">
@@ -190,32 +190,32 @@ using Holm's procedure.</p>
 <span class="r-in"><span><span class="va">D</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>, size <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mu0</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">X</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">mu1</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">X</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">X</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">mu0</span> <span class="op">+</span> <span class="va">D</span> <span class="op">*</span> <span class="op">(</span><span class="va">mu1</span> <span class="op">-</span> <span class="va">mu0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">mu0</span> <span class="op">+</span> <span class="va">D</span> <span class="op">*</span> <span class="op">(</span><span class="va">mu1</span> <span class="op">-</span> <span class="va">mu0</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Split the sample.</span></span></span>
-<span class="r-in"><span><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="sample_split.html">sample_split</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, training_frac <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="sample_split.html">sample_split</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, training_frac <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">training_idx</span> <span class="op">&lt;-</span> <span class="va">splits</span><span class="op">$</span><span class="va">training_idx</span></span></span>
 <span class="r-in"><span><span class="va">honest_idx</span> <span class="op">&lt;-</span> <span class="va">splits</span><span class="op">$</span><span class="va">honest_idx</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">y_tr</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="va">training_idx</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">Y_tr</span> <span class="op">&lt;-</span> <span class="va">Y</span><span class="op">[</span><span class="va">training_idx</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">D_tr</span> <span class="op">&lt;-</span> <span class="va">D</span><span class="op">[</span><span class="va">training_idx</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">X_tr</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="va">training_idx</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">y_hon</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="va">honest_idx</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">Y_hon</span> <span class="op">&lt;-</span> <span class="va">Y</span><span class="op">[</span><span class="va">honest_idx</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">D_hon</span> <span class="op">&lt;-</span> <span class="va">D</span><span class="op">[</span><span class="va">honest_idx</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">X_hon</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="va">honest_idx</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Construct a tree using training sample.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/bethatkinson/rpart" class="external-link">rpart</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="external-link">rpart</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"y"</span> <span class="op">=</span> <span class="va">y_tr</span>, <span class="va">X_tr</span><span class="op">)</span>, maxdepth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="external-link">rpart</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"Y"</span> <span class="op">=</span> <span class="va">Y_tr</span>, <span class="va">X_tr</span><span class="op">)</span>, maxdepth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Estimate GATEs in each node (internal and terminal) using honest sample.</span></span></span>
-<span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">causal_ols_rpart</span><span class="op">(</span><span class="va">tree</span>, <span class="va">y_hon</span>, <span class="va">D_hon</span>, <span class="va">X_hon</span>, method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">causal_ols_rpart</span><span class="op">(</span><span class="va">tree</span>, <span class="va">Y_hon</span>, <span class="va">D_hon</span>, <span class="va">X_hon</span>, method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">model</span><span class="op">)</span> <span class="co"># Coefficient of leafk:D is GATE in k-th leaf.</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> estimatr::lm_robust(formula = y ~ 0 + leaf + D:leaf, data = data.frame(y = y, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> estimatr::lm_robust(formula = Y ~ 0 + leaf + D:leaf, data = data.frame(Y = Y, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     leaf = leaves, D = D), se_type = "HC1")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Standard error type:  HC1 </span>

@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">aggTrees</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.3</span>
       </span>
     </div>
 
@@ -82,14 +82,7 @@
 <!-- badges: start -->
 
 <p>R package to implement aggregation trees, a nonparametric approach to discovering heterogeneous subgroups in a selection-on-observables framework.</p>
-<p>The approach consists of three steps:</p>
-<ol style="list-style-type: decimal">
-<li>Estimate the conditional average treatment effects (CATEs);</li>
-<li>Approximate the CATEs by a decision tree;</li>
-<li>Prune the tree.</li>
-</ol>
-<p>This way, we generate a sequence of groupings, one for each granularity level. The resulting sequence is nested in the sense that subgroups formed at a given level of granularity are never broken at coarser levels. This guarantees consistency of the results across the different granularity levels, generally considered a basic requirement that every classification system should satisfy. Moreover, each grouping features an optimality property in that it ensures that the loss in explained heterogeneity resulting from aggregation is minimized.</p>
-<p>Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. Under an “honesty”” condition, we can use the estimated standard errors to conduct valid inference about the GATEs as usual, e.g., by constructing conventional confidence intervals.</p>
+<p><code>aggTrees</code> allows researchers to assess whether there exists relevant heterogeneity in treatment effects by generating a sequence of optimal groupings, one for each level of granularity. For each grouping, we obtain point estimation and inference about the Group Average Treatment Effects. Please reference the use as <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256" class="external-link">Di Francesco (2022)</a>.</p>
 <p>To get started, please check the online <a href="https://riccardo-df.github.io/aggTrees/articles/aggTrees-vignette.html">vignette</a> for a short tutorial.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
