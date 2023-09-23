@@ -8,6 +8,8 @@ navbar:
   left:
   - text: "Get started"
     href: articles/aggTrees-vignette.html
+  - text: "Inference"
+    href: articles/inference.html
   - text: "Reference"
     href: reference/index.html
   right:
