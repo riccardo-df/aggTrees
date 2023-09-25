@@ -79,7 +79,7 @@ cates <- predict(forest, X)$predictions
 Now we use the `build_aggtree` function to construct the sequence of groupings. This function approximates the estimated CATEs by a decision tree using only the training sample and computes node predictions (i.e., the GATEs) using only the honest sample. `build_aggtree` allows the user to choose between two GATE estimators:
 
 1. If we set `method = "raw"`, the GATEs are estimated by taking the differences between the mean outcomes of treated and control units in each node. This is an unbiased estimator (only) in randomized experiments;
-2. If we set `method = "aipw"`, the GATEs are estimated by averaging doubly-robust scores in each node. This is an unbiased estimator also in observational studies under particular conditions on the construction of the scores.
+2. If we set `method = "aipw"`, the GATEs are estimated by averaging doubly-robust scores in each node. This is an unbiased estimator also in observational studies under particular conditions on the construction of the scores.[^2]
 
 The doubly-robust scores are estimated internally using 5-fold cross-fitting and only observations from the honest sample. Notice the use of the `is_honest` argument, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions. 
 
@@ -98,7 +98,7 @@ plot(groupings) # Try also setting 'sequence = TRUE'.
 ### Further Analysis
 Now that we have a whole sequence of optimal groupings, we can pick the grouping associated with our preferred granularity level and call the `inference_aggtree` function. This function does the following:
 
-1. It gets standard errors for the GATEs by estimating via OLS appropriate linear models using the honest sample. The choice of the linear model depends on the `method` we used when we called `build_aggtree`;[^2]
+1. It gets standard errors for the GATEs by estimating via OLS appropriate linear models using the honest sample. The choice of the linear model depends on the `method` we used when we called `build_aggtree`;[^3]
 2. It tests the null hypotheses that the differences in the GATEs across all pairs of groups equal zero. Here, we account for multiple hypotheses testing by adjusting the $p$-values using Holm's procedure;
 3. It computes the average characteristics of the units in each group.
 
@@ -116,3 +116,5 @@ print(results, table = "avg_char")
 
 [^1]: Check the [inference vignette](https://riccardo-df.github.io/aggTrees/articles/inference.html) for more details. 
 [^2]: See footnote 1.
+[^3]: See footnote 1.
+

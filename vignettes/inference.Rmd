@@ -26,7 +26,7 @@ To this end, `inference_aggtree` always uses the honest sample to estimate the l
 ## Linear Models
 When calling the `build_aggtree` function, the user can control the GATE estimator employed by the routine by setting the `method` argument. The `inference_aggtree` function inherits this argument and selects the model to be estimated accordingly. 
 
-### Difference in Mean Outcommes
+#### Difference in Mean Outcomes
 If `method` is set to `"raw"`, the `inference_aggtree` function estimates via OLS the following linear model:
 
 \begin{equation}
@@ -39,7 +39,7 @@ Exploiting the random assignment to treatment, we can show that each $\beta_l$ i
 
 Under honesty, the OLS estimator $\hat{\beta}_l$ of $\beta_l$ is root-$n$ consistent and asymptotically normal.
 
-### Doubly-Robust Scores
+#### Doubly-Robust Scores
 If `method` is set to `"aipw"`, the `inference_aggtree` function estimates via OLS the following linear model:
 
 \begin{equation}
