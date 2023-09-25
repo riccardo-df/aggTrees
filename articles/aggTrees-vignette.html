@@ -179,7 +179,8 @@ experiments;</li>
 <li>If we set <code>method = "aipw"</code>, the GATEs are estimated by
 averaging doubly-robust scores in each node. This is an unbiased
 estimator also in observational studies under particular conditions on
-the construction of the scores.</li>
+the construction of the scores.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+</li>
 </ol>
 <p>The doubly-robust scores are estimated internally using 5-fold
 cross-fitting and only observations from the honest sample. Notice the
@@ -223,7 +224,7 @@ following:</p>
 <li>It gets standard errors for the GATEs by estimating via OLS
 appropriate linear models using the honest sample. The choice of the
 linear model depends on the <code>method</code> we used when we called
-<code>build_aggtree</code>;<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+<code>build_aggtree</code>;<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>
 </li>
 <li>It tests the null hypotheses that the differences in the GATEs
 across all pairs of groups equal zero. Here, we account for multiple
@@ -314,6 +315,7 @@ group.</li>
 <li id="fn1"><p>Check the <a href="https://riccardo-df.github.io/aggTrees/articles/inference.html">inference
 vignette</a> for more details.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>See footnote 1.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>See footnote 1.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
