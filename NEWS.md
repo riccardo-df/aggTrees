@@ -1,6 +1,6 @@
 ## version 2.0.3
 
-Updated vignettes.
+Updated vignettes. Improved LATEX output.
 
 ## version 2.0.2
 

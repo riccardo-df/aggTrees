@@ -277,7 +277,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   if (!(table %in% c("avg_char", "diff"))) stop("Invalid 'table'. This must be either 'avg_char' or 'diff'.", call. = FALSE)
 
   ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
-  if (is.null(x$idx$honest_idx)) {
+  if (is.null(x$aggTree$idx$honest_idx)) {
     X <- x$aggTree$dta[, -c(1,2 )]
   } else {
     X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
@@ -293,14 +293,14 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
     gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl("leaf", x)))
   }
 
-  gates_point <- round(x$model$coefficients[gates_idx], 3)
-  gates_sd <- round(x$model$std.error[gates_idx], 3)
+  gates_point <- format(round(x$model$coefficients[gates_idx], 2), nsmall = 2)
+  gates_sd <- format(round(x$model$std.error[gates_idx], 2), nsmall = 2)
 
-  gates_ci_lower <- round(gates_point - 1.96 * gates_sd, 3)
-  gates_ci_upper <- round(gates_point + 1.96 * gates_sd, 3)
+  gates_ci_lower <- format(round(as.numeric(gates_point) - 1.96 * as.numeric(gates_sd), 3), nsmall = 3)
+  gates_ci_upper <- format(round(as.numeric(gates_point) + 1.96 * as.numeric(gates_sd), 3), nsmall = 3)
 
-  if (length(x$boot_ci) != 0) gates_ci_lower_boot <- round(x$boot_ci$lower, 3) else gates_ci_lower_boot <- NA
-  if (length(x$boot_ci) != 0) gates_ci_upper_boot <- round(x$boot_ci$upper, 3) else gates_ci_upper_boot <- NA
+  if (length(x$boot_ci) != 0) gates_ci_lower_boot <- format(round(x$boot_ci$lower, 3), nsmall = 3) else gates_ci_lower_boot <- NA
+  if (length(x$boot_ci) != 0) gates_ci_upper_boot <- format(round(x$boot_ci$upper, 3), nsmall = 3) else gates_ci_upper_boot <- NA
 
   ## Write table.
   if (table == "avg_char") {
@@ -321,8 +321,8 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
     for (i in seq_len(length(table_names))) {
-      temp_means <- round(parms[[i]][, 1], 3)
-      temp_sds <- round(parms[[i]][, 2], 3)
+      temp_means <- format(round(parms[[i]][, 1], 2), nsmall = 2)
+      temp_sds <- format(round(parms[[i]][, 2], 3), nsmall = 3)
 
       temp_line <- paste0("      \\texttt{", table_names[i], "} & " )
 
@@ -340,7 +340,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership. Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of the GATEs.}
+    \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership", if (!is.null(x$aggTree$idx$honest_idx)) "using only the honest sample." else "." ,"Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of the GATEs.}
     \\label{table:average.characteristics.leaves}
     \\end{table}
 \\endgroup \n\n")
@@ -370,13 +370,13 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
 
     cat("      \\multirow{3}{*}{GATEs} & ", paste(gates_point[1:(length(unique(leaves))-1)], " & ", sep = ""), gates_point[length(unique(leaves))], " \\\\
       & ", paste("[", gates_ci_lower[1:(length(unique(leaves))-1)], ", ", gates_ci_upper[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower[length(unique(leaves))], ", ", gates_ci_upper[length(unique(leaves))], "]", sep = ""), " \\\\
-      & ", paste("[", gates_ci_lower_boot[1:(length(unique(leaves))-1)], ", ", gates_ci_upper_boot[1:(length(unique(leaves))-1)], "] & ", sep = ""), paste("[", gates_ci_lower_boot[length(unique(leaves))], ", ", gates_ci_upper_boot[length(unique(leaves))], "]", sep = ""), " \\\\ \n\n", sep = "")
+      & ", paste("\\{", gates_ci_lower_boot[1:(length(unique(leaves))-1)], ", ", gates_ci_upper_boot[1:(length(unique(leaves))-1)], "\\} & ", sep = ""), paste("\\{", gates_ci_lower_boot[length(unique(leaves))], ", ", gates_ci_upper_boot[length(unique(leaves))], "\\}", sep = ""), " \\\\ \n\n", sep = "")
     cat("      \\addlinespace[2pt]
       \\hline \\\\[-1.8ex] \n\n")
 
     for (i in seq_len(get_leaves(x$groups))) {
-      cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 3), " & "), round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 3), " \\\\
-            & ", paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), ") & "), paste0("(", round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), ")"), " \\\\ \n", sep = "")
+      cat(paste0("      \\textit{Leaf ", i, "}"), " & ", paste0(format(round(x$gates_diff_pairs$gates_diff[i, seq_len(get_leaves(x$groups)-1)], 2), nsmall = 2), " & "), format(round(x$gates_diff_pairs$gates_diff[i, get_leaves(x$groups)], 2), nsmall = 2), " \\\\
+            & ", paste0("(", format(round(x$gates_diff_pairs$holm_pvalues[i, seq_len(get_leaves(x$groups)-1)], 3), nsmall = 3), ") & "), paste0("(", format(round(x$gates_diff_pairs$holm_pvalues[i, get_leaves(x$groups)], 3), nsmall = 3), ")"), " \\\\ \n", sep = "")
     }
 
     cat("\n      \\addlinespace[3pt]
@@ -384,7 +384,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex]
     \\end{tabular}
     \\end{adjustbox}
-    \\caption{Point estimates and $95\\%$ confidence intervals for the GATEs based on asymptotic normality and on the percentiles of the bootstrap distribution. Leaves are sorted in increasing order of the GATEs. Additionally, differences in the GATEs across all pairs of leaves are displayed. p-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
+    \\caption{Point estimates and $95\\%$ confidence intervals for the GATEs based on asymptotic normality (in square brackets) and on the percentiles of the bootstrap distribution (in curly braces). Leaves are sorted in increasing order of the GATEs. Additionally, the differences in the GATEs across all pairs of leaves are displayed. $p$-values to test the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
     \\label{table:differences.gates}
     \\end{table}
 \\endgroup \n\n")
