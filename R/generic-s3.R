@@ -360,7 +360,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   \\renewcommand{\\arraystretch}{1.2}
   \\begin{table}[b!]
     \\centering
-    \\begin{adjustbox}{width = 0.85\\textwidth}
+    \\begin{adjustbox}{width = 1\\textwidth}
     \\begin{tabular}{@{\\extracolsep{5pt}}l", rep(" c", times = get_leaves(x$groups)), "}
       \\\\[-1.8ex]\\hline
       \\hline \\\\[-1.8ex] \n
