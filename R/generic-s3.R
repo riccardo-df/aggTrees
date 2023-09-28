@@ -293,8 +293,8 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
     gates_idx <- which(sapply(names(x$model$coefficients), function(x) grepl("leaf", x)))
   }
 
-  gates_point <- format(round(x$model$coefficients[gates_idx], 2), nsmall = 2)
-  gates_sd <- format(round(x$model$std.error[gates_idx], 2), nsmall = 2)
+  gates_point <- format(round(x$model$coefficients[gates_idx], 3), nsmall = 3)
+  gates_sd <- format(round(x$model$std.error[gates_idx], 3), nsmall = 3)
 
   gates_ci_lower <- format(round(as.numeric(gates_point) - 1.96 * as.numeric(gates_sd), 3), nsmall = 3)
   gates_ci_upper <- format(round(as.numeric(gates_point) + 1.96 * as.numeric(gates_sd), 3), nsmall = 3)
@@ -321,7 +321,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
       \\hline \\\\[-1.8ex] \n\n", sep = "")
 
     for (i in seq_len(length(table_names))) {
-      temp_means <- format(round(parms[[i]][, 1], 2), nsmall = 2)
+      temp_means <- format(round(parms[[i]][, 1], 3), nsmall = 3)
       temp_sds <- format(round(parms[[i]][, 2], 3), nsmall = 3)
 
       temp_line <- paste0("      \\texttt{", table_names[i], "} & " )
