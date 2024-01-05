@@ -29,3 +29,4 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 URL: https://riccardo-df.github.io/aggTrees/
+BugReports: https://github.com/riccardo-df/aggTrees/issues
