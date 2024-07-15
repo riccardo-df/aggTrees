@@ -3,18 +3,20 @@
 #' Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
 #' The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
 #' feature an optimality property. For each grouping, we obtain point estimation and standard errors for the group average
-#' treatment effects (GATEs). Additionally, we assess whether systematic heterogeneity is found by testing the hypotheses
-#' that the differences in the GATEs across all pairs of groups are zero. Finally, we investigate the driving mechanisms of
-#' effect heterogeneity by computing the average characteristics of units in each group.
+#' treatment effects (GATEs) using debiased machine learning procedures. Additionally, we assess whether systematic heterogeneity
+#' is found by testing the hypotheses that the differences in the GATEs across all pairs of groups are zero. Finally, we investigate
+#' the driving mechanisms of effect heterogeneity by computing the average characteristics of units in each group.
 #'
-#' @param Y Outcome vector.
-#' @param D Treatment vector.
-#' @param X Covariate matrix (no intercept).
-#' @param honest_frac Fraction of observations to be allocated to honest sample.
+#' @param Y_tr Outcome vector for training sample.
+#' @param Y_hon Outcome vector for honest sample.
+#' @param D_tr Treatment vector for training sample.
+#' @param D_hon Treatment vector for honest sample.
+#' @param X_tr Covariate matrix (no intercept) for training sample.
+#' @param X_hon Covariate matrix (no intercept) for honest sample.
+#' @param cates_tr Optional, predicted CATEs for training sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
+#' @param cates_tr Optional, predicted CATEs for honest sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.
 #' @param scores Optional, vector of scores to be used in computing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
-#' @param cates Optional, estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
-#' @param is_honest Logical vector denoting which observations belong to the honest sample. Required only if the \code{cates} argument is used.
 #' @param ... Further arguments from \code{\link[rpart]{rpart.control}}.
 #'
 #' @return
@@ -37,11 +39,9 @@
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
 #' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
-#' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(Y, D, X, method = "aipw")
-#'
-#' ## Alternatively, we can estimate the CATEs and pass them.
-#' splits <- sample_split(length(Y), training_frac = 0.5)
+#' ## Training-honest sample split.
+#' honest_frac <- 0.5
+#' splits <- sample_split(length(Y), training_frac = (1 - honest_frac))
 #' training_idx <- splits$training_idx
 #' honest_idx <- splits$honest_idx
 #'
@@ -53,12 +53,16 @@
 #' D_hon <- D[honest_idx]
 #' X_hon <- X[honest_idx, ]
 #'
+#' ## Construct sequence of groupings. CATEs estimated internally.
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+#'
+#' ## Alternatively, we can estimate the CATEs and pass them.
 #' library(grf)
 #' forest <- causal_forest(X_tr, Y_tr, D_tr) # Use training sample.
-#' cates <- predict(forest, X)$predictions
+#' cates_tr <- predict(forest, X_tr)$predictions
+#' cates_hon <- predict(forest, X_hon)$predictions
 #'
-#' groupings <- build_aggtree(Y, D, X, method = "aipw", cates = cates,
-#'                            is_honest = 1:length(Y) %in% honest_idx)
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw", cates_tr = cates_tr, cates_hon = cates_hon)
 #'
 #' ## We have compatibility with generic S3-methods.
 #' summary(groupings)
@@ -67,7 +71,7 @@
 #'
 #' ## To predict, do the following.
 #' tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
-#' head(predict(tree, data.frame(X)))
+#' head(predict(tree, data.frame(X_hon)))
 #'
 #' ## Inference with 4 groups.
 #' results <- inference_aggtree(groupings, n_groups = 4)
@@ -98,10 +102,9 @@
 #' is unbiased also in observational studies. Honest regression forests and 5-fold cross fitting are used to estimate the
 #' propensity score and the conditional mean function of the outcome (unless the user specifies the argument \code{scores}).\cr
 #'
-#' The user can provide a vector of the estimated CATEs via the \code{cates} argument. If so, the user needs to specify a logical
-#' vector to denote which observations belong to the honest sample. If honesty is not desired, \code{is_honest} must be a
-#' vector of \code{FALSE}s. If no vector of CATEs is provided, these are estimated internally via a
-#' \code{\link[grf]{causal_forest}}.\cr
+#' The user can provide a vector of the estimated CATEs via the \code{cates_tr} and \code{cates_hon} arguments. If no CATEs are provided,
+#' these are estimated internally via a \code{\link[grf]{causal_forest}} using only the training sample, that is, \code{Y_tr}, \code{D_tr},
+#' and \code{X_tr}.\cr
 #'
 #' ## GATEs Estimation and Inference
 #' \code{\link{inference_aggtree}} takes as input an \code{aggTrees} object constructed by \code{\link{build_aggtree}}. Then, for
@@ -142,10 +145,9 @@
 #'
 #' ## Caution on Inference
 #' Regardless of the chosen \code{method}, both functions estimate the GATEs, the linear models, and the average characteristics
-#' of units in each group using only observations in the honest sample. If the honest sample is empty (this happens because the
-#' user either sets \code{honest_frac = 0} or passes a vector of \code{FALSE}s as \code{is_honest} when calling
-#' \code{\link{build_aggtree}}), the same data used to construct the tree are used to estimate the above quantities. This is
-#' fine for prediction but invalidates inference.
+#' of units in each group using only observations in the honest sample. If the honest sample is empty (this happens when the
+#' user sets \code{Y_hon}, \code{D_hon}, and \code{X_hon} to \code{NULL}), the same data used to construct the tree are used
+#' to estimate the above quantities. This is fine for prediction but invalidates inference.
 #'
 #' @import rpart grf
 #'
@@ -159,46 +161,30 @@
 #' @seealso \code{\link{plot.aggTrees}} \code{\link{print.aggTrees.inference}}
 #'
 #' @export
-build_aggtree <- function(Y, D, X,
-                          honest_frac = 0.5, method = "aipw", scores = NULL,
-                          cates = NULL, is_honest = NULL, ...) {
+build_aggtree <- function(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon,
+                          cates_tr = NULL, cates_hon = NULL,
+                          method = "aipw", scores = NULL,
+                          ...) {
   ## Handling inputs and checks.
   if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
   if (!is.matrix(X) & !is.data.frame(X)) stop("Invalid 'X'. This must be either a matrix or a data frame.", call. = FALSE)
-  if (honest_frac < 0 | honest_frac >= 1) stop("Invalid 'honest_frac'. This must be in the interval [0, 1).", call. = FALSE)
-  if (!is.null(cates)) if(is.null(is_honest)) stop("When 'cates' is used, you need to specify honest observations via the argument 'is_honest'.", call. = FALSE)
-
-  ## If necessary, perform training-honest split.
-  if (is.null(cates)) {
-    idx <- sample_split(length(Y), training_frac = (1 - honest_frac))
-    training_idx <- idx$training_idx
-    honest_idx <- idx$honest_idx
-  } else {
-    training_idx <- which(!is_honest)
-    if (sum(is_honest) > 0) honest_idx <- which(is_honest) else honest_idx = NULL
-  }
-
-  ## Define variables.
-  Y_tr <- Y[training_idx]
-  D_tr <- D[training_idx]
-  X_tr <- X[training_idx, ]
-
-  Y_hon <- Y[honest_idx]
-  D_hon <- D[honest_idx]
-  X_hon <- X[honest_idx, ]
+  if (is.null(Y_hon) & (!is.null(D_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
+  if (is.null(D_hon) & (!is.null(Y_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
+  if (is.null(X_hon) & (!is.null(Y_hon) | is.null(D_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
+  if (is.null(cates_tr) & !is.null(cates_hon) | !is.null(cates_tr) & is.null(cates_hon)) stop("Either you provide both 'cates_tr' and 'cates_hon' or set both to NULL.", call. = FALSE)
 
   ## If necessary, estimate the CATEs using training sample (estimation step).
-  if (is.null(cates)) {
+  if (is.null(cates_tr) & is.null(cates_hon)) {
     forest <- grf::causal_forest(X_tr, Y_tr, D_tr, num.trees = 4000, tune.parameters = "all")
-    forest_predictions <- stats::predict(forest, X) # Predict on whole sample.
-    cates <- forest_predictions$predictions
+    cates_tr <- stats::predict(forest, X_tr)$predictions
+    cates_hon <- stats::predict(forest, X_hon)$predictions
   }
 
   ## Grow the tree using training sample (tree-growing step).
-  tree <- rpart::rpart(cates ~ ., data = data.frame("cates" = cates[training_idx], X_tr), method = "anova", control = rpart::rpart.control(...), model = TRUE)
+  tree <- rpart::rpart(cates_tr ~ ., data = data.frame("cates" = cates_tr, X_tr), method = "anova", control = rpart::rpart.control(...), model = TRUE)
 
   ## If adaptive, replace each node with predictions computed in training sample. Otherwise, honest trees.
-  if (honest_frac == 0 | (!is.null(is_honest) & sum(is_honest) == 0)) {
+  if (is.null(Y_hon)) {
     results <- estimate_rpart(tree, Y_tr, D_tr, X_tr, method, scores = scores)
   } else {
     results <- estimate_rpart(tree, Y_hon, D_hon, X_hon, method, scores = scores)
@@ -208,14 +194,24 @@ build_aggtree <- function(Y, D, X,
   scores <- results$scores
 
   ## Output.
-  if (!is.null(is_honest)) forest <- NULL
+  if (!is.null(Y_hon)) forest <- NULL
+
+  training_sample <- data.frame(cates_tr, Y_tr, D_tr, X_tr)
+  colnames(training_sample) <- c("cates", "Y", "D", colnames(X))
+
+  if (!is.null(Y_hon)) {
+    honest_sample <- data.frame(cates_hon, Y_hon, D_hon, X_hon)
+    colnames(honest_sample) <- colnames(training_sample)
+  } else {
+    honest_sample <- NULL
+  }
 
   out <- list("tree" = new_tree,
               "forest" = forest,
               "scores" = scores,
               "method" = method,
-              "dta" = data.frame(Y, D, X),
-              "idx" = list("training_idx" = training_idx, "honest_idx" = honest_idx))
+              "training_sample" = training_sample,
+              "honest_sample" = honest_sample)
   class(out) <- "aggTrees"
   return(out)
 }
@@ -239,10 +235,10 @@ inference_aggtree <- function(object, n_groups,
   ## Handling inputs and checks.
   if (!(inherits(object, "aggTrees"))) stop("Invalid 'object'. This must be an aggTrees object.", call. = FALSE)
   if (!(inherits(object$tree, "rpart"))) stop("Invalid 'object'. This must be a valid aggTrees object.", call. = FALSE)
-  if (is.null(object$idx$honest_idx)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
+  if (is.null(object$honest_sample)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
   if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
-  if (boot_R < 0) stop("Invalid 'boot_R'. This must be a positive integer.", call. = FALSE)
+  if (boot_R < 0 | boot_R %% 1 != 1) stop("Invalid 'boot_R'. This must be a positive integer.", call. = FALSE)
 
   tree <- object$tree
 
@@ -251,15 +247,15 @@ inference_aggtree <- function(object, n_groups,
   method <- object$method
   scores <- object$scores
 
-  ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
-  if (is.null(object$idx$honest_idx)) {
-    Y <- object$dta$Y
-    D <- object$dta$D
-    X <- object$dta[, -c(1:2)]
+  ## Select appropriate sample (full/honest) according to the output of build_aggtree.
+  if (is.null(honest_sample)) {
+    Y <- object$training_sample$Y
+    D <- object$training_sample$D
+    X <- object$training_sample[, -c(1:3)]
   } else {
-    Y <- object$dta$Y[object$idx$honest_idx]
-    D <- object$dta$D[object$idx$honest_idx]
-    X <- object$dta[object$idx$honest_idx, -c(1:2)]
+    Y <- object$honest$Y
+    D <- object$honest$D
+    X <- object$honest[, -c(1:3)]
   }
 
   ## Select granularity level.

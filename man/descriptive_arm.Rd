@@ -17,7 +17,4 @@ descriptive_arm(X, D)
 \description{
 Computes sample averages and standard deviations of the covariates across treatment arms.
 }
-\details{
-Sample means and standard deviations across treatment arms are a first, useful insight to assess covariate balance.
-}
 \keyword{internal}

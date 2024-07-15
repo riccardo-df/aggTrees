@@ -6,35 +6,39 @@
 \title{Aggregation Trees}
 \usage{
 build_aggtree(
-  Y,
-  D,
-  X,
-  honest_frac = 0.5,
+  Y_tr,
+  Y_hon,
+  D_tr,
+  D_hon,
+  X_tr,
+  X_hon,
+  cates_tr = NULL,
+  cates_hon = NULL,
   method = "aipw",
   scores = NULL,
-  cates = NULL,
-  is_honest = NULL,
   ...
 )
 
 inference_aggtree(object, n_groups, boot_ci = FALSE, boot_R = 2000)
 }
 \arguments{
-\item{Y}{Outcome vector.}
+\item{Y_tr}{Outcome vector for training sample.}
 
-\item{D}{Treatment vector.}
+\item{Y_hon}{Outcome vector for honest sample.}
 
-\item{X}{Covariate matrix (no intercept).}
+\item{D_tr}{Treatment vector for training sample.}
 
-\item{honest_frac}{Fraction of observations to be allocated to honest sample.}
+\item{D_hon}{Treatment vector for honest sample.}
+
+\item{X_tr}{Covariate matrix (no intercept) for training sample.}
+
+\item{X_hon}{Covariate matrix (no intercept) for honest sample.}
+
+\item{cates_tr}{Optional, predicted CATEs for honest sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.}
 
 \item{scores}{Optional, vector of scores to be used in computing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.}
-
-\item{cates}{Optional, estimated CATEs. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
-
-\item{is_honest}{Logical vector denoting which observations belong to the honest sample. Required only if the \code{cates} argument is used.}
 
 \item{...}{Further arguments from \code{\link[rpart]{rpart.control}}.}
 
@@ -56,9 +60,9 @@ in the call.
 Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework.
 The approach constructs a sequence of groupings, one for each level of granularity. Groupings are nested and
 feature an optimality property. For each grouping, we obtain point estimation and standard errors for the group average
-treatment effects (GATEs). Additionally, we assess whether systematic heterogeneity is found by testing the hypotheses
-that the differences in the GATEs across all pairs of groups are zero. Finally, we investigate the driving mechanisms of
-effect heterogeneity by computing the average characteristics of units in each group.
+treatment effects (GATEs) using debiased machine learning procedures. Additionally, we assess whether systematic heterogeneity
+is found by testing the hypotheses that the differences in the GATEs across all pairs of groups are zero. Finally, we investigate
+the driving mechanisms of effect heterogeneity by computing the average characteristics of units in each group.
 }
 \details{
 Aggregation trees are a three-step procedure. First, the conditional average treatment effects (CATEs) are estimated using any
@@ -76,10 +80,9 @@ in randomized experiment. If \code{method == "aipw"}, we construct doubly-robust
 is unbiased also in observational studies. Honest regression forests and 5-fold cross fitting are used to estimate the
 propensity score and the conditional mean function of the outcome (unless the user specifies the argument \code{scores}).\cr
 
-The user can provide a vector of the estimated CATEs via the \code{cates} argument. If so, the user needs to specify a logical
-vector to denote which observations belong to the honest sample. If honesty is not desired, \code{is_honest} must be a
-vector of \code{FALSE}s. If no vector of CATEs is provided, these are estimated internally via a
-\code{\link[grf]{causal_forest}}.\cr
+The user can provide a vector of the estimated CATEs via the \code{cates_tr} and \code{cates_hon} arguments. If no CATEs are provided,
+these are estimated internally via a \code{\link[grf]{causal_forest}} using only the training sample, that is, \code{Y_tr}, \code{D_tr},
+and \code{X_tr}.\cr
 }
 
 \subsection{GATEs Estimation and Inference}{
@@ -130,10 +133,9 @@ predictions (from most negative to most positive). Standard errors are estimated
 \subsection{Caution on Inference}{
 
 Regardless of the chosen \code{method}, both functions estimate the GATEs, the linear models, and the average characteristics
-of units in each group using only observations in the honest sample. If the honest sample is empty (this happens because the
-user either sets \code{honest_frac = 0} or passes a vector of \code{FALSE}s as \code{is_honest} when calling
-\code{\link{build_aggtree}}), the same data used to construct the tree are used to estimate the above quantities. This is
-fine for prediction but invalidates inference.
+of units in each group using only observations in the honest sample. If the honest sample is empty (this happens when the
+user sets \code{Y_hon}, \code{D_hon}, and \code{X_hon} to \code{NULL}), the same data used to construct the tree are used
+to estimate the above quantities. This is fine for prediction but invalidates inference.
 }
 }
 \examples{
@@ -150,11 +152,9 @@ mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2]
 Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 
-## Construct sequence of groupings. CATEs estimated internally.
-groupings <- build_aggtree(Y, D, X, method = "aipw")
-
-## Alternatively, we can estimate the CATEs and pass them.
-splits <- sample_split(length(Y), training_frac = 0.5)
+## Training-honest sample split.
+honest_frac <- 0.5
+splits <- sample_split(length(Y), training_frac = (1 - honest_frac))
 training_idx <- splits$training_idx
 honest_idx <- splits$honest_idx
 
@@ -166,12 +166,16 @@ Y_hon <- Y[honest_idx]
 D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
+## Construct sequence of groupings. CATEs estimated internally.
+groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+
+## Alternatively, we can estimate the CATEs and pass them.
 library(grf)
 forest <- causal_forest(X_tr, Y_tr, D_tr) # Use training sample.
-cates <- predict(forest, X)$predictions
+cates_tr <- predict(forest, X_tr)$predictions
+cates_hon <- predict(forest, X_hon)$predictions
 
-groupings <- build_aggtree(Y, D, X, method = "aipw", cates = cates,
-                           is_honest = 1:length(Y) \%in\% honest_idx)
+groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw", cates_tr = cates_tr, cates_hon = cates_hon)
 
 ## We have compatibility with generic S3-methods.
 summary(groupings)
@@ -180,7 +184,7 @@ plot(groupings) # Try also setting 'sequence = TRUE'.
 
 ## To predict, do the following.
 tree <- subtree(groupings$tree, cv = TRUE) # Select by cross-validation.
-head(predict(tree, data.frame(X)))
+head(predict(tree, data.frame(X_hon)))
 
 ## Inference with 4 groups.
 results <- inference_aggtree(groupings, n_groups = 4)

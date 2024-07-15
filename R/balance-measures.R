@@ -9,9 +9,6 @@
 #' 4xp array, storing the desired statistics.
 #'
 #' @keywords internal
-#'
-#' @details
-#' Sample means and standard deviations across treatment arms are a first, useful insight to assess covariate balance.
 descriptive_arm <- function(X, D) {
   ## Computing measures.
   mean_treated <- round(apply(X[D == 1, ], MARGIN = 2, mean), 3)
@@ -216,7 +213,7 @@ balance_measures <- function(X, D) {
     \\end{tabular}
     \\end{adjustbox}
     \\caption{Balance between treatment and control groups. The last two columns report the estimated normalized differences ($\\hat{\\Delta}_j$) and logarithms of the ratio of standard deviations ($\\hat{\\Gamma}_j$).}
-    \\label{table:descriptive.stats}
+    \\label{table_descriptive_stats}
     \\end{table}
 \\endgroup")
 }

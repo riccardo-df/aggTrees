@@ -11,8 +11,7 @@
 #' Plots an \code{aggTrees} object.
 #'
 #' @examples
-#' \donttest{
-#' ## Generate data.
+#' \donttest{## Generate data.
 #' set.seed(1986)
 #'
 #' n <- 1000
@@ -25,8 +24,22 @@
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
 #' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
-#' ## Construct sequence of groupings. CATEs estimated internally,
-#' groupings <- build_aggtree(Y, D, X, method = "aipw")
+#' ## Training-honest sample split.
+#' honest_frac <- 0.5
+#' splits <- sample_split(length(Y), training_frac = (1 - honest_frac))
+#' training_idx <- splits$training_idx
+#' honest_idx <- splits$honest_idx
+#'
+#' Y_tr <- Y[training_idx]
+#' D_tr <- D[training_idx]
+#' X_tr <- X[training_idx, ]
+#'
+#' Y_hon <- Y[honest_idx]
+#' D_hon <- D[honest_idx]
+#' X_hon <- X[honest_idx, ]
+#'
+#' ## Construct sequence of groupings. CATEs estimated internally.
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
 #'
 #' ## Plot.
 #' plot(groupings)
@@ -227,8 +240,7 @@ print.aggTrees <- function(x, ...) {
 #' Prints LATEX code.
 #'
 #' @examples
-#' \donttest{
-#' ## Generate data.
+#' \donttest{## Generate data.
 #' set.seed(1986)
 #'
 #' n <- 1000
@@ -241,8 +253,22 @@ print.aggTrees <- function(x, ...) {
 #' mu1 <- 0.5 * X[, 1] + X[, 2]
 #' Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
 #'
-#' ## Construct sequence of groupings. CATEs estimated internally,
-#' groupings <- build_aggtree(Y, D, X, method = "aipw")
+#' ## Training-honest sample split.
+#' honest_frac <- 0.5
+#' splits <- sample_split(length(Y), training_frac = (1 - honest_frac))
+#' training_idx <- splits$training_idx
+#' honest_idx <- splits$honest_idx
+#'
+#' Y_tr <- Y[training_idx]
+#' D_tr <- D[training_idx]
+#' X_tr <- X[training_idx, ]
+#'
+#' Y_hon <- Y[honest_idx]
+#' D_hon <- D[honest_idx]
+#' X_hon <- X[honest_idx, ]
+#'
+#' ## Construct sequence of groupings. CATEs estimated internally.
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
 #'
 #' ## Analyze results with 4 groups.
 #' results <- inference_aggtree(groupings, n_groups = 4)
