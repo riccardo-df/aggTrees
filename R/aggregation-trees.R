@@ -174,14 +174,14 @@ build_aggtree <- function(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon,
   if (is.null(cates_tr) & !is.null(cates_hon) | !is.null(cates_tr) & is.null(cates_hon)) stop("Either you provide both 'cates_tr' and 'cates_hon' or set both to NULL.", call. = FALSE)
 
   ## If necessary, estimate the CATEs using training sample (estimation step).
-  if (is.null(cates_tr) & is.null(cates_hon)) {
+  if (is.null(cates_tr)) {
     forest <- grf::causal_forest(X_tr, Y_tr, D_tr, num.trees = 4000, tune.parameters = "all")
     cates_tr <- stats::predict(forest, X_tr)$predictions
     cates_hon <- stats::predict(forest, X_hon)$predictions
   }
 
   ## Grow the tree using training sample (tree-growing step).
-  tree <- rpart::rpart(cates_tr ~ ., data = data.frame("cates" = cates_tr, X_tr), method = "anova", control = rpart::rpart.control(...), model = TRUE)
+  tree <- rpart::rpart(cates ~ ., data = data.frame("cates" = cates_tr, X_tr), method = "anova", control = rpart::rpart.control(...), model = TRUE)
 
   ## If adaptive, replace each node with predictions computed in training sample. Otherwise, honest trees.
   if (is.null(Y_hon)) {
