@@ -31,12 +31,12 @@ This way, we generate a sequence of groupings, one for each granularity level.
 The resulting sequence is nested in the sense that subgroups formed at a given level of granularity are never broken at coarser levels. This guarantees consistency of the results across the different granularity levels, generally considered a basic requirement that every classification system should satisfy. Moreover, each grouping features an optimality property in that it ensures that the loss in
 explained heterogeneity resulting from aggregation is minimized.
 
-Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased only in randomized experiments) and on sample averages of doubly-robust scores (unbiased also in observational studies). 
+Given the sequence of groupings, we can estimate the group average treatment effects (GATEs) as we like. The package supports two estimators, based on differences in mean outcomes between treated and control units (unbiased only in randomized experiments) and on debiased machine learning procedures (unbiased also in observational studies). 
 
 The package also allows to get standard errors for the GATEs by estimating via OLS appropriate linear models. Then, under an "honesty" condition, we can use the estimated standard errors to conduct valid inference about the GATEs as usual, e.g., by constructing conventional confidence intervals.[^1]
 
 ## Code
-For illustration purposes, let us generate some data:
+For illustration purposes, let us generate some data. We also split the observed sample into a training sample and an honest sample of equal sizes, as this will be necessary to achieve valid inference about the GATEs later on.
 
 ```{r data-generation, eval = TRUE}
 ## Generate data.
@@ -51,12 +51,7 @@ D <- rbinom(n, size = 1, prob = 0.5)
 mu0 <- 0.5 * X[, 1]
 mu1 <- 0.5 * X[, 1] + X[, 2]
 Y <- mu0 + D * (mu1 - mu0) + rnorm(n)
-```
 
-### CATEs Estimation
-First, we need to estimate the CATEs. This can be achieved with any estimator we like. Here we use the causal forest estimator. To achieve valid inference about the GATEs, we split the sample into a training sample and an honest sample of equal sizes. The CATEs are estimated using only the training sample.
-
-```{r estimate-cates, eval = TRUE}
 ## Sample split.
 splits <- sample_split(length(Y), training_frac = 0.5)
 training_idx <- splits$training_idx
@@ -69,10 +64,17 @@ X_tr <- X[training_idx, ]
 Y_hon <- Y[honest_idx]
 D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
+```
 
+### CATEs Estimation
+First, we need to estimate the CATEs. This can be achieved with any estimator we like. Here we use the causal forest estimator. The CATEs are estimated using only the training sample.
+
+```{r estimate-cates, eval = TRUE}
 ## Estimate the CATEs. Use only training sample.
 forest <- causal_forest(X_tr, Y_tr, D_tr) 
-cates <- predict(forest, X)$predictions
+
+cates_tr <- predict(forest, X_tr)$predictions
+cates_hon <- predict(forest, X_hon)$predictions
 ```
 
 ### Constructing the Sequence of Groupings
@@ -81,12 +83,13 @@ Now we use the `build_aggtree` function to construct the sequence of groupings. 
 1. If we set `method = "raw"`, the GATEs are estimated by taking the differences between the mean outcomes of treated and control units in each node. This is an unbiased estimator (only) in randomized experiments;
 2. If we set `method = "aipw"`, the GATEs are estimated by averaging doubly-robust scores in each node. This is an unbiased estimator also in observational studies under particular conditions on the construction of the scores.[^2]
 
-The doubly-robust scores are estimated internally using 5-fold cross-fitting and only observations from the honest sample. Notice the use of the `is_honest` argument, a logical vector denoting which observations we allocated to the honest sample. This way, `build_aggtree` knows which observations must be used to construct the tree and compute node predictions. 
+The doubly-robust scores are estimated internally using 5-fold cross-fitting and only observations from the honest sample.
 
 ```{r construct-sequence, eval = TRUE}
 ## Construct the sequence. Use doubly-robust scores.
-groupings <- build_aggtree(Y, D, X, method = "aipw", 
-                           cates = cates, is_honest = 1:length(Y) %in% honest_idx)
+groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, 
+                           cates_tr = cates_tr, cates_hon = cates_hon,
+                           method = "aipw")
 
 ## Print.
 print(groupings)
@@ -117,4 +120,3 @@ print(results, table = "avg_char")
 [^1]: Check the [inference vignette](https://riccardo-df.github.io/aggTrees/articles/inference.html) for more details. 
 [^2]: See footnote 1.
 [^3]: See footnote 1.
-
