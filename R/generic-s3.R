@@ -196,7 +196,7 @@ plot.aggTrees <- function(x, leaves = get_leaves(x$tree), sequence = FALSE, ...)
 #'
 #' @export
 summary.aggTrees <- function(object, ...) {
-  if (is.null(object$idx$honest_idx)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
+  if (is.null(object$honest_sample)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
   summary(object$tree)
 }
 
@@ -303,10 +303,10 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
   if (!(table %in% c("avg_char", "diff"))) stop("Invalid 'table'. This must be either 'avg_char' or 'diff'.", call. = FALSE)
 
   ## Select appropriate sample (adaptive/honest) according to the output of build_aggtree.
-  if (is.null(x$aggTree$idx$honest_idx)) {
-    X <- x$aggTree$dta[, -c(1,2 )]
+  if (is.null(x$aggTree$honest_sample)) {
+    X <- x$aggTree$training_sample[, -c(1:3)]
   } else {
-    X <- x$aggTree$dta[x$aggTree$idx$honest_idx, -c(1,2 )]
+    X <- x$aggTree$honest_sample[, -c(1:3)]
   }
 
   ## Extract information.
@@ -367,7 +367,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
     \\end{tabular}
     \\end{adjustbox}
     \\caption{Average characteristics of units in each leaf, obtained by regressing each covariate on a set of dummies denoting leaf membership", if (!is.null(x$aggTree$idx$honest_idx)) "using only the honest sample." else "." ,"Standard errors are estimated via the Eicker-Huber-White estimator. Leaves are sorted in increasing order of the GATEs.}
-    \\label{table:average.characteristics.leaves}
+    \\label{table_average_characteristics_leaves}
     \\end{table}
 \\endgroup \n\n")
 
@@ -411,7 +411,7 @@ print.aggTrees.inference <- function(x, table = "avg_char", ...) {
     \\end{tabular}
     \\end{adjustbox}
     \\caption{Point estimates and $95\\%$ confidence intervals for the GATEs based on asymptotic normality (in square brackets) and on the percentiles of the bootstrap distribution (in curly braces). Leaves are sorted in increasing order of the GATEs. Additionally, the GATE differences across all pairs of leaves are displayed. $p$-values testing the null hypothesis that a single difference is zero are adjusted using Holm's procedure and reported in parenthesis under each point estimate.}
-    \\label{table:differences.gates}
+    \\label{table_differences_gates}
     \\end{table}
 \\endgroup \n\n")
   }

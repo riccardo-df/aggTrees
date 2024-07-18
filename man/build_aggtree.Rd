@@ -167,7 +167,7 @@ D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
 ## Construct sequence of groupings. CATEs estimated internally.
-groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
+groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon)
 
 ## Alternatively, we can estimate the CATEs and pass them.
 library(grf)

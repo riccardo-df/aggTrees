@@ -54,7 +54,7 @@
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
+#' groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon)
 #'
 #' ## Alternatively, we can estimate the CATEs and pass them.
 #' library(grf)
@@ -168,12 +168,12 @@ build_aggtree <- function(Y_tr, D_tr, X_tr,
                           ...) {
   ## Handling inputs and checks.
   if (any(!(D_tr %in% c(0, 1)))) stop("Invalid 'D_tr'. Only binary treatments are allowed.", call. = FALSE)
-  if (any(!(D_hon %in% c(0, 1)))) stop("Invalid 'D_hon'. Only binary treatments are allowed.", call. = FALSE)
-  if (!is.matrix(X_tr) & !is.data.frame(X_tr)) stop("Invalid 'X_tr'. This must be either a matrix or a data frame.", call. = FALSE)
-  if (!is.matrix(X_hon) & !is.data.frame(X_hon)) stop("Invalid 'X_hon'. This must be either a matrix or a data frame.", call. = FALSE)
-  if (is.null(Y_hon) & (!is.null(D_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
-  if (is.null(D_hon) & (!is.null(Y_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
-  if (is.null(X_hon) & (!is.null(Y_hon) | is.null(D_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
+  if (!is.null(D_hon) & any(!(D_hon %in% c(0, 1)))) stop("Invalid 'D_hon'. Only binary treatments are allowed.", call. = FALSE)
+  if (!is.null(X_tr) &!is.matrix(X_tr) & !is.data.frame(X_tr)) stop("Invalid 'X_tr'. This must be either a matrix or a data frame.", call. = FALSE)
+  if (!is.null(X_hon) & !is.matrix(X_hon) & !is.data.frame(X_hon)) stop("Invalid 'X_hon'. This must be either a matrix or a data frame.", call. = FALSE)
+  if (!is.null(Y_hon) & (is.null(D_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
+  if (!is.null(D_hon) & (is.null(Y_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
+  if (!is.null(X_hon) & (is.null(Y_hon) | is.null(D_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
   if (is.null(cates_tr) & !is.null(cates_hon) | !is.null(cates_tr) & is.null(cates_hon)) stop("Either you provide both 'cates_tr' and 'cates_hon' or set both to NULL.", call. = FALSE)
 
   ## If necessary, estimate the CATEs using training sample (estimation step).
