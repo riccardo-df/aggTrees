@@ -178,7 +178,6 @@ build_aggtree <- function(Y_tr, D_tr, X_tr,
   if (!is.null(D_hon) & (is.null(Y_hon) | is.null(X_hon) | is.null(cates_hon))) stop("Either you provide all 'Y_hon', 'D_hon', 'X_hon', and 'cates_hon', or set all to NULL.", call. = FALSE)
   if (!is.null(X_hon) & (is.null(Y_hon) | is.null(D_hon) | is.null(cates_hon))) stop("Either you provide all 'Y_hon', 'D_hon', 'X_hon', and 'cates_hon', or set all to NULL.", call. = FALSE)
   if (!is.null(cates_hon) & (is.null(Y_hon) | is.null(D_hon) | is.null(X_hon))) stop("Either you provide all 'Y_hon', 'D_hon', 'X_hon', and 'cates_hon', or set all to NULL.", call. = FALSE)
-  if (!is.null(cates_tr) & is.null(cates_hon)) stop("If you provide 'cates_tr' you cannot set 'cates_hon' to NULL.", call. = FALSE)
 
   ## If necessary, estimate the CATEs using training sample (estimation step).
   if (is.null(cates_tr)) {
