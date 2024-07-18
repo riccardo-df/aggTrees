@@ -86,7 +86,7 @@ Now we use the `build_aggtree` function to construct the sequence of groupings. 
 The doubly-robust scores are estimated internally using 5-fold cross-fitting and only observations from the honest sample.
 
 ```{r construct-sequence, eval = TRUE}
-## Construct the sequence. Use doubly-robust scores.
+## Construct the sequence. Use doubly-robust scores (default option).
 groupings <- build_aggtree(Y_tr, D_tr, X_tr, # Training sample. 
                            Y_hon, D_hon, X_hon, # Honest sample.
                            cates_tr = cates_tr, cates_hon = cates_hon) # Predicted CATEs.

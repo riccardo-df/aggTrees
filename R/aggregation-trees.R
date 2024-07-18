@@ -200,7 +200,7 @@ build_aggtree <- function(Y_tr, D_tr, X_tr,
   if (!is.null(Y_hon)) forest <- NULL
 
   training_sample <- data.frame(cates_tr, Y_tr, D_tr, X_tr)
-  colnames(training_sample) <- c("cates", "Y", "D", colnames(X))
+  colnames(training_sample) <- c("cates", "Y", "D", colnames(X_tr))
 
   if (!is.null(Y_hon)) {
     honest_sample <- data.frame(cates_hon, Y_hon, D_hon, X_hon)
