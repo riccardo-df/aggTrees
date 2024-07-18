@@ -6,27 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inference • aggTrees</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Inference">
-<meta property="og:description" content="aggTrees">
-<meta property="og:image" content="https://riccardo-df.github.io/aggTrees/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -40,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aggTrees</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
       </span>
     </div>
 
@@ -60,7 +52,7 @@
 <li>
   <a href="https://github.com/riccardo-df/aggTrees" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -71,7 +63,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -79,7 +71,7 @@
       <h1 data-toc-skip>Inference</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/riccardo-df/aggTrees/blob/HEAD/vignettes/inference.Rmd" class="external-link"><code>vignettes/inference.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/riccardo-df/aggTrees/blob/main/vignettes/inference.Rmd" class="external-link"><code>vignettes/inference.Rmd</code></a></small>
       <div class="hidden name"><code>inference.Rmd</code></div>
 
     </div>
@@ -121,19 +113,33 @@ accordingly.</p>
 <p>If <code>method</code> is set to <code>"raw"</code>, the
 <code>inference_aggtree</code> function estimates via OLS the following
 linear model:</p>
-<p><span class="math display">\[\begin{equation}
-    Y_i = \sum_{l = 1}^{|\mathcal{T_{\alpha}}|} L_{i, l} \, \gamma_l +
-\sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l} \, D_i \, \beta_l +
-\epsilon_i
-\end{equation}\]</span></p>
-<p>with <span class="math inline">\(|\mathcal{T}_{\alpha}|\)</span> the
-number of leaves of a particular tree <span class="math inline">\(\mathcal{T}_{\alpha}\)</span>, and <span class="math inline">\(L_{i, l}\)</span> a dummy variable equal to one if
-the <span class="math inline">\(i\)</span>-th unit falls in the <span class="math inline">\(l\)</span>-th leaf of <span class="math inline">\(\mathcal{T}_{\alpha}\)</span>.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>𝒯</mi><mi mathvariant="script">α</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow></munderover><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>l</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>γ</mi><mi>l</mi></msub><mo>+</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>𝒯</mi><mi>α</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow></munderover><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>l</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>D</mi><mi>i</mi></msub><mspace width="0.167em"></mspace><msub><mi>β</mi><mi>l</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\begin{equation}
+    Y_i = \sum_{l = 1}^{|\mathcal{T_{\alpha}}|} L_{i, l} \, \gamma_l + \sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l} \, D_i \, \beta_l + \epsilon_i
+\end{equation}</annotation></semantics></math></p>
+<p>with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>𝒯</mi><mi>α</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">|\mathcal{T}_{\alpha}|</annotation></semantics></math>
+the number of leaves of a particular tree
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝒯</mi><mi>α</mi></msub><annotation encoding="application/x-tex">\mathcal{T}_{\alpha}</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>l</mi></mrow></msub><annotation encoding="application/x-tex">L_{i, l}</annotation></semantics></math>
+a dummy variable equal to one if the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>-th
+unit falls in the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>-th
+leaf of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝒯</mi><mi>α</mi></msub><annotation encoding="application/x-tex">\mathcal{T}_{\alpha}</annotation></semantics></math>.</p>
 <p>Exploiting the random assignment to treatment, we can show that each
-<span class="math inline">\(\beta_l\)</span> identifies the GATE in the
-<span class="math inline">\(l\)</span>-th leaf.</p>
-<p>Under honesty, the OLS estimator <span class="math inline">\(\hat{\beta}_l\)</span> of <span class="math inline">\(\beta_l\)</span> is root-<span class="math inline">\(n\)</span> consistent and asymptotically
-normal.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>l</mi></msub><annotation encoding="application/x-tex">\beta_l</annotation></semantics></math>
+identifies the GATE in the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>-th
+leaf.</p>
+<p>Under honesty, the OLS estimator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mi>l</mi></msub><annotation encoding="application/x-tex">\hat{\beta}_l</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>l</mi></msub><annotation encoding="application/x-tex">\beta_l</annotation></semantics></math>
+is
+root-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+consistent and asymptotically normal.</p>
 </div>
 <div class="section level4">
 <h4 id="doubly-robust-scores">Doubly-Robust Scores<a class="anchor" aria-label="anchor" href="#doubly-robust-scores"></a>
@@ -141,39 +147,53 @@ normal.</p>
 <p>If <code>method</code> is set to <code>"aipw"</code>, the
 <code>inference_aggtree</code> function estimates via OLS the following
 linear model:</p>
-<p><span class="math display">\[\begin{equation}
-    \widehat{\Gamma}_i = \sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l}
-\, \beta_l + \epsilon_i
-\end{equation}\]</span></p>
-<p>where <span class="math inline">\(\Gamma_i\)</span> writes as:</p>
-<p><span class="math display">\[\begin{equation*}
-    \Gamma_i = \mu \left( 1, X_i \right) - \mu \left( 0, X_i \right) +
-\frac{D_i \left[ Y_i - \mu \left( 1, X_i \right) \right]}{p \left( X_i
-\right)}  - \frac{ \left( 1 - D_i \right) \left[ Y_i - \mu \left( 0, X_i
-\right) \right]}{1 - p \left( X_i \right)}
-\end{equation*}\]</span></p>
-<p>with <span class="math inline">\(\mu \left(D_i, X_i \right) =
-\mathbb{E} \left[ Y_i | D_i, Z_i \right]\)</span> the conditional mean
-of <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(p \left( X_i \right) = \mathbb{P} \left( D_i = 1 |
-X_i \right)\)</span> the propensity score.</p>
-<p>The doubly-robust scores <span class="math inline">\(\Gamma_i\)</span> are inherited by the output of
-the <code>build_aggtree</code> function.</p>
-<p>As before, we can show that each <span class="math inline">\(\beta_l\)</span> identifies the GATE in the <span class="math inline">\(l\)</span>-th leaf, this time even in
-observational studies.</p>
-<p>Under honesty, the OLS estimator <span class="math inline">\(\hat{\beta}_l\)</span> of <span class="math inline">\(\beta_l\)</span> is root-<span class="math inline">\(n\)</span> consistent and asymptotically normal,
-provided that the <span class="math inline">\(\Gamma_i\)</span> are
-cross-fitted in the honest sample and that the product of the
-convergence rates of the estimators of the nuisance functions <span class="math inline">\(\mu \left( \cdot, \cdot \right)\)</span> and <span class="math inline">\(p \left( \cdot \right)\)</span> is faster than
-<span class="math inline">\(n^{1/2}\)</span>.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Γ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>𝒯</mi><mi>α</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow></munderover><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>l</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>β</mi><mi>l</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\begin{equation}
+    \widehat{\Gamma}_i = \sum_{l = 1}^{|\mathcal{T}_{\alpha}|} L_{i, l} \, \beta_l + \epsilon_i
+\end{equation}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Γ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\Gamma_i</annotation></semantics></math>
+writes as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Γ</mi><mi>i</mi></msub><mo>=</mo><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mfrac><mrow><msub><mi>D</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>−</mo><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>−</mo><mfrac><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>D</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>−</mo><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mrow><mrow><mn>1</mn><mo>−</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">\begin{equation*}
+    \Gamma_i = \mu \left( 1, X_i \right) - \mu \left( 0, X_i \right) + \frac{D_i \left[ Y_i - \mu \left( 1, X_i \right) \right]}{p \left( X_i \right)}  - \frac{ \left( 1 - D_i \right) \left[ Y_i - \mu \left( 0, X_i \right) \right]}{1 - p \left( X_i \right)}
+\end{equation*}</annotation></semantics></math></p>
+<p>with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>i</mi></msub><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>Y</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>D</mi><mi>i</mi></msub><mo>,</mo><msub><mi>Z</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mu \left(D_i, X_i \right) = \mathbb{E} \left[ Y_i | D_i, Z_i \right]</annotation></semantics></math>
+the conditional mean of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">Y_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>ℙ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p \left( X_i \right) = \mathbb{P} \left( D_i = 1 | X_i \right)</annotation></semantics></math>
+the propensity score.</p>
+<p>The doubly-robust scores
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Γ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\Gamma_i</annotation></semantics></math>
+are inherited by the output of the <code>build_aggtree</code>
+function.</p>
+<p>As before, we can show that each
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>l</mi></msub><annotation encoding="application/x-tex">\beta_l</annotation></semantics></math>
+identifies the GATE in the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>-th
+leaf, this time even in observational studies.</p>
+<p>Under honesty, the OLS estimator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mi>l</mi></msub><annotation encoding="application/x-tex">\hat{\beta}_l</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>l</mi></msub><annotation encoding="application/x-tex">\beta_l</annotation></semantics></math>
+is
+root-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+consistent and asymptotically normal, provided that the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Γ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\Gamma_i</annotation></semantics></math>
+are cross-fitted in the honest sample and that the product of the
+convergence rates of the estimators of the nuisance functions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo>,</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mu \left( \cdot, \cdot \right)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p \left( \cdot \right)</annotation></semantics></math>
+is faster than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>n</mi><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">n^{1/2}</annotation></semantics></math>.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -186,16 +206,16 @@ convergence rates of the estimators of the nuisance functions <span class="math 
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

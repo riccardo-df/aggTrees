@@ -1,93 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/404.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/articles/aggTrees-vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/articles/inference.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/index.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/avg_characteristics_rpart.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/balance_measures.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/build_aggtree.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/causal_ols_rpart.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/descriptive_arm.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/dr_scores.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/estimate_rpart.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/expand_df.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/get_leaves.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/leaf_membership.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/log_ratio_sd.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/node_membership.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/normalized_diff.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/plot.aggTrees.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/print.aggTrees.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/print.aggTrees.inference.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/rename_latex.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/sample_split.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/subtree.html</loc>
-  </url>
-  <url>
-    <loc>https://riccardo-df.github.io/aggTrees/reference/summary.aggTrees.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://riccardo-df.github.io/aggTrees/404.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/LICENSE-text.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/LICENSE.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/articles/aggTrees-vignette.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/articles/index.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/articles/inference.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/authors.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/index.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/news/index.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/avg_characteristics_rpart.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/balance_measures.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/build_aggtree.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/causal_ols_rpart.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/descriptive_arm.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/dr_scores.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/estimate_rpart.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/expand_df.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/get_leaves.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/index.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/leaf_membership.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/log_ratio_sd.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/node_membership.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/normalized_diff.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/plot.aggTrees.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/print.aggTrees.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/print.aggTrees.inference.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/rename_latex.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/sample_split.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/subtree.html</loc></url>
+<url><loc>https://riccardo-df.github.io/aggTrees/reference/summary.aggTrees.html</loc></url>
 </urlset>
+
