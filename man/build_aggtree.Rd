@@ -34,7 +34,9 @@ inference_aggtree(object, n_groups, boot_ci = FALSE, boot_R = 2000)
 
 \item{X_hon}{Covariate matrix (no intercept) for honest sample.}
 
-\item{cates_tr}{Optional, predicted CATEs for honest sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
+\item{cates_tr}{Optional, predicted CATEs for training sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
+
+\item{cates_hon}{Optional, predicted CATEs for honest sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.}
 
 \item{method}{Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.}
 
@@ -167,7 +169,8 @@ D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
 ## Construct sequence of groupings. CATEs estimated internally.
-groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon)
+groupings <- build_aggtree(Y_tr, D_tr, X_tr, # Training sample.
+                           Y_hon, D_hon, X_hon) # Honest sample.
 
 ## Alternatively, we can estimate the CATEs and pass them.
 library(grf)
@@ -175,7 +178,9 @@ forest <- causal_forest(X_tr, Y_tr, D_tr) # Use training sample.
 cates_tr <- predict(forest, X_tr)$predictions
 cates_hon <- predict(forest, X_hon)$predictions
 
-groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon, cates_tr = cates_tr, cates_hon = cates_hon)
+groupings <- build_aggtree(Y_tr, D_tr, X_tr, # Training sample.
+                           Y_hon, D_hon, X_hon, # Honest sample.
+                           cates_tr, cates_hon) # Predicted CATEs.
 
 ## We have compatibility with generic S3-methods.
 summary(groupings)

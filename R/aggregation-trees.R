@@ -14,7 +14,7 @@
 #' @param X_tr Covariate matrix (no intercept) for training sample.
 #' @param X_hon Covariate matrix (no intercept) for honest sample.
 #' @param cates_tr Optional, predicted CATEs for training sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
-#' @param cates_tr Optional, predicted CATEs for honest sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
+#' @param cates_hon Optional, predicted CATEs for honest sample. If not provided by the user, CATEs are estimated internally via a \code{\link[grf]{causal_forest}}.
 #' @param method Either \code{"raw"} or \code{"aipw"}, controls how node predictions are computed.
 #' @param scores Optional, vector of scores to be used in computing node predictions. Useful to save computational time if scores have already been estimated. Ignored if \code{method == "raw"}.
 #' @param ... Further arguments from \code{\link[rpart]{rpart.control}}.
@@ -54,7 +54,8 @@
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon)
+#' groupings <- build_aggtree(Y_tr, D_tr, X_tr, # Training sample.
+#'                            Y_hon, D_hon, X_hon) # Honest sample.
 #'
 #' ## Alternatively, we can estimate the CATEs and pass them.
 #' library(grf)
@@ -62,7 +63,9 @@
 #' cates_tr <- predict(forest, X_tr)$predictions
 #' cates_hon <- predict(forest, X_hon)$predictions
 #'
-#' groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon, cates_tr = cates_tr, cates_hon = cates_hon)
+#' groupings <- build_aggtree(Y_tr, D_tr, X_tr, # Training sample.
+#'                            Y_hon, D_hon, X_hon, # Honest sample.
+#'                            cates_tr, cates_hon) # Predicted CATEs.
 #'
 #' ## We have compatibility with generic S3-methods.
 #' summary(groupings)
