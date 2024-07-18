@@ -63,12 +63,12 @@ dr_scores <- function(Y, D, X, k = 5) {
     left_out_idx <- folds[[fold]]
 
     cond_mean_forest <- grf::regression_forest(data.frame("D" = D[-left_out_idx], X[-left_out_idx, ]), Y[-left_out_idx])
-    pscore_forest <- grf::regression_forest(matrix(X[-left_out_idx, ], ncol = dim(X)[2]), D[-left_out_idx])
+    pscore_forest <- grf::regression_forest(as.matrix(X[-left_out_idx, ], nrow = dim(X)[1], ncol = dim(X)[2]), D[-left_out_idx])
 
     ## Predict on left-out fold.
     nuisances_mat[left_out_idx, "mu_0"] <- predict(cond_mean_forest, data.frame("D" = rep(0, length(left_out_idx)), X[left_out_idx, ]))$predictions
     nuisances_mat[left_out_idx, "mu_1"] <- predict(cond_mean_forest, data.frame("D" = rep(1, length(left_out_idx)), X[left_out_idx, ]))$predictions
-    nuisances_mat[left_out_idx, "pscore"] <- predict(pscore_forest, matrix(X[left_out_idx, ], ncol = dim(X)[2]))$predictions
+    nuisances_mat[left_out_idx, "pscore"] <- predict(pscore_forest, as.matrix(X[left_out_idx, ], nrow = dim(X)[1], ncol = dim(X)[2]))$predictions
   }
 
   ## Construct doubly-robust scores.
