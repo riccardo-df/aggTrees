@@ -251,14 +251,14 @@ inference_aggtree <- function(object, n_groups,
   scores <- object$scores
 
   ## Select appropriate sample (full/honest) according to the output of build_aggtree.
-  if (is.null(honest_sample)) {
+  if (is.null(object$honest_sample)) {
     Y <- object$training_sample$Y
     D <- object$training_sample$D
     X <- object$training_sample[, -c(1:3)]
   } else {
-    Y <- object$honest$Y
-    D <- object$honest$D
-    X <- object$honest[, -c(1:3)]
+    Y <- object$honest_sample$Y
+    D <- object$honest_sample$D
+    X <- object$honest_sample[, -c(1:3)]
   }
 
   ## Select granularity level.
