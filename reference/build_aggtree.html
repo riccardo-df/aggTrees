@@ -279,7 +279,6 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-in"><span><span class="co">## Construct sequence of groupings. CATEs estimated internally.</span></span></span>
 <span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu">build_aggtree</span><span class="op">(</span><span class="va">Y_tr</span>, <span class="va">D_tr</span>, <span class="va">X_tr</span>, <span class="co"># Training sample.</span></span></span>
 <span class="r-in"><span>                           <span class="va">Y_hon</span>, <span class="va">D_hon</span>, <span class="va">X_hon</span><span class="op">)</span> <span class="co"># Honest sample.</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Either you provide all 'Y_hon', 'D_hon', 'X_hon', and 'cates_hon', or set all to NULL.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Alternatively, we can estimate the CATEs and pass them.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/grf-labs/grf" class="external-link">grf</a></span><span class="op">)</span></span></span>
@@ -299,57 +298,57 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-out co"><span class="r-pr">#&gt;</span>     X_tr), method = "anova", model = TRUE, control = rpart::rpart.control(...))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   n= 500 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           CP nsplit  rel error     xerror        xstd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.74814291      0 1.00000000 1.00430727 0.038816368</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.18226932      1 0.25185709 0.26051883 0.012191802</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.02301549      2 0.06958777 0.07446623 0.006448265</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.01000000      3 0.04657228 0.05452246 0.003995228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          CP nsplit  rel error     xerror        xstd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.7360461      0 1.00000000 1.00439191 0.039833578</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.1943360      1 0.26395392 0.27021335 0.012105034</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.0218754      2 0.06961795 0.08064756 0.006947625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.0100000      3 0.04774255 0.05108766 0.003389573</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Variable importance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x2 x1 x3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93  6  1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  5  1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 1: 500 observations,    complexity param=0.7481429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.1172183, MSE=0.6400647 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 1: 500 observations,    complexity param=0.7360461</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.1271354, MSE=0.6493231 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   left son=2 (221 obs) right son=3 (279 obs)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Primary splits:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; -0.1879849 to the left,  improve=0.74814290, (0 missing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.2090187 to the left,  improve=0.04071098, (0 missing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 0.07957051 to the right, improve=0.00617327, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; -0.1879849 to the left,  improve=0.736046100, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.2090187 to the left,  improve=0.040496860, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 0.07957051 to the right, improve=0.005618913, (0 missing)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Surrogate splits:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.2090187 to the left,  agree=0.588, adj=0.068, (0 split)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -2.778503  to the left,  agree=0.562, adj=0.009, (0 split)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 2: 221 observations,    complexity param=0.02301549</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-1.308876, MSE=0.06099727 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 2: 221 observations,    complexity param=0.0218754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-1.364316, MSE=0.06229607 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   left son=4 (190 obs) right son=5 (31 obs)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Primary splits:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; -0.383392  to the left,  improve=0.54640110, (0 missing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.7607663 to the left,  improve=0.13284140, (0 missing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -0.448465  to the right, improve=0.02226696, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; -0.383392  to the left,  improve=0.5158625, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.7607663 to the left,  improve=0.1757891, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; -0.6784445 to the right, improve=0.0194642, (0 missing)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 3: 279 observations,    complexity param=0.1822693</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=0.6575556, MSE=0.2405807 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   left son=6 (156 obs) right son=7 (123 obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 3: 279 observations,    complexity param=0.194336</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=0.6772359, MSE=0.2578074 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   left son=6 (160 obs) right son=7 (119 obs)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Primary splits:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; 0.6427372  to the left,  improve=0.86904530, (0 missing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.6991158 to the left,  improve=0.02757701, (0 missing)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 0.5527987  to the right, improve=0.02547441, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x2 &lt; 0.6613496  to the left,  improve=0.87717150, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 0.5527987  to the right, improve=0.02474377, (0 missing)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; -0.6991158 to the left,  improve=0.02013863, (0 missing)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Surrogate splits:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; 0.9938645  to the left,  agree=0.573, adj=0.033, (0 split)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 2.15878    to the left,  agree=0.566, adj=0.016, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x1 &lt; 1.289389   to the left,  agree=0.584, adj=0.025, (0 split)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       x3 &lt; 2.15878    to the left,  agree=0.581, adj=0.017, (0 split)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Node number 4: 190 observations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-1.455661, MSE=0.02539749 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-1.509075, MSE=0.02885161 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Node number 5: 31 observations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.2507968, MSE=0.04158614 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=-0.320842, MSE=0.03817818 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 6: 156 observations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=0.03480117, MSE=0.02782329 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 6: 160 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=0.06742149, MSE=0.03096881 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 7: 123 observations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=1.44297, MSE=0.03617487 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node number 7: 119 observations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mean=1.477908, MSE=0.0326036 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Honest estimates: TRUE </span>
@@ -358,13 +357,13 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-out co"><span class="r-pr">#&gt;</span> node), split, n, deviance, yval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       * denotes terminal node</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1) root 500 320.032300 -0.11721830  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2) x2&lt; -0.1879849 221  13.480400 -1.30887600  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     4) x2&lt; -0.383392 190   4.825523 -1.45566100 *</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     5) x2&gt;=-0.383392 31   1.289170 -0.25079680 *</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3) x2&gt;=-0.1879849 279  67.122020  0.65755560  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     6) x2&lt; 0.6427372 156   4.340434  0.03480117 *</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     7) x2&gt;=0.6427372 123   4.449509  1.44297000 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1) root 500 324.661600 -0.12713540  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2) x2&lt; -0.1879849 221  13.767430 -1.36431600  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     4) x2&lt; -0.383392 190   5.481807 -1.50907500 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     5) x2&gt;=-0.383392 31   1.183523 -0.32084200 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3) x2&gt;=-0.1879849 279  71.928260  0.67723590  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     6) x2&lt; 0.6613496 160   4.955010  0.06742149 *</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     7) x2&gt;=0.6613496 119   3.879829  1.47790800 *</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span> <span class="co"># Try also setting 'sequence = TRUE'.</span></span></span>
 <span class="r-plt img"><img src="build_aggtree-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -372,7 +371,7 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-in"><span><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu"><a href="subtree.html">subtree</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">$</span><span class="va">tree</span>, cv <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Select by cross-validation.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">tree</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">X_hon</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           1           2           3           4           5           6 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -0.25079677 -1.45566099 -1.45566099  1.44296972 -1.45566099  0.03480117 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -0.32084200 -1.50907485 -1.50907485  1.47790823 -1.50907485  0.06742149 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Inference with 4 groups.</span></span></span>
 <span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">inference_aggtree</span><span class="op">(</span><span class="va">groupings</span>, n_groups <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
@@ -387,26 +386,26 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate Std. Error t value  Pr(&gt;|t|) CI Lower CI Upper  DF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf1  -1.4557     0.1673 -8.7027 4.809e-17  -1.7843  -1.1270 496</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf2  -0.2508     0.3895 -0.6440 5.199e-01  -1.0160   0.5144 496</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf3   0.0348     0.1562  0.2228 8.238e-01  -0.2721   0.3417 496</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf4   1.4430     0.1828  7.8916 1.924e-14   1.0837   1.8022 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf1 -1.50907     0.1717 -8.7904 2.454e-17  -1.8464  -1.1718 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf2 -0.32084     0.3778 -0.8492 3.962e-01  -1.0632   0.4215 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf3  0.06742     0.1576  0.4277 6.690e-01  -0.2423   0.3771 496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf4  1.47791     0.1870  7.9046 1.754e-14   1.1106   1.8453 496</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Multiple R-squared:  0.227 ,	Adjusted R-squared:  0.2208 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> F-statistic: 34.62 on 4 and 496 DF,  p-value: &lt; 2.2e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiple R-squared:  0.2305 ,	Adjusted R-squared:  0.2243 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> F-statistic: 35.16 on 4 and 496 DF,  p-value: &lt; 2.2e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">results</span><span class="op">$</span><span class="va">gates_diff_pairs</span><span class="op">$</span><span class="va">gates_diff</span> <span class="co"># GATEs differences.</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          leaf1     leaf2    leaf3 leaf4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> leaf1       NA        NA       NA    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf2 1.204864        NA       NA    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf3 1.490462 0.2855979       NA    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> leaf4 2.898631 1.6937665 1.408169    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf2 1.188233        NA       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf3 1.576496 0.3882635       NA    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> leaf4 2.986983 1.7987502 1.410487    NA</span>
 <span class="r-in"><span><span class="va">results</span><span class="op">$</span><span class="va">gates_diff_pairs</span><span class="op">$</span><span class="va">holm_pvalues</span> <span class="co"># leaves 1-2 not statistically different.</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]         [,2]         [,3] [,4]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]           NA           NA           NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 9.316712e-03           NA           NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 9.071553e-10 0.4964232488           NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 2.655349e-27 0.0002831547 3.463206e-08   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]         [,3] [,4]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]           NA          NA           NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 8.743913e-03          NA           NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 1.893241e-10 3.43402e-01           NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 1.378481e-27 7.12634e-05 5.663583e-08   NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## LATEX.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span>, table <span class="op">=</span> <span class="st">"diff"</span><span class="op">)</span></span></span>
@@ -424,8 +423,8 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[2pt]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \multirow{3}{*}{GATEs} &amp; -1.456 &amp; -0.251 &amp;  0.035 &amp;  1.443 \\</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; [-1.783, -1.129] &amp; [-1.013,  0.511] &amp; [-0.271,  0.341] &amp; [ 1.084,  1.802] \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \multirow{3}{*}{GATEs} &amp; -1.509 &amp; -0.321 &amp;  0.067 &amp;  1.478 \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; [-1.846, -1.172] &amp; [-1.062,  0.420] &amp; [-0.243,  0.377] &amp; [ 1.111,  1.845] \\</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &amp; \{NA, NA\} &amp; \{NA, NA\} &amp; \{NA, NA\} &amp; \{NA, NA\} \\ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[2pt]</span>
@@ -433,11 +432,11 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 1} &amp; NA &amp; NA &amp; NA &amp; NA \\</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (NA) &amp; (NA) &amp; (NA) &amp; (NA) \\ </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 2} &amp; 1.20 &amp;   NA &amp;   NA &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 2} &amp; 1.19 &amp;   NA &amp;   NA &amp; NA \\</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0.009) &amp; (   NA) &amp; (   NA) &amp; (NA) \\ </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 3} &amp; 1.49 &amp; 0.29 &amp;   NA &amp; NA \\</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0.000) &amp; (0.496) &amp; (   NA) &amp; (NA) \\ </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 4} &amp; 2.90 &amp; 1.69 &amp; 1.41 &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 3} &amp; 1.58 &amp; 0.39 &amp;   NA &amp; NA \\</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0.000) &amp; (0.343) &amp; (   NA) &amp; (NA) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \textit{Leaf 4} &amp; 2.99 &amp; 1.80 &amp; 1.41 &amp; NA \\</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &amp; (0.000) &amp; (0.000) &amp; (0.000) &amp; (NA) \\ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[3pt]</span>
@@ -465,9 +464,9 @@ construct the tree are used to estimate the above quantities. This is fine for p
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[2pt]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \hline \\[-1.8ex] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x1} &amp; -0.018 &amp; (0.073) &amp; -0.041 &amp; (0.188) &amp; -0.003 &amp; (0.079) &amp; -0.023 &amp; (0.082) \\ </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x2} &amp; -1.056 &amp; (0.044) &amp; -0.299 &amp; (0.012) &amp;  0.200 &amp; (0.018) &amp;  1.272 &amp; (0.045) \\ </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x3} &amp;  0.043 &amp; (0.075) &amp; -0.136 &amp; (0.198) &amp; -0.143 &amp; (0.077) &amp;  0.029 &amp; (0.088) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x1} &amp; -0.018 &amp; (0.073) &amp; -0.041 &amp; (0.188) &amp;  0.001 &amp; (0.078) &amp; -0.029 &amp; (0.082) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x2} &amp; -1.056 &amp; (0.044) &amp; -0.299 &amp; (0.012) &amp;  0.207 &amp; (0.018) &amp;  1.286 &amp; (0.046) \\ </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       \texttt{x3} &amp;  0.043 &amp; (0.075) &amp; -0.136 &amp; (0.198) &amp; -0.156 &amp; (0.079) &amp;  0.050 &amp; (0.085) \\ </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \addlinespace[3pt]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       \\[-1.8ex]\hline</span>
