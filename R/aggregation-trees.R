@@ -241,7 +241,7 @@ inference_aggtree <- function(object, n_groups,
   if (is.null(object$honest_sample)) warning("Inference is not valid, because the same data have been used to construct the tree and estimate GATEs.")
   if (n_groups <= 1) stop("Invalid 'n_groups'. This must be greater than or equal to 2.", call. = FALSE)
   if (!(boot_ci %in% c(FALSE, TRUE))) stop("Invalid 'boot_ci'. This must be either FALSE or TRUE.", call. = FALSE)
-  if (boot_R < 0 | boot_R %% 1 != 1) stop("Invalid 'boot_R'. This must be a positive integer.", call. = FALSE)
+  if (boot_R < 0 | boot_R %% 1 != 0) stop("Invalid 'boot_R'. This must be a positive integer.", call. = FALSE)
 
   tree <- object$tree
 
