@@ -136,7 +136,8 @@ This way, we have an immediate understanding of the groups with extreme GATEs.</
 <span class="r-in"><span><span class="va">X_hon</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="va">honest_idx</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Construct sequence of groupings. CATEs estimated internally.</span></span></span>
-<span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_aggtree.html">build_aggtree</a></span><span class="op">(</span><span class="va">Y_tr</span>, <span class="va">Y_hon</span>, <span class="va">D_tr</span>, <span class="va">D_hon</span>, <span class="va">X_tr</span>, <span class="va">X_hon</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">groupings</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_aggtree.html">build_aggtree</a></span><span class="op">(</span><span class="va">Y_tr</span>, <span class="va">Y_hon</span>, <span class="va">D_tr</span>,</span></span>
+<span class="r-in"><span>                           <span class="va">D_hon</span>, <span class="va">X_tr</span>, <span class="va">X_hon</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Invalid 'D_tr'. Only binary treatments are allowed.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot.</span></span></span>
