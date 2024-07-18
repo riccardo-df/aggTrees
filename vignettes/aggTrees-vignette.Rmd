@@ -87,9 +87,9 @@ The doubly-robust scores are estimated internally using 5-fold cross-fitting and
 
 ```{r construct-sequence, eval = TRUE}
 ## Construct the sequence. Use doubly-robust scores.
-groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, 
-                           cates_tr = cates_tr, cates_hon = cates_hon,
-                           method = "aipw")
+groupings <- build_aggtree(Y_tr, D_tr, X_tr, # Training sample. 
+                           Y_hon, D_hon, X_hon, # Honest sample.
+                           cates_tr = cates_tr, cates_hon = cates_hon) # Predicted CATEs.
 
 ## Print.
 print(groupings)

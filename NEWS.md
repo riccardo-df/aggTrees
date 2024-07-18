@@ -1,3 +1,7 @@
+## version 2.1.0
+
+The 'build_aggtree' function now requires a different set of arguments that allow better control on training-honest sample split.
+
 ## version 2.0.3
 
 Updated vignettes. Improved LATEX output.

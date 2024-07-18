@@ -7,11 +7,11 @@
 \usage{
 build_aggtree(
   Y_tr,
-  Y_hon,
   D_tr,
-  D_hon,
   X_tr,
-  X_hon,
+  Y_hon = NULL,
+  D_hon = NULL,
+  X_hon = NULL,
   cates_tr = NULL,
   cates_hon = NULL,
   method = "aipw",
@@ -24,13 +24,13 @@ inference_aggtree(object, n_groups, boot_ci = FALSE, boot_R = 2000)
 \arguments{
 \item{Y_tr}{Outcome vector for training sample.}
 
-\item{Y_hon}{Outcome vector for honest sample.}
-
 \item{D_tr}{Treatment vector for training sample.}
 
-\item{D_hon}{Treatment vector for honest sample.}
-
 \item{X_tr}{Covariate matrix (no intercept) for training sample.}
+
+\item{Y_hon}{Outcome vector for honest sample.}
+
+\item{D_hon}{Treatment vector for honest sample.}
 
 \item{X_hon}{Covariate matrix (no intercept) for honest sample.}
 
@@ -134,8 +134,8 @@ predictions (from most negative to most positive). Standard errors are estimated
 
 Regardless of the chosen \code{method}, both functions estimate the GATEs, the linear models, and the average characteristics
 of units in each group using only observations in the honest sample. If the honest sample is empty (this happens when the
-user sets \code{Y_hon}, \code{D_hon}, and \code{X_hon} to \code{NULL}), the same data used to construct the tree are used
-to estimate the above quantities. This is fine for prediction but invalidates inference.
+user either does not provide \code{Y_hon}, \code{D_hon}, and \code{X_hon} or sets them to \code{NULL}), the same data used to
+construct the tree are used to estimate the above quantities. This is fine for prediction but invalidates inference.
 }
 }
 \examples{
@@ -167,7 +167,7 @@ D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
 ## Construct sequence of groupings. CATEs estimated internally.
-groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
 
 ## Alternatively, we can estimate the CATEs and pass them.
 library(grf)
@@ -175,7 +175,7 @@ forest <- causal_forest(X_tr, Y_tr, D_tr) # Use training sample.
 cates_tr <- predict(forest, X_tr)$predictions
 cates_hon <- predict(forest, X_hon)$predictions
 
-groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw", cates_tr = cates_tr, cates_hon = cates_hon)
+groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon, cates_tr = cates_tr, cates_hon = cates_hon)
 
 ## We have compatibility with generic S3-methods.
 summary(groupings)

@@ -58,7 +58,7 @@ D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 
 ## Construct sequence of groupings. CATEs estimated internally.
-groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
 
 ## Analyze results with 4 groups.
 results <- inference_aggtree(groupings, n_groups = 4)

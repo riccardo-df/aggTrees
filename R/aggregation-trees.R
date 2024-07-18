@@ -54,7 +54,7 @@
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
 #'
 #' ## Alternatively, we can estimate the CATEs and pass them.
 #' library(grf)
@@ -62,7 +62,7 @@
 #' cates_tr <- predict(forest, X_tr)$predictions
 #' cates_hon <- predict(forest, X_hon)$predictions
 #'
-#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw", cates_tr = cates_tr, cates_hon = cates_hon)
+#' groupings <- build_aggtree(Y_tr, D_tr, X_tr, Y_hon, D_hon, X_hon, cates_tr = cates_tr, cates_hon = cates_hon)
 #'
 #' ## We have compatibility with generic S3-methods.
 #' summary(groupings)
@@ -146,8 +146,8 @@
 #' ## Caution on Inference
 #' Regardless of the chosen \code{method}, both functions estimate the GATEs, the linear models, and the average characteristics
 #' of units in each group using only observations in the honest sample. If the honest sample is empty (this happens when the
-#' user sets \code{Y_hon}, \code{D_hon}, and \code{X_hon} to \code{NULL}), the same data used to construct the tree are used
-#' to estimate the above quantities. This is fine for prediction but invalidates inference.
+#' user either does not provide \code{Y_hon}, \code{D_hon}, and \code{X_hon} or sets them to \code{NULL}), the same data used to
+#' construct the tree are used to estimate the above quantities. This is fine for prediction but invalidates inference.
 #'
 #' @import rpart grf
 #'
@@ -161,13 +161,16 @@
 #' @seealso \code{\link{plot.aggTrees}} \code{\link{print.aggTrees.inference}}
 #'
 #' @export
-build_aggtree <- function(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon,
+build_aggtree <- function(Y_tr, D_tr, X_tr,
+                          Y_hon = NULL, D_hon = NULL, X_hon = NULL,
                           cates_tr = NULL, cates_hon = NULL,
                           method = "aipw", scores = NULL,
                           ...) {
   ## Handling inputs and checks.
-  if (any(!(D %in% c(0, 1)))) stop("Invalid 'D'. Only binary treatments are allowed.", call. = FALSE)
-  if (!is.matrix(X) & !is.data.frame(X)) stop("Invalid 'X'. This must be either a matrix or a data frame.", call. = FALSE)
+  if (any(!(D_tr %in% c(0, 1)))) stop("Invalid 'D_tr'. Only binary treatments are allowed.", call. = FALSE)
+  if (any(!(D_hon %in% c(0, 1)))) stop("Invalid 'D_hon'. Only binary treatments are allowed.", call. = FALSE)
+  if (!is.matrix(X_tr) & !is.data.frame(X_tr)) stop("Invalid 'X_tr'. This must be either a matrix or a data frame.", call. = FALSE)
+  if (!is.matrix(X_hon) & !is.data.frame(X_hon)) stop("Invalid 'X_hon'. This must be either a matrix or a data frame.", call. = FALSE)
   if (is.null(Y_hon) & (!is.null(D_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
   if (is.null(D_hon) & (!is.null(Y_hon) | is.null(X_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)
   if (is.null(X_hon) & (!is.null(Y_hon) | is.null(D_hon))) stop("Either you provide valid 'Y_hon', 'D_hon', and 'X_hon' or set all to NULL.", call. = FALSE)

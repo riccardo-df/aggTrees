@@ -39,7 +39,7 @@
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
 #'
 #' ## Plot.
 #' plot(groupings)
@@ -223,7 +223,7 @@ summary.aggTrees <- function(object, ...) {
 #'
 #' @export
 print.aggTrees <- function(x, ...) {
-  if (is.null(x$idx$honest_idx)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
+  if (is.null(x$honest_sample)) cat("Honest estimates:", FALSE, "\n") else cat("Honest estimates:", TRUE, "\n")
   print(x$tree)
 }
 
@@ -268,7 +268,7 @@ print.aggTrees <- function(x, ...) {
 #' X_hon <- X[honest_idx, ]
 #'
 #' ## Construct sequence of groupings. CATEs estimated internally.
-#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon, method = "aipw")
+#' groupings <- build_aggtree(Y_tr, Y_hon, D_tr, D_hon, X_tr, X_hon)
 #'
 #' ## Analyze results with 4 groups.
 #' results <- inference_aggtree(groupings, n_groups = 4)
