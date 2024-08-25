@@ -403,7 +403,7 @@ estimate_rpart <- function(tree, Y, D, X, method = "aipw", scores = NULL) {
 #' using Holm's procedure.
 #'
 #' ## Caution on Inference
-#' "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
+#' "honesty" is a necessary requirement to get valid inference. Thus, observations in \code{Y}, \code{D}, and
 #' \code{X} must not have been used to construct the \code{tree} and the \code{scores}.\cr
 #'
 #' @import rpart estimatr car stats
