@@ -122,7 +122,7 @@ GATEs later on.</p>
 <code class="sourceCode R"><span><span class="co">## Generate data.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1986</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">500</span> <span class="co"># Small sample size due to compliance with CRAN notes.</span></span>
 <span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">k</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">k</span><span class="op">)</span></span>
@@ -188,18 +188,20 @@ cross-fitting and only observations from the honest sample.</p>
 <span><span class="co">## Print.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Honest estimates: TRUE </span></span>
-<span><span class="co">#&gt; n= 500 </span></span>
+<span><span class="co">#&gt; n= 250 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; node), split, n, deviance, yval</span></span>
 <span><span class="co">#&gt;       * denotes terminal node</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 1) root 500 320.032300 -0.11721830  </span></span>
-<span><span class="co">#&gt;   2) x2&lt; -0.1879849 221  13.480400 -1.30887600  </span></span>
-<span><span class="co">#&gt;     4) x2&lt; -0.383392 190   4.825523 -1.45566100 *</span></span>
-<span><span class="co">#&gt;     5) x2&gt;=-0.383392 31   1.289170 -0.25079680 *</span></span>
-<span><span class="co">#&gt;   3) x2&gt;=-0.1879849 279  67.122020  0.65755560  </span></span>
-<span><span class="co">#&gt;     6) x2&lt; 0.6427372 156   4.340434  0.03480117 *</span></span>
-<span><span class="co">#&gt;     7) x2&gt;=0.6427372 123   4.449509  1.44297000 *</span></span>
+<span><span class="co">#&gt;  1) root 250 123.9466000  0.13700170  </span></span>
+<span><span class="co">#&gt;    2) x2&lt; 0.4110066 169  17.4697700 -0.26060540  </span></span>
+<span><span class="co">#&gt;      4) x2&lt; -0.2808111 98   1.5706020 -0.58001140 *</span></span>
+<span><span class="co">#&gt;      5) x2&gt;=-0.2808111 71   2.2189360  0.24512080  </span></span>
+<span><span class="co">#&gt;       10) x2&lt; 0.1101004 38   0.3944950  0.39862120 *</span></span>
+<span><span class="co">#&gt;       11) x2&gt;=0.1101004 33   0.3364562 -0.06187981 *</span></span>
+<span><span class="co">#&gt;    3) x2&gt;=0.4110066 81   2.1095900  0.78572910  </span></span>
+<span><span class="co">#&gt;      6) x2&lt; 0.6244741 16   0.2477193 -0.36697840 *</span></span>
+<span><span class="co">#&gt;      7) x2&gt;=0.6244741 65   0.2205796  1.11284900 *</span></span>
 <span></span>
 <span><span class="co">## Plot.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">groupings</span><span class="op">)</span> <span class="co"># Try also setting 'sequence = TRUE'.</span></span></code></pre></div>
@@ -247,8 +249,8 @@ group.</li>
 <span><span class="co">#&gt;       \addlinespace[2pt]</span></span>
 <span><span class="co">#&gt;       \hline \\[-1.8ex] </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;       \multirow{3}{*}{GATEs} &amp; -1.456 &amp; -0.251 &amp;  0.035 &amp;  1.443 \\</span></span>
-<span><span class="co">#&gt;       &amp; [-1.783, -1.129] &amp; [-1.013,  0.511] &amp; [-0.271,  0.341] &amp; [ 1.084,  1.802] \\</span></span>
+<span><span class="co">#&gt;       \multirow{3}{*}{GATEs} &amp; -0.580 &amp; -0.367 &amp;  0.245 &amp;  1.113 \\</span></span>
+<span><span class="co">#&gt;       &amp; [-1.017, -0.143] &amp; [-1.396,  0.662] &amp; [-0.298,  0.788] &amp; [ 0.633,  1.593] \\</span></span>
 <span><span class="co">#&gt;       &amp; \{NA, NA\} &amp; \{NA, NA\} &amp; \{NA, NA\} &amp; \{NA, NA\} \\ </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       \addlinespace[2pt]</span></span>
@@ -256,12 +258,12 @@ group.</li>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       \textit{Leaf 1} &amp; NA &amp; NA &amp; NA &amp; NA \\</span></span>
 <span><span class="co">#&gt;             &amp; (NA) &amp; (NA) &amp; (NA) &amp; (NA) \\ </span></span>
-<span><span class="co">#&gt;       \textit{Leaf 2} &amp; 1.20 &amp;   NA &amp;   NA &amp; NA \\</span></span>
-<span><span class="co">#&gt;             &amp; (0.009) &amp; (   NA) &amp; (   NA) &amp; (NA) \\ </span></span>
-<span><span class="co">#&gt;       \textit{Leaf 3} &amp; 1.49 &amp; 0.29 &amp;   NA &amp; NA \\</span></span>
-<span><span class="co">#&gt;             &amp; (0.000) &amp; (0.496) &amp; (   NA) &amp; (NA) \\ </span></span>
-<span><span class="co">#&gt;       \textit{Leaf 4} &amp; 2.90 &amp; 1.69 &amp; 1.41 &amp; NA \\</span></span>
-<span><span class="co">#&gt;             &amp; (0.000) &amp; (0.000) &amp; (0.000) &amp; (NA) \\ </span></span>
+<span><span class="co">#&gt;       \textit{Leaf 2} &amp; 0.21 &amp;   NA &amp;   NA &amp; NA \\</span></span>
+<span><span class="co">#&gt;             &amp; (0.709) &amp; (   NA) &amp; (   NA) &amp; (NA) \\ </span></span>
+<span><span class="co">#&gt;       \textit{Leaf 3} &amp; 0.83 &amp; 0.61 &amp;   NA &amp; NA \\</span></span>
+<span><span class="co">#&gt;             &amp; (0.079) &amp; (0.607) &amp; (   NA) &amp; (NA) \\ </span></span>
+<span><span class="co">#&gt;       \textit{Leaf 4} &amp; 1.69 &amp; 1.48 &amp; 0.87 &amp; NA \\</span></span>
+<span><span class="co">#&gt;             &amp; (0.000) &amp; (0.056) &amp; (0.079) &amp; (NA) \\ </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       \addlinespace[3pt]</span></span>
 <span><span class="co">#&gt;       \\[-1.8ex]\hline</span></span>
@@ -288,9 +290,9 @@ group.</li>
 <span><span class="co">#&gt;       \addlinespace[2pt]</span></span>
 <span><span class="co">#&gt;       \hline \\[-1.8ex] </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;       \texttt{x1} &amp; -0.018 &amp; (0.073) &amp; -0.041 &amp; (0.188) &amp; -0.003 &amp; (0.079) &amp; -0.023 &amp; (0.082) \\ </span></span>
-<span><span class="co">#&gt;       \texttt{x2} &amp; -1.056 &amp; (0.044) &amp; -0.299 &amp; (0.012) &amp;  0.200 &amp; (0.018) &amp;  1.272 &amp; (0.045) \\ </span></span>
-<span><span class="co">#&gt;       \texttt{x3} &amp;  0.043 &amp; (0.075) &amp; -0.136 &amp; (0.198) &amp; -0.143 &amp; (0.077) &amp;  0.029 &amp; (0.088) \\ </span></span>
+<span><span class="co">#&gt;       \texttt{x1} &amp;  0.125 &amp; (0.097) &amp; -0.030 &amp; (0.202) &amp; -0.089 &amp; (0.148) &amp;  0.083 &amp; (0.106) \\ </span></span>
+<span><span class="co">#&gt;       \texttt{x2} &amp; -0.941 &amp; (0.057) &amp;  0.505 &amp; (0.012) &amp;  0.020 &amp; (0.026) &amp;  1.222 &amp; (0.050) \\ </span></span>
+<span><span class="co">#&gt;       \texttt{x3} &amp;  0.088 &amp; (0.109) &amp; -0.542 &amp; (0.197) &amp;  0.316 &amp; (0.141) &amp; -0.036 &amp; (0.107) \\ </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;       \addlinespace[3pt]</span></span>
 <span><span class="co">#&gt;       \\[-1.8ex]\hline</span></span>
