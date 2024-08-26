@@ -42,7 +42,7 @@ For illustration purposes, let us generate some data. We also split the observed
 ## Generate data.
 set.seed(1986)
 
-n <- 1000
+n <- 500 # Small sample size due to compliance with CRAN notes.
 k <- 3
 
 X <- matrix(rnorm(n * k), ncol = k)

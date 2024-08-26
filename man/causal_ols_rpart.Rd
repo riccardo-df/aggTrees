@@ -80,7 +80,7 @@ using Holm's procedure.
 
 \subsection{Caution on Inference}{
 
-"honesty" is a necessary requirement to get valid inference. Thus, observations in \code{y}, \code{D}, and
+"honesty" is a necessary requirement to get valid inference. Thus, observations in \code{Y}, \code{D}, and
 \code{X} must not have been used to construct the \code{tree} and the \code{scores}.\cr
 }
 }
