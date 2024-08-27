@@ -30,27 +30,27 @@ devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtool
 - Athey, S., & Imbens, G. W. (2016).
 <b>Recursive Partitioning for Heterogeneous Causal Effects.</b>
 <i>Proceedings of the National Academy of Sciences</i>, 113(27).
-[<a href="https://www.pnas.org/doi/abs/10.1073/pnas.1510489113">paper</a>]
+[<a href="https://doi.org/10.1073/pnas.1510489113">paper</a>]
 
 - Athey, S., Tibshirani, J., & Wager, S. (2019).
 <b>Generalized Random Forests.</b> 
 <i>Annals of Statistics</i>, 47(2).
-[<a href="https://projecteuclid.org/euclid.aos/1547197251">paper</a>]
+[<a href="https://doi.org/10.1214/18-AOS1709">paper</a>]
 
 - Chernozhukov, V., Demirer, M., Duflo, E., & Fernandez-Val, I. (2017).
 <b>Generic Machine Learning Inference on Heterogeneous Treatment Effects in Randomized Experiments.</b>
-<i>National Bureau of Economic Research</i>.
-[<a href="https://www.nber.org/papers/w24678">paper</a>]
+<i>arXiv preprint</i>.
+[<a href="https://doi.org/10.48550/arXiv.1712.04802">paper</a>]
 
 - Cotterman, R., & Peracchi, F. (1992).
 <b>Classification and aggregation: An application to industrial classification in cps data.</b> 
 <i>Journal of Applied Econometrics</i>, 7(1).
-[<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/jae.3950070105">paper</a>]
+[<a href="https://doi.org/10.1002/jae.3950070105">paper</a>]
 
 - Di Francesco, R. (2022).
 <b>Aggregation Trees.</b> 
 <i>CEIS Research Paper, 546.</i>
-[<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4304256">paper</a>]
+[<a href="https://doi.org/10.2139/ssrn.4304256">paper</a>]
 
 - Holm, S. (1979).
 <b>A Simple Sequentially Rejective Multiple Test Procedure.</b> 
@@ -60,4 +60,4 @@ devtools::install_github("riccardo-df/aggTrees") # run install.packages("devtool
 - Semenova, V., & Chernozhukov, V. (2021).
 <b>Debiased Machine Learning of Conditional Average Treatment Effects and Other Causal Functions.</b>
 <i>The Econometrics Journal</i>, 24(2).
-[<a href="https://academic.oup.com/ectj/article/24/2/264/5899048">paper</a>]
+[<a href="https://doi.org/10.1093/ectj/utaa027">paper</a>]
