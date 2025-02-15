@@ -6,7 +6,7 @@ template:
 navbar:
   type: default
   left:
-  - text: "Get started"
+  - text: "Tutorial"
     href: articles/aggTrees-vignette.html
   - text: "Inference"
     href: articles/inference.html
