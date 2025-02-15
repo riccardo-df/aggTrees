@@ -84,19 +84,19 @@ Francesco</h4>
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>This tutorial provides an overview of the core functions in the
-<code>aggTrees</code> package, which facilitates predictive modeling of
-ordered non-numeric outcomes:</p>
+<code>aggTrees</code> package, which facilitates the discovery of hidden
+heterogeneity:</p>
 <ul>
 <li>
-<code>ocf()</code> for estimation and inference about conditional
-choice probabilities</li>
+<code><a href="../reference/build_aggtree.html">build_aggtree()</a></code> for constructing a hierarchical
+sequence of optimal groupings</li>
 <li>
-<code>marginal_effects()</code> for estimation and inference about
-covariates’ marginal effects</li>
+<code><a href="../reference/build_aggtree.html">inference_aggtree()</a></code> for estimation and inference about
+the average treatment effect of each group</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="methodology-overview">Methodology Overview<a class="anchor" aria-label="anchor" href="#methodology-overview"></a>
+<h2 id="methodology-overview">Methodology overview<a class="anchor" aria-label="anchor" href="#methodology-overview"></a>
 </h2>
 <p>The approach consists of three steps:</p>
 <ol style="list-style-type: decimal">
@@ -159,7 +159,7 @@ GATEs later on.</p>
 <span><span class="va">D_hon</span> <span class="op">&lt;-</span> <span class="va">D</span><span class="op">[</span><span class="va">honest_idx</span><span class="op">]</span></span>
 <span><span class="va">X_hon</span> <span class="op">&lt;-</span> <span class="va">X</span><span class="op">[</span><span class="va">honest_idx</span>, <span class="op">]</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="cates-estimation">CATEs Estimation<a class="anchor" aria-label="anchor" href="#cates-estimation"></a>
+<h3 id="cate-estimation">CATE estimation<a class="anchor" aria-label="anchor" href="#cate-estimation"></a>
 </h3>
 <p>First, we need to estimate the CATEs. This can be achieved with any
 estimator we like. Here we use the causal forest estimator. The CATEs
@@ -172,7 +172,7 @@ are estimated using only the training sample.</p>
 <span><span class="va">cates_hon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">forest</span>, <span class="va">X_hon</span><span class="op">)</span><span class="op">$</span><span class="va">predictions</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="constructing-the-sequence-of-groupings">Constructing the Sequence of Groupings<a class="anchor" aria-label="anchor" href="#constructing-the-sequence-of-groupings"></a>
+<h3 id="constructing-the-sequence-of-groupings">Constructing the sequence of groupings<a class="anchor" aria-label="anchor" href="#constructing-the-sequence-of-groupings"></a>
 </h3>
 <p>Now we use the <code>build_aggtree</code> function to construct the
 sequence of groupings. This function approximates the estimated CATEs by
@@ -222,7 +222,7 @@ cross-fitting and only observations from the honest sample.</p>
 <p><img src="aggTrees-vignette_files/figure-html/construct-sequence-1.png" width="700"></p>
 </div>
 <div class="section level3">
-<h3 id="further-analysis">Further Analysis<a class="anchor" aria-label="anchor" href="#further-analysis"></a>
+<h3 id="inference">Inference<a class="anchor" aria-label="anchor" href="#inference"></a>
 </h3>
 <p>Now that we have a whole sequence of optimal groupings, we can pick
 the grouping associated with our preferred granularity level and call
