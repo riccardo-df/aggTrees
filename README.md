@@ -4,7 +4,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/aggTrees)](https://CRAN.R-project.org/package=aggTrees) 
 [![Downloads](https://cranlogs.r-pkg.org/badges/aggTrees)](https://CRAN.R-project.org/package=aggTrees)
 
-`aggTrees` is an R package for *aggregation trees*, a nonparametric approach designed to discover heterogeneous subgroups in a selection-on-observables framework. This method helps researchers assess treatment effect heterogeneity by constructing a hierarchical sequence of optimal groupings, enabling estimation and inference at different levels of granularity.
+`aggTrees` is an R package for *aggregation trees*, a nonparametric approach designed to discover heterogeneous subgroups in a selection-on-observables framework. This method helps researchers assess treatment effect heterogeneity by constructing a hierarchical sequence of optimal groupings, enabling estimation and inference of the group average treatment effects at different levels of granularity.
 
 ------------------------------------------------------------------------
 
