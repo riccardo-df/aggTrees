@@ -9,12 +9,12 @@
 ------------------------------------------------------------------------
 
 ### Key features
-✔ **Data-driven subgroup discovery** for causal inference.
-✔ **Optimal partitions** for identifying treatment effect heterogeneity.
-✔ **Point estimation and inference** for the average treatment effect of each subgroup.
-✔ **Fully nonparametric** — no need to pre-specify effect moderators.
-✔ **Seamless integration** with standard econometric workflows.
-✔ **Active development & support** - open-source and actively maintained.                                                          |
+✔ **Data-driven subgroup discovery** for causal inference.  
+✔ **Optimal partitions** for identifying treatment effect heterogeneity.  
+✔ **Point estimation and inference** for the average treatment effect of each subgroup.  
+✔ **Fully nonparametric** — no need to pre-specify effect moderators.  
+✔ **Seamless integration** with standard econometric workflows.  
+✔ **Active development & support** - open-source and actively maintained.                                                          
 
 ------------------------------------------------------------------------
 

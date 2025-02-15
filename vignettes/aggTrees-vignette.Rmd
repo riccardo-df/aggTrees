@@ -1,8 +1,9 @@
 ---
-title: "Short Tutorial"
+title: "Short tutorial"
+author: "Riccardo Di Francesco"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Short Tutorial}
+  %\VignetteIndexEntry{Short tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +18,12 @@ library(aggTrees)
 library(grf)
 ```
 
-In this tutorial, we show how to use the `aggTrees` package to discover heterogeneous subgroups in a selection-on-observables setting. 
+## Introduction
+
+This tutorial provides an overview of the core functions in the `aggTrees` package, which facilitates predictive modeling of ordered non-numeric outcomes:
+
+-   `ocf()` for estimation and inference about conditional choice probabilities
+-   `marginal_effects()` for estimation and inference about covariates' marginal effects
 
 ## Methodology Overview
 The approach consists of three steps:
