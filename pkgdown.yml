@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   aggTrees-vignette: aggTrees-vignette.html
   inference: inference.html
-last_built: 2025-02-15T14:12Z
+last_built: 2025-02-15T14:15Z
 urls:
   reference: https://riccardo-df.github.io/aggTrees/reference
   article: https://riccardo-df.github.io/aggTrees/articles
