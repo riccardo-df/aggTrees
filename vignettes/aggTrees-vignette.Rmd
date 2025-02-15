@@ -20,12 +20,12 @@ library(grf)
 
 ## Introduction
 
-This tutorial provides an overview of the core functions in the `aggTrees` package, which facilitates predictive modeling of ordered non-numeric outcomes:
+This tutorial provides an overview of the core functions in the `aggTrees` package, which facilitates the discovery of hidden heterogeneity:
 
--   `ocf()` for estimation and inference about conditional choice probabilities
--   `marginal_effects()` for estimation and inference about covariates' marginal effects
+-   `build_aggtree()` for constructing a hierarchical sequence of optimal groupings
+-   `inference_aggtree()` for estimation and inference about the average treatment effect of each group 
 
-## Methodology Overview
+## Methodology overview
 The approach consists of three steps:
 
 1. Estimate the conditional average treatment effects (CATEs);
@@ -72,7 +72,7 @@ D_hon <- D[honest_idx]
 X_hon <- X[honest_idx, ]
 ```
 
-### CATEs Estimation
+### CATE estimation
 First, we need to estimate the CATEs. This can be achieved with any estimator we like. Here we use the causal forest estimator. The CATEs are estimated using only the training sample.
 
 ```{r estimate-cates, eval = TRUE}
@@ -83,7 +83,7 @@ cates_tr <- predict(forest, X_tr)$predictions
 cates_hon <- predict(forest, X_hon)$predictions
 ```
 
-### Constructing the Sequence of Groupings
+### Constructing the sequence of groupings
 Now we use the `build_aggtree` function to construct the sequence of groupings. This function approximates the estimated CATEs by a decision tree using only the training sample and computes node predictions (i.e., the GATEs) using only the honest sample. `build_aggtree` allows the user to choose between two GATE estimators:
 
 1. If we set `method = "raw"`, the GATEs are estimated by taking the differences between the mean outcomes of treated and control units in each node. This is an unbiased estimator (only) in randomized experiments;
@@ -104,7 +104,7 @@ print(groupings)
 plot(groupings) # Try also setting 'sequence = TRUE'.
 ```
 
-### Further Analysis
+### Inference
 Now that we have a whole sequence of optimal groupings, we can pick the grouping associated with our preferred granularity level and call the `inference_aggtree` function. This function does the following:
 
 1. It gets standard errors for the GATEs by estimating via OLS appropriate linear models using the honest sample. The choice of the linear model depends on the `method` we used when we called `build_aggtree`;[^3]

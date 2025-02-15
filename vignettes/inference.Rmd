@@ -1,5 +1,6 @@
 ---
 title: "Inference"
+author: "Riccardo Di Francesco"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Inference}
