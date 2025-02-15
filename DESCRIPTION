@@ -6,7 +6,7 @@ Authors@R: person("Riccardo", "Di Francesco", email = "difrancesco.riccardo96@gm
 Description: Nonparametric data-driven approach to discovering heterogeneous subgroups in a selection-on-observables framework. 
     'aggTrees' allows researchers to assess whether there exists relevant heterogeneity in treatment effects by generating a sequence of optimal groupings, 
     one for each level of granularity. For each grouping, we obtain point estimation and inference about the group average treatment effects. 
-    Please reference the use as Di Francesco (2022) <doi:10.2139/ssrn.4304256>.
+    Please reference the use as Di Francesco (2024) <doi:10.48550/arXiv.2410.11408>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
