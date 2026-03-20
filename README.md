@@ -55,5 +55,5 @@ We welcome contributions! If you encounter issues, have feature requests, or wan
 
 If you use `aggTrees` in your research, please cite the corresponding paper:
 
-> Di Francesco, R. (2024). Aggregation trees. arXiv preprint arXiv:2410.11408.
+> Di Francesco, R. (2026). Econometric Reviews, 1–26.
 
